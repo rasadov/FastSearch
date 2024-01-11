@@ -5,8 +5,7 @@ from myproject.myproject.spiders.myspider import MySpider
 import time
 
 
-spider = MySpider("rtx 3060 site:amazon.com", 1)
-spider.query = "rtx 3060 site:amazon.com"
-spider.pages = 1
+spider = MySpider("https://www.ebay.com/itm/355363099516", 'url', 1,10)
+
 
 spider.run()
