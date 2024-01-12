@@ -70,15 +70,36 @@ If it is one page website, no need to set `total_pages` parameter
 
 def scrap_ebay_item(response, url: str):
     """
-    Extracts data from item page in ebay
+    Extracts data from the item page on ebay
     """
     title = response.css('title::text').get()
     price = response.css('div.x-price-primary span.ux-textspans::text').get()
+
     if title and price:
         with open(f'data.txt', 'a+', encoding="utf-8") as file:
             file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
 
+        name = ''.join(word[0] for word in title.split()[:5])
+        return name        
+
+def scrap_amazon_uk_item(response, url: None | str = None):
+    """
+    Extracts data from item page in amazon.co.uk
+    """
+    title = response.css('#productTitle::text').get().strip()
+    price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'
+    if title and price:
+        # for i in price:
+            with open(f'data.txt', 'a+', encoding="utf-8") as file:
+                # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
+                file.write(f"title: {title}\n")
+                file.write(f"price: {price}\n")
+    else:
+        with open(f'data.txt', 'a+', encoding="utf-8") as file:
+                # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
+                file.write(f"ERROR! price: {price} | {title} \n")
+
 
 if __name__ == "__main__":
-    a = [ i for i, k in search('rtx 3060 site:amazon.com','google', 1 )]
-    print(a)
+    with open(f'.html', 'r', encoding="utf-8") as file:
+        html_content = file.read()

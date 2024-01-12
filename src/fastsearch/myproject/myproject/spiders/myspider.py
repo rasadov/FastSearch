@@ -1,8 +1,7 @@
-from typing import Any, Optional
 from scrapy.crawler import CrawlerProcess
 import scrapy
 import sys
-sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src\fastsearch')
+sys.path.append(r'..\fastsearch')
 from utils import *
 import warnings
 
@@ -27,20 +26,29 @@ class MySpider(scrapy.Spider):
         except IndexError:
             pass
         for url in self.start_urls:
-            yield scrapy.Request(url=url, callback=lambda response: self.parse(response=response, url=url))
+            yield scrapy.Request(url=url, callback=self.parse, meta={'url': url})
     
 
-    def parse(self, response, url):
+    def parse(self, response):
         """
 Gets the entire HTML content of the page\n
 Used to proccess and store data    
         """
+        url = response.meta.get('url', '')
+        name = ''
+
         if 'ebay' in url:
-            scrap_ebay_item(response, url)
+            name = scrap_ebay_item(response, url)
         html_content = response.body.decode(response.encoding)
+        
+        if "amazon" in url:
+            with open(f'data.txt', 'a+', encoding="utf-8") as file:
+                # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
+                file.write(f"url: {url}\n")
+            scrap_amazon_uk_item(response, url)
 
         # self.log(f'HTML Content: {html_content}')        
-        with open(f'sadsad.html', 'w', encoding=response.encoding) as f:
+        with open(f'{name}.html', 'w', encoding=response.encoding) as f:
             f.write(html_content)
         return None
 
@@ -48,7 +56,6 @@ Used to proccess and store data
         process = CrawlerProcess(
         settings={
             "FEEDS": {
-                "items.json": {"format": "json"},
                 },
             }
         )
