@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Login</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div class="login-container">
+        <div>
+            <h1>FastSearch</h1>
+            <p>Search for products faster and smarter.</p>
+        </div>
+        <div class="login-section">
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <div>   
+                    <input type="text" name="" id="">
+                </div>
+                <div>
+                    <input type="text" name="" id="">
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
