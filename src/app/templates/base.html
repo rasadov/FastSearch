@@ -9,7 +9,42 @@
 </head>
 <body>
     <nav>
-        
+        <div class="half-width">
+            <h1>FastSearch</h1>
+        </div>
+        <div style="text-align: right;" class="half-width">
+            <div style="margin-left: auto; display: inline-flex;">
+                <div class="nav-links">
+                    
+                    <a href="{{ url_for('home_page') }}" style="width: 40px;">
+                        <p>Home</p>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="" style="width: 40px;">
+                        <p>Link</p>
+                    </a>
+                </div>
+                {% if current_user.is_authenticated %}
+                <div class="nav-links">
+                    <a href="" style="width: 40px;">
+                        <p>{{ current_user.username }}</p>
+                    </a>
+                </div>
+                {% else %}
+                <div class="nav-links">
+                    <a href="{{ url_for('register_page') }}" style="width: 40px;">
+                        <p>Register</p>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('login_page') }}" style="width: 40px;">
+                        <p>Login</p>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </nav>
     <div class="content">
         {% block content %}

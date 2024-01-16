@@ -12,15 +12,17 @@
             <p>Search for products faster and smarter.</p>
         </div>
         <div class="login-section">
-            <form method="post">
+            <form method="POST">
                 {{ form.hidden_tag() }}
                 <div>   
-                    <input type="text" name="" id="">
+                    {{ form.username(class='', placeholder='Username') }}
                 </div>
                 <div>
-                    <input type="text" name="" id="">
+                    {{ form.password(class='', placeholder='Password') }}
                 </div>
-                
+                <div>
+                    {{ form.submit(class='', placeholder='Submit')}}
+                </div>
             </form>
         </div>
     </div>
