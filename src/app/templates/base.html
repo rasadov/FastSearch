@@ -28,7 +28,8 @@
                 {% if current_user.is_authenticated %}
                 <div class="nav-links">
                     <a href="" style="width: 40px;">
-                        <p>{{ current_user.username }}</p>
+                        <p>{{ current_user.name.split(' ')[0] }}</p>
+                        <!-- <p>Profile</p> -->
                     </a>
                 </div>
                 {% else %}

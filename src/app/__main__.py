@@ -1,5 +1,5 @@
 from flask import redirect, render_template, url_for, flash, send_from_directory
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from web import *
 from models import *
 from forms import *
@@ -7,16 +7,20 @@ from forms import *
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User,user_id)
+    try:
+        return db.session.get(User,int(user_id))
+    except (ValueError, TypeError):
+        return None 
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+                               'images/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/')
 @app.route('/home')
 def home_page():
+    print(current_user)
     return render_template("index.html")
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -30,7 +34,7 @@ def register_page():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user)
-                return redirect(url_for('home_page'))
+                return redirect('/')
             else:
                 flash('This Email is already used', category='danger')
         else:
@@ -43,25 +47,54 @@ def register_page():
 
 @app.route('/login', methods=['GET','POST'])
 def login_page():
+    if current_user.is_authenticated:
+        return redirect('/')
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(username=form.username.data).first()
         if attempted_user and attempted_user.chech_password_correction(attempted_password=form.password.data):
             login_user(attempted_user)
-            return redirect(url_for('home_page'))
+            return redirect('/')
         else:
             flash("Username or password is not correct")
 
-
-
-
     return render_template("login.html", form=form)
+    
+@app.route('/login-with-google',methods=['GET','POST'])
+def login_with_google():
+    if current_user.is_authenticated:
+        return redirect('/')
+    google = oauth.create_client('google')  # create the google oauth client
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/authorize')
+def authorize():
+    if current_user.is_authenticated:
+        return redirect('/')
+    google = oauth.create_client('google')  # create the google oauth client
+    token = google.authorize_access_token()  # Access token from google (needed to get user info)
+    resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
+    user_info = resp.json()
+    user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
+
+    user_to_add = User(email_address=user['email'],profile_picture=user['picture'], name=user['name'])
+    if not user_to_add.user_exists():
+        db.session.add(user_to_add)
+        db.session.commit()
+        login_user(user_to_add)
+    else:
+        user_to_login = User.query.filter_by(email_address=user_to_add.email_address).first()
+        login_user(user_to_login)    
+    session['profile'] = user_info
+    session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    return redirect('/')
 
 
 @app.route('/logout', methods=['GET','POST'])
 def logout():
     logout_user()
-    return redirect(url_for('home_page'))
+    return redirect('/')
 
 
 @app.errorhandler(404)

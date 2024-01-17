@@ -1,0 +1,31 @@
+
+div.login-section {
+    border-radius: 15px;
+    background-color: #202020;
+}
+
+div.login-container {
+    margin: auto;
+}
+
+
+.google-button {
+    display: inline-block;
+    background-color: #2f2f2f;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+    display: inline-flex;
+}
+
+.google-button:hover {
+    background-color: #3a76ec;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}

@@ -56,14 +56,3 @@ nav p {
 div.row {
     display: flex;
 }
-
-div.login-section {
-    border-radius: 15px;
-    background-color: #202020;
-}
-
-div.login-container {
-    margin: auto;
-}
-
-

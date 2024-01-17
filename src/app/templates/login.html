@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
+<link rel="stylesheet" href="../static/auth.css">
 <title>Login</title>
 {% endblock %}
+
+
 
 {% block content %}
 <div>
@@ -15,7 +18,7 @@
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div>   
-                    {{ form.username(class='', placeholder='Username') }}
+                    {{ form.email_address(class='', placeholder='Email Address') }}
                 </div>
                 <div>
                     {{ form.password(class='', placeholder='Password') }}
@@ -24,6 +27,12 @@
                     {{ form.submit(class='', placeholder='Submit')}}
                 </div>
             </form>
+        </div>
+        <div style="text-align: center; margin: 20px auto;">
+            <a href="{{ url_for('login_with_google') }}" class="google-button">
+                <img src="../static/images/google-icon.png" alt="Google Icon" class="google-icon">
+                <p style="margin: auto;">Continue with Google</p>
+            </a>
         </div>
     </div>
 </div>
