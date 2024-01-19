@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     email_address = Column(String(), nullable=False, unique=True)
     name = Column(String(length=30), default=None)
     password_hash = Column(String(length=100), default=None)
-    profile_picture = Column(String())
+    profile_picture = Column(String(), default='../static/images/profile/user.png')
 
     
     @property

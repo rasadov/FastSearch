@@ -18,7 +18,6 @@ def favicon():
                                'images/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/')
-@app.route('/home')
 def home_page():
     print(current_user)
     return render_template("index.html")

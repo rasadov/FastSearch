@@ -8,23 +8,22 @@
 
 
 {% block content %}
-<div>
+<div >
     <div class="login-container">
         <div>
-            <h1>FastSearch</h1>
-            <p>Search for products faster and smarter.</p>
+            <h1>Log in</h1>
         </div>
         <div class="login-section">
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div>   
-                    {{ form.email_address(class='', placeholder='Email Address') }}
+                    {{ form.email_address(class='input-field', placeholder='Email Address') }}
                 </div>
                 <div>
-                    {{ form.password(class='', placeholder='Password') }}
+                    {{ form.password(class='input-field', placeholder='Password') }}
                 </div>
                 <div>
-                    {{ form.submit(class='', placeholder='Submit')}}
+                    {{ form.submit(class='submit-btn', value='Log in')}}
                 </div>
             </form>
         </div>
@@ -34,6 +33,7 @@
                 <p style="margin: auto;">Continue with Google</p>
             </a>
         </div>
+
     </div>
 </div>
 {% endblock %}

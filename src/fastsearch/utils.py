@@ -44,7 +44,8 @@ def custom_url(url):
         return None
     
 
-def search(query: str, method: str, total_pages: int | None = None) -> [str, str]:
+def search(query: str, method: str, total_pages: int | None = None,
+           item_class: str | None = None) -> [str, str]:
     """
 Returns link for the page\n
 `query`
@@ -67,6 +68,15 @@ If it is one page website, no need to set `total_pages` parameter
 
     elif method == 'url':
         yield 'no title for custom url', query
+
+    elif method == 'newegg':
+        query = query.split(' ')
+        res = ''
+        for i in range(len(query)):
+            res += i
+            if i != len(query) - 1:
+                res += "+"
+        yield 'no title for this url', f"https://www.newegg.com/p/pl?d={res}"
 
 def scrap_ebay_item(response, url: str):
     """
@@ -99,6 +109,53 @@ def scrap_amazon_uk_item(response, url: None | str = None):
                 # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
                 file.write(f"ERROR! price: {price} | {title} \n")
 
+def scrap_newegg_item(response, url: None | str = None):
+    """
+Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with newegg.com  
+    """
+    # Get data from response
+    title = response.css('div.product-wrap h1.product-title::text').get()
+    price = response.css('li.price-current strong::text').get() + response.css('li.price-current sup::text').get() + response.css('li.price-current::text').get()
+    item_elements = response.css('ol.breadcrumb li a::text').getall()
+    rating = response.css('div.product-rating i.rating::attr(title)').get()
+    amount_of_ratings = response.css('div.product-rating span.item-rating-num::text').get()
+    try:
+        producer = item_elements[len(item_elements) - 1]
+        item_class = item_elements[len(item_elements) - 2]
+    except IndexError:
+        pass
+    
+    # Save data collected from response
+    with open(f'data.txt', 'a+', encoding="utf-8") as file:
+        file.write(f"url: {url}\n")
+        file.write(f"title: {title}\n")
+        file.write(f"price: {price}\n")
+        file.write(f"item class: {item_class}\n")
+        file.write(f"producer: {producer}\n")
+        file.write(f"rating: {rating}\n")
+        file.write(f"amount of ratings: {amount_of_ratings}\n")
+
+
+def parsing_method(response):
+    url = response.meta.get('url', '')
+    name = ''
+
+    if 'ebay' in url:
+        name = scrap_ebay_item(response, url)
+    html_content = response.body.decode(response.encoding)
+    
+    if "amazon" in url:
+        with open(f'data.txt', 'a+', encoding="utf-8") as file:
+            file.write(f"url: {url}\n")
+        scrap_amazon_uk_item(response, url)
+
+    if 'newegg' in url:
+        scrap_newegg_item(response, url)
+
+    with open(f'{name}.html', 'w', encoding=response.encoding) as f:
+        f.write(html_content)
+    
+    return
 
 if __name__ == "__main__":
     with open(f'.html', 'r', encoding="utf-8") as file:

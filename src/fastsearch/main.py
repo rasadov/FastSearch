@@ -3,7 +3,13 @@ from scrapy import *
 from myproject.myproject.spiders.myspider import MySpider
 
 
-spider = MySpider("https://www.excaliberpc.com/792006/msi-raider-ge76-12ue-871-17.3.html", 'url', 1,10)
+# spider = MySpider("https://www.newegg.com/asus-geforce-rtx-3060-dual-rtx3060-o12g-white/p/14-126-634", 'url')
+
+
+# spider.run()
+
+
+spider = MySpider("https://www.newegg.com/asus-geforce-rtx-3060-dual-rtx3060-o12g-white/p/14-126-634", 'url')
 
 
 spider.run()

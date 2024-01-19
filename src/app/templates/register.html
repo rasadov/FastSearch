@@ -9,25 +9,23 @@
 <div>
     <div class="login-container">
         <div>
-            <h1>FastSearch</h1>
-            <p>Search for products faster and smarter.</p>
+            <h1>Register</h1>
         </div>
         <div class="login-section">
             <form method="POST">
                 {{ form.hidden_tag() }}
                 <div>   
-                    {{ form.email_address(class='', placeholder='Email') }}
+                    {{ form.email_address(class='input-field', placeholder='Email Address') }}
                 </div>
                 <div>   
-                    {{ form.password(class='', placeholder='Password') }}
+                    {{ form.password(class='input-field', placeholder='Password') }}
                 </div>
                 <div>   
-                    {{ form.confirm_password(class='', placeholder='Confirm Password') }}
+                    {{ form.confirm_password(class='input-field', placeholder='Confirm Password') }}
                 </div>
                 <div>   
-                    {{ form.submit(class='') }}
+                    {{ form.submit(class='submit-btn', value='Register') }}
                 </div>
-                
             </form>
         </div>
         <div style="text-align: center; margin: 20px auto;">

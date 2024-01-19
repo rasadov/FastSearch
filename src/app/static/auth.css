@@ -10,14 +10,18 @@ div.login-container {
 
 
 .google-button {
+    width: 22%;
+    height: 50px;
     display: inline-block;
     background-color: #2f2f2f;
     color: #fff;
     text-decoration: none;
     padding: 10px 20px;
-    border-radius: 25px;
+    border-radius: 55px;
     transition: background-color 0.3s ease;
     display: inline-flex;
+    font-size: 20px;
+    margin: 10px auto;
 }
 
 .google-button:hover {
@@ -25,7 +29,35 @@ div.login-container {
 }
 
 .google-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.input-field {
+    font-size: 20px;
+    width: 22%;
+    height: 50px;
+    margin: 15px auto;
+    border-radius: 15px;
+    padding-left: 20px;
+}
+
+.input-field::selection {
+    border: 100px;
+}
+
+
+.submit-btn {
+    cursor: pointer;
+    width: 24%;
+    background-color: rgb(47, 189, 255);
+    font-size: 20px;
+    padding: 10px 7%;
+    height: 50px;
+    margin: 15px auto;
+    border-radius: 55px;
+    text-align: center;
+    color: white;
 }
