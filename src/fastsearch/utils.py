@@ -1,5 +1,7 @@
+import re
 import requests
 import dotenv
+import json
 import os
 
 dotenv.load_dotenv()
@@ -31,7 +33,7 @@ def google_custom_search(query, start_index, api_key=api_key, cx=cx):
     
 def custom_url(url):
     """
-    If website you are using doesn't have special funtion for it,\n
+    For scraping data from single website or if website doesnt have special function for it,\n
     Use `custom_url` function
     """
     try:
@@ -80,7 +82,7 @@ If it is one page website, no need to set `total_pages` parameter
 
 def scrap_ebay_item(response, url: str):
     """
-    Extracts data from the item page on ebay
+    Extracts data from the item page on `ebay.com`
     """
     title = response.css('title::text').get()
     price = response.css('div.x-price-primary span.ux-textspans::text').get()
@@ -99,19 +101,16 @@ def scrap_amazon_uk_item(response, url: None | str = None):
     title = response.css('#productTitle::text').get().strip()
     price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'
     if title and price:
-        # for i in price:
-            with open(f'data.txt', 'a+', encoding="utf-8") as file:
-                # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
-                file.write(f"title: {title}\n")
-                file.write(f"price: {price}\n")
+        with open(f'data.txt', 'a+', encoding="utf-8") as file:
+            file.write(f"title: {title}\n")
+            file.write(f"price: {price}\n")
     else:
         with open(f'data.txt', 'a+', encoding="utf-8") as file:
-                # file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
-                file.write(f"ERROR! price: {price} | {title} \n")
+            file.write(f"ERROR! price: {price} | {title} \n")
 
 def scrap_newegg_item(response, url: None | str = None):
     """
-Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with newegg.com  
+Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
     # Get data from response
     title = response.css('div.product-wrap h1.product-title::text').get()
@@ -119,13 +118,47 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     item_elements = response.css('ol.breadcrumb li a::text').getall()
     rating = response.css('div.product-rating i.rating::attr(title)').get()
     amount_of_ratings = response.css('div.product-rating span.item-rating-num::text').get()
+    
     try:
         producer = item_elements[len(item_elements) - 1]
+    except IndexError:
+        producer = None
+    try:
         item_class = item_elements[len(item_elements) - 2]
     except IndexError:
-        pass
+        item_class = None
     
-    # Save data collected from response
+    # Save data to txt file (temporary)
+    with open(f'data.txt', 'a+', encoding="utf-8") as file:
+        file.write(f"url: {url}\n")
+        file.write(f"title: {title}\n")
+        file.write(f"price: {price}\n")
+        file.write(f"item class: {item_class}\n")
+        file.write(f"producer: {producer}\n")
+        file.write(f"rating: {rating}\n")
+        file.write(f"amount of ratings: {amount_of_ratings}\n")
+
+def scrap_gamestop_item(response, url: None | str = None):
+    """
+Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
+    """
+
+    script_content = response.css('script[type="application/ld+json"]::text').get()
+
+    parsed_data = json.loads(script_content)
+
+    # Parse json data
+    price = parsed_data.get('offers')[0].get('price')
+    if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
+        price += '$' 
+    producer = parsed_data.get('brand')
+    title = parsed_data.get('name')
+    item_class = parsed_data.get('category')
+    rating = parsed_data.get('aggregateRating').get('ratingValue')
+    amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+
+    
+    # Save data to txt file (temporary)
     with open(f'data.txt', 'a+', encoding="utf-8") as file:
         file.write(f"url: {url}\n")
         file.write(f"title: {title}\n")
@@ -142,21 +175,22 @@ def parsing_method(response):
 
     if 'ebay' in url:
         name = scrap_ebay_item(response, url)
-    html_content = response.body.decode(response.encoding)
     
-    if "amazon" in url:
+    elif "amazon" in url:
         with open(f'data.txt', 'a+', encoding="utf-8") as file:
             file.write(f"url: {url}\n")
         scrap_amazon_uk_item(response, url)
 
-    if 'newegg' in url:
+    elif 'newegg' in url:
         scrap_newegg_item(response, url)
 
+    elif 'gamestop' in url:
+        scrap_gamestop_item(response, url)
+
+    html_content = response.body.decode(response.encoding)
     with open(f'{name}.html', 'w', encoding=response.encoding) as f:
         f.write(html_content)
     
-    return
-
 if __name__ == "__main__":
     with open(f'.html', 'r', encoding="utf-8") as file:
         html_content = file.read()

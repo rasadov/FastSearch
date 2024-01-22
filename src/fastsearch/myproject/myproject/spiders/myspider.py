@@ -10,14 +10,15 @@ warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWa
 
 
 class MySpider(scrapy.Spider):
+    """Spider recieves and processes requests\n
+    Uses function `search` to get link"""
     name = 'myspider'
     start_urls = []
-    def __init__(self, query, method, pages=None, results_per_page = None):
+    def __init__(self, query: str, method:str, pages = None, results_per_page = None) -> None:
         self.query = query
         self.method = method
         self.pages = pages
         self.results_per_page = results_per_page
-
 
     def start_requests(self):
         self.start_urls = [link for title, link in search(self.query, self.method, self.pages)]
@@ -39,6 +40,8 @@ Used to proccess and store data
         parsing_method(response)
 
     def run(self):
+        """Activates spider:\n
+    Scraps data and stores it"""
         process = CrawlerProcess(
         settings={
             "FEEDS": {
