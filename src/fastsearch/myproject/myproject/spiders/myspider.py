@@ -10,8 +10,7 @@ warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWa
 
 
 class MySpider(scrapy.Spider):
-    """Spider recieves and processes requests\n
-    Uses function `search` to get link"""
+    """Spider recieves and processes requests\n"""
     name = 'myspider'
     start_urls = []
     def __init__(self, query: str, method:str, pages = None, results_per_page = None) -> None:
@@ -36,7 +35,6 @@ class MySpider(scrapy.Spider):
 Gets the entire HTML content of the page\n
 Used to proccess and store data    
         """
-        # self.log(f'HTML Content: {html_content}')        
         parsing_method(response)
 
     def run(self):

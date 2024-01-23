@@ -112,22 +112,32 @@ def scrap_newegg_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
+    # title = response.css('div.product-wrap h1.product-title::text').get()
+    # price = response.css('li.price-current strong::text').get() + response.css('li.price-current sup::text').get() + response.css('li.price-current::text').get()
+    # rating = response.css('div.product-rating i.rating::attr(title)').get()
+    # amount_of_ratings = response.css('div.product-rating span.item-rating-num::text').get()
     # Get data from response
-    title = response.css('div.product-wrap h1.product-title::text').get()
-    price = response.css('li.price-current strong::text').get() + response.css('li.price-current sup::text').get() + response.css('li.price-current::text').get()
     item_elements = response.css('ol.breadcrumb li a::text').getall()
-    rating = response.css('div.product-rating i.rating::attr(title)').get()
-    amount_of_ratings = response.css('div.product-rating span.item-rating-num::text').get()
-    
-    try:
-        producer = item_elements[len(item_elements) - 1]
-    except IndexError:
-        producer = None
     try:
         item_class = item_elements[len(item_elements) - 2]
     except IndexError:
         item_class = None
     
+
+    script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
+
+    parsed_data = json.loads(script_content)
+
+    price = parsed_data.get('offers').get('price')
+    if parsed_data.get('offers').get('priceCurrency') == "USD":
+        price += '$' 
+    producer = parsed_data.get('brand')
+    title = parsed_data.get('name')
+
+    rating = parsed_data.get('aggregateRating').get('ratingValue')
+    amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+    
+
     # Save data to txt file (temporary)
     with open(f'data.txt', 'a+', encoding="utf-8") as file:
         file.write(f"url: {url}\n")
@@ -137,6 +147,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
         file.write(f"producer: {producer}\n")
         file.write(f"rating: {rating}\n")
         file.write(f"amount of ratings: {amount_of_ratings}\n")
+        # file.write(script_content)
 
 def scrap_gamestop_item(response, url: None | str = None):
     """
@@ -147,15 +158,14 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
     parsed_data = json.loads(script_content)
 
-    # Parse json data
     price = parsed_data.get('offers')[0].get('price')
     if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
         price += '$' 
     producer = parsed_data.get('brand')
     title = parsed_data.get('name')
     item_class = parsed_data.get('category')
-    rating = parsed_data.get('aggregateRating').get('ratingValue')
-    amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+    # rating = parsed_data.get('aggregateRating').get('ratingValue')
+    # amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
 
     
     # Save data to txt file (temporary)
@@ -165,13 +175,36 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
         file.write(f"price: {price}\n")
         file.write(f"item class: {item_class}\n")
         file.write(f"producer: {producer}\n")
-        file.write(f"rating: {rating}\n")
-        file.write(f"amount of ratings: {amount_of_ratings}\n")
+        # file.write(f"rating: {rating}\n")
+        # file.write(f"amount of ratings: {amount_of_ratings}\n")
+
+def scrap_excaliberpc_item(response, url):
+    price = response.css('meta[property="price"]::attr(content)').get()
+    if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
+        price += "$"
+
+    producer = response.css('meta[property="brand"]::attr(content)').get()
+    title = response.css('h1.product-head_name::text').get().strip()
+    
+    item_class = response.css('ul.breadcrumbs li span::text').getall()[2]
+
+    
+
+    with open(f'data.txt', 'a+', encoding="utf-8") as file:
+        file.write(f"url: {url}\n")
+        file.write(f"title: {title}\n")
+        file.write(f"price: {price}\n")
+        file.write(f"item class: {item_class}\n")
+        file.write(f"producer: {producer}\n")
 
 
 def parsing_method(response):
     url = response.meta.get('url', '')
     name = ''
+
+    html_content = response.body.decode(response.encoding)
+    with open(f'{name}.html', 'w', encoding=response.encoding) as f:
+        f.write(html_content)
 
     if 'ebay' in url:
         name = scrap_ebay_item(response, url)
@@ -187,9 +220,8 @@ def parsing_method(response):
     elif 'gamestop' in url:
         scrap_gamestop_item(response, url)
 
-    html_content = response.body.decode(response.encoding)
-    with open(f'{name}.html', 'w', encoding=response.encoding) as f:
-        f.write(html_content)
+    elif 'excaliberpc' in url:
+        scrap_excaliberpc_item(response, url)
     
 if __name__ == "__main__":
     with open(f'.html', 'r', encoding="utf-8") as file:
