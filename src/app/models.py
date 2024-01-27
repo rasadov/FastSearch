@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, String, Column
+from sqlalchemy import Integer, String, Column, Float
 from flask_login import UserMixin
-from web import db, bcrypt
+from web import db, bcrypt, app
 
 
 Base = declarative_base()
@@ -33,4 +33,23 @@ class User(UserMixin, db.Model):
         return False
 
 class Product(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
+    def __init__(self, url : str, title : str, price : str, item_class : str | None = None, producer : str | None = None, amount_of_ratings : str | None = None, rating : str | None = None) -> None:
+        self.url = url
+        self.title = title
+        self.price = price
+        self.item_class = item_class
+        self.producer = producer
+        self.amount_of_ratings = amount_of_ratings
+        self.rating = rating
+
+    id = Column(Integer(), primary_key=True)
+    url = Column(String(), nullable=False)
+    title = Column(String(), nullable=False)
+    price = Column(String(), nullable=False)
+    item_class = Column(String(), default=None)
+    producer = Column(String(), default=None)
+    amount_of_ratings = Column(Integer(), default=None)
+    rating = Column(Float(), default=None)
+
+# with app.app_context():
+#     db.create_all()

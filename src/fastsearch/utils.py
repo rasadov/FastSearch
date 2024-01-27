@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r'../app')
+# from models import *
 import re
 import requests
 import dotenv
@@ -6,11 +9,11 @@ import os
 
 dotenv.load_dotenv()
 
-api_key = os.environ.get("API_KEY") 
-cx = os.environ.get("CX") 
+GOOGLE_API_KEY = os.environ.get("API_KEY") 
+GOOGLE_CX = os.environ.get("CX") 
 
 
-def google_custom_search(query, start_index, api_key=api_key, cx=cx):
+def google_custom_search(query, start_index, api_key=GOOGLE_API_KEY, cx=GOOGLE_CX):
     """
     Searches google for query
     """
@@ -61,7 +64,7 @@ If it is one page website, no need to set `total_pages` parameter
     if method == 'google':
         for page in range(1, total_pages + 1):
             start_index = (page - 1) * 10
-            results = google_custom_search(query, start_index, api_key, cx)
+            results = google_custom_search(query, start_index, GOOGLE_API_KEY, GOOGLE_CX)
             if results:
                 for item in results.get('items', []):
                     title = item.get('title')
@@ -83,6 +86,7 @@ If it is one page website, no need to set `total_pages` parameter
 def scrap_ebay_item(response, url: str):
     """
     Extracts data from the item page on `ebay.com`
+    Not finished
     """
     title = response.css('title::text').get()
     price = response.css('div.x-price-primary span.ux-textspans::text').get()
@@ -97,6 +101,7 @@ def scrap_ebay_item(response, url: str):
 def scrap_amazon_uk_item(response, url: None | str = None):
     """
     Extracts data from item page in amazon.co.uk
+    Not finished
     """
     title = response.css('#productTitle::text').get().strip()
     price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'
@@ -158,6 +163,9 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
     parsed_data = json.loads(script_content)
 
+    with open("Sample.json", "+a", encoding="utf-8") as file:
+        file.writelines(script_content)
+
     price = parsed_data.get('offers')[0].get('price')
     if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
         price += '$' 
@@ -166,8 +174,13 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     item_class = parsed_data.get('category')
     # rating = parsed_data.get('aggregateRating').get('ratingValue')
     # amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
-
     
+    # obj = Product(url=url, title=title, price=price, item_class=item_class,producer=producer)
+
+    # with app.app_context():
+    #     db.session.add(obj)
+    #     db.session.commit()
+
     # Save data to txt file (temporary)
     with open(f'data.txt', 'a+', encoding="utf-8") as file:
         file.write(f"url: {url}\n")

@@ -18,7 +18,8 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 db = SQLAlchemy(app)
-# db.create_all()
+# with app.app_context():
+#     db.create_all()
 
 oauth = OAuth(app)
 google = oauth.register(
