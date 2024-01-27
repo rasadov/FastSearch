@@ -1,6 +1,4 @@
-import sys
-sys.path.append(r'../app')
-# from models import *
+import psycopg2
 import re
 import requests
 import dotenv
@@ -9,11 +7,17 @@ import os
 
 dotenv.load_dotenv()
 
-GOOGLE_API_KEY = os.environ.get("API_KEY") 
-GOOGLE_CX = os.environ.get("CX") 
+GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API") 
+GOOGLE_CX = os.environ.get("GOOGLE_CX") 
 
 
-def google_custom_search(query, start_index, api_key=GOOGLE_API_KEY, cx=GOOGLE_CX):
+DB_USER = os.environ.get('DB_USER')
+DB_NAME = os.environ.get('DB_NAME')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT')
+
+def google_custom_search(query, start_index, api_key=GOOGLE_SEARCH_API, cx=GOOGLE_CX):
     """
     Searches google for query
     """
@@ -64,7 +68,7 @@ If it is one page website, no need to set `total_pages` parameter
     if method == 'google':
         for page in range(1, total_pages + 1):
             start_index = (page - 1) * 10
-            results = google_custom_search(query, start_index, GOOGLE_API_KEY, GOOGLE_CX)
+            results = google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)
             if results:
                 for item in results.get('items', []):
                     title = item.get('title')
@@ -117,10 +121,6 @@ def scrap_newegg_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
-    # title = response.css('div.product-wrap h1.product-title::text').get()
-    # price = response.css('li.price-current strong::text').get() + response.css('li.price-current sup::text').get() + response.css('li.price-current::text').get()
-    # rating = response.css('div.product-rating i.rating::attr(title)').get()
-    # amount_of_ratings = response.css('div.product-rating span.item-rating-num::text').get()
     # Get data from response
     item_elements = response.css('ol.breadcrumb li a::text').getall()
     try:
@@ -141,6 +141,20 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
     rating = parsed_data.get('aggregateRating').get('ratingValue')
     amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+    
+
+    # Save data to database
+    conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
+    curr = conn.cursor()
+
+    curr.execute(f"""
+    INSERT INTO product (url, title, price, item_class, producer,amount_of_ratings, rating)
+    VALUES('{url}','{title}','{price}','{item_class}','{producer}', {amount_of_ratings if amount_of_ratings else 'NULL'}, {rating if rating else 'NULL'});
+    """)
+
+    conn.commit()
+    curr.close()
+    conn.close()
     
 
     # Save data to txt file (temporary)
@@ -166,20 +180,36 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     with open("Sample.json", "+a", encoding="utf-8") as file:
         file.writelines(script_content)
 
+    title = parsed_data.get('name')
     price = parsed_data.get('offers')[0].get('price')
     if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
         price += '$' 
     producer = parsed_data.get('brand')
-    title = parsed_data.get('name')
     item_class = parsed_data.get('category')
-    # rating = parsed_data.get('aggregateRating').get('ratingValue')
-    # amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
-    
-    # obj = Product(url=url, title=title, price=price, item_class=item_class,producer=producer)
 
-    # with app.app_context():
-    #     db.session.add(obj)
-    #     db.session.commit()
+    rating = parsed_data.get('aggregateRating')
+    if rating:
+        rating = rating.get('ratingValue')
+
+    amount_of_ratings = parsed_data.get('aggregateRating')
+    if amount_of_ratings:
+        amount_of_ratings = amount_of_ratings.get('reviewCount')
+    
+    
+
+    # Save data to database
+    conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
+    
+    curr = conn.cursor()
+
+    curr.execute(f"""
+    INSERT INTO product (url, title, price, item_class, producer,amount_of_ratings, rating)
+    VALUES('{url}','{title}','{price}','{item_class if item_class else 'NULL'}','{producer if producer else 'NULL'}', {amount_of_ratings if amount_of_ratings else 'NULL'}, {rating if rating else 'NULL'});
+    """)
+
+    conn.commit()
+    curr.close()
+    conn.close()
 
     # Save data to txt file (temporary)
     with open(f'data.txt', 'a+', encoding="utf-8") as file:

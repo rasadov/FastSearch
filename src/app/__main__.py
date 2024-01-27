@@ -19,25 +19,22 @@ def favicon():
 
 @app.route('/')
 def home_page():
-    print(current_user)
     return render_template("index.html")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        if not User.query.filter_by(username=form.username.data).count():
-            if not User.query.filter_by(email_address=form.email_address.data).count():
-                user = User(name=form.name.data, username=form.username.data, password=form.password.data, email_address=form.email_address.data)
-                # db.create_all()
-                db.session.add(user)
-                db.session.commit()
-                login_user(user)
-                return redirect('/')
-            else:
-                flash('This Email is already used', category='danger')
+        if not User.query.filter_by(email_address=form.email_address.data).count():
+            user = User(password=form.password.data, email_address=form.email_address.data)
+            # db.create_all()
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            return redirect('/')
         else:
-            flash('This Username is already taken', category='danger')
+            flash('This Email is already used', category='danger')
+    
     if form.errors != {}: # if there are no errors from validations
         for err_msg in form.errors.values():
             print(f"There was an error: {err_msg[0]}")

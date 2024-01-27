@@ -8,7 +8,12 @@ import os
 
 dotenv.load_dotenv()
 
-DB_URL = os.environ.get('DB_URL')
+DB_USER = os.environ.get('DB_USER')
+DB_NAME = os.environ.get('DB_NAME')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT')
+
 
 app = Flask(__name__)
 oauth = OAuth(app)
@@ -16,7 +21,7 @@ oauth = OAuth(app)
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 db = SQLAlchemy(app)
 # with app.app_context():
 #     db.create_all()
