@@ -33,15 +33,6 @@ class User(UserMixin, db.Model):
         return False
 
 class Product(db.Model):
-    def __init__(self, url : str, title : str, price : str, item_class : str | None = None, producer : str | None = None, amount_of_ratings : str | None = None, rating : str | None = None) -> None:
-        self.url = url
-        self.title = title
-        self.price = price
-        self.item_class = item_class
-        self.producer = producer
-        self.amount_of_ratings = amount_of_ratings
-        self.rating = rating
-
     id = Column(Integer(), primary_key=True)
     url = Column(String(), nullable=False)
     title = Column(String(), nullable=False)
@@ -50,6 +41,7 @@ class Product(db.Model):
     producer = Column(String(), default=None)
     amount_of_ratings = Column(Integer(), default=None)
     rating = Column(Float(), default=None)
+
 
 # with app.app_context():
 #     db.create_all()

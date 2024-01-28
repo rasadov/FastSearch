@@ -23,8 +23,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 db = SQLAlchemy(app)
-# with app.app_context():
-#     db.create_all()
 
 oauth = OAuth(app)
 google = oauth.register(

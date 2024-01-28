@@ -10,21 +10,21 @@ dotenv.load_dotenv()
 GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API") 
 GOOGLE_CX = os.environ.get("GOOGLE_CX") 
 
-
 DB_USER = os.environ.get('DB_USER')
 DB_NAME = os.environ.get('DB_NAME')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOST = os.environ.get('DB_HOST')
 DB_PORT = os.environ.get('DB_PORT')
 
-def google_custom_search(query, start_index, api_key=GOOGLE_SEARCH_API, cx=GOOGLE_CX):
+
+def google_custom_search(query, start_index):
     """
     Searches google for query
     """
     base_url = "https://www.googleapis.com/customsearch/v1"
     params = {
-        'key': api_key,
-        'cx': cx,
+        'key': GOOGLE_SEARCH_API,
+        'cx': GOOGLE_CX,
         'q': query,
         'start': start_index,
     }
@@ -53,8 +53,7 @@ def custom_url(url):
         return None
     
 
-def search(query: str, method: str, total_pages: int | None = None,
-           item_class: str | None = None) -> [str, str]:
+def search(query: str, method: str, total_pages: int | None = None) -> [str, str]:
     """
 Returns link for the page\n
 `query`
@@ -87,7 +86,7 @@ If it is one page website, no need to set `total_pages` parameter
                 res += "+"
         yield 'no title for this url', f"https://www.newegg.com/p/pl?d={res}"
 
-def scrap_ebay_item(response, url: str):
+def scrap_ebay_item(response, url: str, method : str = "add"):
     """
     Extracts data from the item page on `ebay.com`
     Not finished
@@ -102,7 +101,7 @@ def scrap_ebay_item(response, url: str):
         name = ''.join(word[0] for word in title.split()[:5])
         return name        
 
-def scrap_amazon_uk_item(response, url: None | str = None):
+def scrap_amazon_uk_item(response, url: None | str = None, method : str = "add"):
     """
     Extracts data from item page in amazon.co.uk
     Not finished
@@ -117,7 +116,10 @@ def scrap_amazon_uk_item(response, url: None | str = None):
         with open(f'data.txt', 'a+', encoding="utf-8") as file:
             file.write(f"ERROR! price: {price} | {title} \n")
 
-def scrap_newegg_item(response, url: None | str = None):
+
+
+
+def scrap_newegg_item(response, url: None | str = None, refresh : bool = False):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
@@ -147,28 +149,54 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()
 
-    curr.execute(f"""
-    INSERT INTO product (url, title, price, item_class, producer,amount_of_ratings, rating)
-    VALUES('{url}','{title}','{price}','{item_class}','{producer}', {amount_of_ratings if amount_of_ratings else 'NULL'}, {rating if rating else 'NULL'});
-    """)
+    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
+
+    result = curr.fetchone()
+
+    if result:
+        price_in_db = result[3]  
+        amount_of_rating_in_db = result[6]
+        rating_in_db = result[7]
+
+        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+            # Price or rating or amount of ratings has changed, update the database
+
+
+            
+            if price_in_db != price:
+                pass # Save price change
+            #     curr.execute("""
+            #         CREATE TABLE IF NOT EXISTS price_history (
+            #         price_history_id SERIAL PRIMARY KEY,
+            #         product_id INT,
+            #         new_price DECIMAL(10, 2) NOT NULL,
+            #         change_date DATE NOT NULL,
+
+            #         FOREIGN KEY (product_id) REFERENCES product(id)
+            #         );""")
+
+            curr.execute(f"""
+                UPDATE product
+                SET price = %s, title = %s, item_class = %s, producer = %s,
+                    amount_of_ratings = %s, rating = %s
+                WHERE url = %s;
+            """, (price, title, item_class, producer, amount_of_ratings, rating, url))
+            print(f"Product with URL {url} updated.")
+        else:
+            print(f"Product with URL {url} already exists in the database, no update needed.")
+    else:
+        # URL does not exist, insert a new record into the database
+        curr.execute("""
+            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        print(f"New product with URL {url} inserted into the database.")
 
     conn.commit()
     curr.close()
     conn.close()
-    
 
-    # Save data to txt file (temporary)
-    with open(f'data.txt', 'a+', encoding="utf-8") as file:
-        file.write(f"url: {url}\n")
-        file.write(f"title: {title}\n")
-        file.write(f"price: {price}\n")
-        file.write(f"item class: {item_class}\n")
-        file.write(f"producer: {producer}\n")
-        file.write(f"rating: {rating}\n")
-        file.write(f"amount of ratings: {amount_of_ratings}\n")
-        # file.write(script_content)
-
-def scrap_gamestop_item(response, url: None | str = None):
+def scrap_gamestop_item(response, url: None | str = None, refresh : bool = False):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
@@ -202,26 +230,54 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     
     curr = conn.cursor()
 
-    curr.execute(f"""
-    INSERT INTO product (url, title, price, item_class, producer,amount_of_ratings, rating)
-    VALUES('{url}','{title}','{price}','{item_class if item_class else 'NULL'}','{producer if producer else 'NULL'}', {amount_of_ratings if amount_of_ratings else 'NULL'}, {rating if rating else 'NULL'});
-    """)
+    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
+
+    result = curr.fetchone()
+
+    if result:
+        price_in_db = result[3]  
+        amount_of_rating_in_db = result[6]
+        rating_in_db = result[7]
+
+        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+            # Price or rating or amount of ratings has changed, update the database
+
+
+            
+            if price_in_db != price:
+                pass # Save price change
+            #     curr.execute("""
+            #         CREATE TABLE IF NOT EXISTS price_history (
+            #         price_history_id SERIAL PRIMARY KEY,
+            #         product_id INT,
+            #         new_price DECIMAL(10, 2) NOT NULL,
+            #         change_date DATE NOT NULL,
+
+            #         FOREIGN KEY (product_id) REFERENCES product(id)
+            #         );""")
+
+            curr.execute(f"""
+                UPDATE product
+                SET price = %s, title = %s, item_class = %s, producer = %s,
+                    amount_of_ratings = %s, rating = %s
+                WHERE url = %s;
+            """, (price, title, item_class, producer, amount_of_ratings, rating, url))
+            print(f"Product with URL {url} updated.")
+        else:
+            print(f"Product with URL {url} already exists in the database, no update needed.")
+    else:
+        # URL does not exist, insert a new record into the database
+        curr.execute("""
+            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        print(f"New product with URL {url} inserted into the database.")
 
     conn.commit()
     curr.close()
     conn.close()
 
-    # Save data to txt file (temporary)
-    with open(f'data.txt', 'a+', encoding="utf-8") as file:
-        file.write(f"url: {url}\n")
-        file.write(f"title: {title}\n")
-        file.write(f"price: {price}\n")
-        file.write(f"item class: {item_class}\n")
-        file.write(f"producer: {producer}\n")
-        # file.write(f"rating: {rating}\n")
-        # file.write(f"amount of ratings: {amount_of_ratings}\n")
-
-def scrap_excaliberpc_item(response, url):
+def scrap_excaliberpc_item(response, url, refresh : bool = False):
     price = response.css('meta[property="price"]::attr(content)').get()
     if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
         price += "$"
@@ -230,16 +286,62 @@ def scrap_excaliberpc_item(response, url):
     title = response.css('h1.product-head_name::text').get().strip()
     
     item_class = response.css('ul.breadcrumbs li span::text').getall()[2]
+    rating = response.css('meta[property="ratingValue"]::attr(content)').get()
+    amount_of_ratings = response.css('meta[property="reviewCount"]::attr(content)').get()
 
+        
+
+    # Save data to database
+    conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     
+    curr = conn.cursor()
 
-    with open(f'data.txt', 'a+', encoding="utf-8") as file:
-        file.write(f"url: {url}\n")
-        file.write(f"title: {title}\n")
-        file.write(f"price: {price}\n")
-        file.write(f"item class: {item_class}\n")
-        file.write(f"producer: {producer}\n")
+    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
 
+    result = curr.fetchone()
+            
+    if result:
+        price_in_db = result[3]  
+        amount_of_rating_in_db = result[6]
+        rating_in_db = result[7]
+
+        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+            # Price or rating or amount of ratings has changed, update the database
+
+
+            
+            if price_in_db != price:
+                pass # Save price change
+            #     curr.execute("""
+            #         CREATE TABLE IF NOT EXISTS price_history (
+            #         price_history_id SERIAL PRIMARY KEY,
+            #         product_id INT,
+            #         new_price DECIMAL(10, 2) NOT NULL,
+            #         change_date DATE NOT NULL,
+
+            #         FOREIGN KEY (product_id) REFERENCES product(id)
+            #         );""")
+
+            curr.execute(f"""
+                UPDATE product
+                SET price = %s, title = %s, item_class = %s, producer = %s,
+                    amount_of_ratings = %s, rating = %s
+                WHERE url = %s;
+            """, (price, title, item_class, producer, amount_of_ratings, rating, url))
+            print(f"Product with URL {url} updated.")
+        else:
+            print(f"Product with URL {url} already exists in the database, no update needed.")
+    else:
+        # URL does not exist, insert a new record into the database
+        curr.execute("""
+            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        print(f"New product with URL {url} inserted into the database.")
+
+    conn.commit()
+    curr.close()
+    conn.close()
 
 def parsing_method(response):
     url = response.meta.get('url', '')
@@ -265,7 +367,3 @@ def parsing_method(response):
 
     elif 'excaliberpc' in url:
         scrap_excaliberpc_item(response, url)
-    
-if __name__ == "__main__":
-    with open(f'.html', 'r', encoding="utf-8") as file:
-        html_content = file.read()
