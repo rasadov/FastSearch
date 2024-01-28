@@ -119,10 +119,11 @@ def scrap_amazon_uk_item(response, url: None | str = None, method : str = "add")
 
 
 
-def scrap_newegg_item(response, url: None | str = None, refresh : bool = False):
+def scrap_newegg_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
+    # ------------------------- Taking data from response -------------------------
     # Get data from response
     item_elements = response.css('ol.breadcrumb li a::text').getall()
     try:
@@ -145,6 +146,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
     
 
+    # ------------------------- Processing and saving data from response -------------------------
     # Save data to database
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()
@@ -153,27 +155,33 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
     result = curr.fetchone()
 
+    curr.execute("""
+                    CREATE TABLE IF NOT EXISTS price_history (
+                    price_history_id SERIAL PRIMARY KEY,
+                    product_id INT,
+                    price VARCHAR(255),
+                    change_date DATE NOT NULL,
+
+                    FOREIGN KEY (product_id) REFERENCES product(id)
+                    );""")
+
     if result:
         price_in_db = result[3]  
         amount_of_rating_in_db = result[6]
         rating_in_db = result[7]
 
-        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+        if price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings:
             # Price or rating or amount of ratings has changed, update the database
-
-
-            
+    
             if price_in_db != price:
-                pass # Save price change
-            #     curr.execute("""
-            #         CREATE TABLE IF NOT EXISTS price_history (
-            #         price_history_id SERIAL PRIMARY KEY,
-            #         product_id INT,
-            #         new_price DECIMAL(10, 2) NOT NULL,
-            #         change_date DATE NOT NULL,
+                # Save price change
+                
+                product_id = result[0]
 
-            #         FOREIGN KEY (product_id) REFERENCES product(id)
-            #         );""")
+                curr.execute("""
+                    INSERT INTO price_history (product_id, price, change_date)
+                    VALUES (%s, %s, CURRENT_DATE);
+                """, (product_id, price))
 
             curr.execute(f"""
                 UPDATE product
@@ -190,17 +198,27 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
             INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        
+        
+        
+        product_id = result[0]
+        
+        curr.execute("""
+            INSERT INTO price_history (product_id, price, change_date)
+            VALUES (%s, %s, CURRENT_DATE);
+        """, (product_id, price))
+        
         print(f"New product with URL {url} inserted into the database.")
 
     conn.commit()
     curr.close()
     conn.close()
 
-def scrap_gamestop_item(response, url: None | str = None, refresh : bool = False):
+def scrap_gamestop_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
-
+    # ------------------------- Taking data from response -------------------------
     script_content = response.css('script[type="application/ld+json"]::text').get()
 
     parsed_data = json.loads(script_content)
@@ -225,6 +243,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     
     
 
+    # ------------------------- Processing and saving data from response -------------------------
     # Save data to database
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     
@@ -234,27 +253,33 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
     result = curr.fetchone()
 
+    curr.execute("""
+                    CREATE TABLE IF NOT EXISTS price_history (
+                    price_history_id SERIAL PRIMARY KEY,
+                    product_id INT,
+                    price VARCHAR(255),
+                    change_date DATE NOT NULL,
+
+                    FOREIGN KEY (product_id) REFERENCES product(id)
+                    );""")
+
     if result:
         price_in_db = result[3]  
         amount_of_rating_in_db = result[6]
         rating_in_db = result[7]
 
-        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+        if price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings:
             # Price or rating or amount of ratings has changed, update the database
 
-
-            
             if price_in_db != price:
-                pass # Save price change
-            #     curr.execute("""
-            #         CREATE TABLE IF NOT EXISTS price_history (
-            #         price_history_id SERIAL PRIMARY KEY,
-            #         product_id INT,
-            #         new_price DECIMAL(10, 2) NOT NULL,
-            #         change_date DATE NOT NULL,
+                # Save price change
 
-            #         FOREIGN KEY (product_id) REFERENCES product(id)
-            #         );""")
+                product_id = result[0]
+
+                curr.execute("""
+                    INSERT INTO price_history (product_id, price, change_date)
+                    VALUES (%s, %s, CURRENT_DATE);
+                """, (product_id, price))
 
             curr.execute(f"""
                 UPDATE product
@@ -271,13 +296,24 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
             INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        
+        
+        
+        product_id = result[0]
+        
+        curr.execute("""
+            INSERT INTO price_history (product_id, price, change_date)
+            VALUES (%s, %s, CURRENT_DATE);
+        """, (product_id, price))
+        
         print(f"New product with URL {url} inserted into the database.")
 
     conn.commit()
     curr.close()
     conn.close()
 
-def scrap_excaliberpc_item(response, url, refresh : bool = False):
+def scrap_excaliberpc_item(response, url):
+    # ------------------------- Taking data from response -------------------------
     price = response.css('meta[property="price"]::attr(content)').get()
     if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
         price += "$"
@@ -291,6 +327,7 @@ def scrap_excaliberpc_item(response, url, refresh : bool = False):
 
         
 
+    # ------------------------- Processing and saving data from response -------------------------
     # Save data to database
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     
@@ -300,27 +337,33 @@ def scrap_excaliberpc_item(response, url, refresh : bool = False):
 
     result = curr.fetchone()
             
+    curr.execute("""
+                    CREATE TABLE IF NOT EXISTS price_history (
+                    price_history_id SERIAL PRIMARY KEY,
+                    product_id INT,
+                    price VARCHAR(255),
+                    change_date DATE NOT NULL,
+
+                    FOREIGN KEY (product_id) REFERENCES product(id)
+                    );""")
+
     if result:
         price_in_db = result[3]  
         amount_of_rating_in_db = result[6]
         rating_in_db = result[7]
 
-        if refresh and (price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings):
+        if price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings:
             # Price or rating or amount of ratings has changed, update the database
-
-
-            
+    
             if price_in_db != price:
-                pass # Save price change
-            #     curr.execute("""
-            #         CREATE TABLE IF NOT EXISTS price_history (
-            #         price_history_id SERIAL PRIMARY KEY,
-            #         product_id INT,
-            #         new_price DECIMAL(10, 2) NOT NULL,
-            #         change_date DATE NOT NULL,
+                # Save price change
+                
+                product_id = result[0]
 
-            #         FOREIGN KEY (product_id) REFERENCES product(id)
-            #         );""")
+                curr.execute("""
+                    INSERT INTO price_history (product_id, price, change_date)
+                    VALUES (%s, %s, CURRENT_DATE);
+                """, (product_id, price))
 
             curr.execute(f"""
                 UPDATE product
@@ -337,6 +380,16 @@ def scrap_excaliberpc_item(response, url, refresh : bool = False):
             INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """, (url, title, price, item_class, producer, amount_of_ratings, rating))
+        
+        
+        
+        product_id = result[0]
+        
+        curr.execute("""
+            INSERT INTO price_history (product_id, price, change_date)
+            VALUES (%s, %s, CURRENT_DATE);
+        """, (product_id, price))
+        
         print(f"New product with URL {url} inserted into the database.")
 
     conn.commit()
