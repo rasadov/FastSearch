@@ -43,5 +43,5 @@ class Product(db.Model):
     rating = Column(Float(), default=None)
 
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()

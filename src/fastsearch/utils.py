@@ -39,21 +39,6 @@ def google_custom_search(query, start_index):
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
         return None
-    
-def custom_url(url):
-    """
-    For scraping data from single website or if website doesnt have special function for it,\n
-    Use `custom_url` function
-    """
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        search_results = url
-        return search_results
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-        return None
-    
 
 def search(query: str, method: str, total_pages: int | None = None) -> [str, str]:
     """
@@ -97,6 +82,7 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
     \tIf rating has changed updates record in the `product` table\n
     Else:\n
     \tAdds new record in `product` table and starts tracking the price in `price_history` table"""
+
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()
  
@@ -149,8 +135,11 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """, (url, title, price, item_class, producer, amount_of_ratings, rating))
         
+
+        curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""") 
         
-        
+        result = curr.fetchone()
+
         product_id = result[0]
         
         curr.execute("""
@@ -173,15 +162,9 @@ def scrap_ebay_item(response, url: str, method : str = "add"):
     """
     title = response.css('title::text').get()
     price = response.css('div.x-price-primary span.ux-textspans::text').get()
+        
 
-    if title and price:
-        with open(f'data.txt', 'a+', encoding="utf-8") as file:
-            file.write(f"Link: {url}, Title: {title}, Price: {price}\n")
-
-        name = ''.join(word[0] for word in title.split()[:5])
-        return name        
-
-def scrap_amazon_uk_item(response, url: None | str = None, method : str = "add"):
+def scrap_amazon_uk_item(response, url: None | str = None):
     """
     Extracts data from item page in amazon.co.uk
     Not finished
@@ -255,7 +238,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     # ------------------------- Processing and saving data from response -------------------------
     save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
 
-def scrap_excaliberpc_item(response, url):
+def scrap_excaliberpc_item(response, url : None | str = None):
     # ------------------------- Taking data from response -------------------------
     price = response.css('meta[property="price"]::attr(content)').get()
     if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
@@ -273,14 +256,13 @@ def scrap_excaliberpc_item(response, url):
 
 def parsing_method(response):
     url = response.meta.get('url', '')
-    name = ''
 
-    html_content = response.body.decode(response.encoding)
-    with open(f'{name}.html', 'w', encoding=response.encoding) as f:
-        f.write(html_content)
+    # html_content = response.body.decode(response.encoding)
+    # with open('.html', 'w', encoding=response.encoding) as f:
+    #     f.write(html_content)
 
     if 'ebay' in url:
-        name = scrap_ebay_item(response, url)
+        scrap_ebay_item(response, url)
     
     elif "amazon" in url:
         with open(f'data.txt', 'a+', encoding="utf-8") as file:

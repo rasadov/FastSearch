@@ -19,7 +19,8 @@ def favicon():
 
 @app.route('/')
 def home_page():
-    return render_template("index.html")
+    records = Product.query.all()
+    return render_template("index.html", records=records)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
