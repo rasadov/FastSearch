@@ -19,8 +19,7 @@ def favicon():
 
 @app.route('/')
 def home_page():
-    records = Product.query.all()
-    return render_template("index.html", records=records)
+    return render_template("index.html")
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -31,6 +30,51 @@ def search():
         return render_template('search_results.html', results=results, query=search_query)
 
     return render_template('search.html')
+
+@app.route('/profile', methods=['GET','POST'])
+def profile_page():
+    return render_template('profile.html')
+
+@app.route('/edit-profile', methods=['GET','POST'])
+def edit_profile():
+    if current_user.is_anonymous:
+        return redirect('/login')
+    form = EditProfileForm()
+    if request.method == 'POST':
+        print("POST")
+        print(current_user.password_hash)
+        if not current_user.password_hash:
+            form.old_password.data = 'valid'
+        if form.validate_on_submit():
+            print("Validated")
+        
+            user = User.query.filter_by(email_address=form.email_address.data).first()
+            print(user)
+            if User.query.filter_by(email_address=form.email_address.data).count() and form.email_address.data != current_user.email_address:
+                print("This Email is already used")
+                print(current_user.email_address)
+                print(form.email_address.data)
+                flash('This Email is already used', category='danger')
+                return redirect('/edit-profile')
+            if not current_user.password_hash or current_user.chech_password_correction(attempted_password=form.old_password.data):
+                if form.new_password.data == form.old_password.data:
+                    print("New password is the same as old password")
+                    flash('New password is the same as old password', category='danger')
+                    return redirect('/edit-profile')
+                
+                print("Password is correct")
+                current_user.password = form.new_password.data
+                current_user.name = form.name.data
+                current_user.email_address = form.email_address.data
+                db.session.add(current_user)
+                db.session.commit()
+                return redirect('/')
+            else:
+                flash("Current password is not correct")
+        else:
+            print("Form did not validate")
+            print(form.errors)
+    return render_template('edit_profile.html', form=form)
     
 
 @app.route('/register', methods=['GET', 'POST'])

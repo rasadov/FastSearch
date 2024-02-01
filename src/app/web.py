@@ -24,6 +24,14 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 db = SQLAlchemy(app)
 
+app.config['UPLOAD_FOLDER'] = 'static/images/profile_pics'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 oauth = OAuth(app)
 google = oauth.register(
     name='google',

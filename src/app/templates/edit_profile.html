@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Edit Profile</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <label for="first_name">Name:</label>
+        {{ form.name(class='', value=current_user.name) }}<br><br>
+        {% if current_user.password_hash %}
+        <label for="current_password">Current Password:</label>
+        {{ form.old_password(class='', minlength='8') }}<br><br>
+        <label for="new_password">New Password:</label>
+        {{ form.new_password(class='', minlength='8') }}<br><br>
+        {% else %}
+        <label for="password">Password:</label>
+        {{ form.new_password(class='', minlength='8') }}<br><br>
+        {% endif %}
+        <input type="submit" value="Save Changes">
+    </form>
+
+{% endblock %}
