@@ -14,8 +14,8 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
     submit = SubmitField(label='Submit')
 
-class EditProfileForm(FlaskForm):
-    name = StringField(label='Name', validators=[])
-    old_password = PasswordField(label='Current password', validators=[DataRequired()])
-    new_password = PasswordField(label='New password', validators=[Length(8), DataRequired()])
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField(label='Old Password', validators=[Length(8), DataRequired()])
+    password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
+    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
     submit = SubmitField(label='Submit')

@@ -7,7 +7,6 @@
 {% block content %}
 {% if current_user.is_authenticated %}
 <div style="margin: 100px auto; background-color: #2f2f2f; width: 1000px; border-radius: 25px;">
-    <img src="{{ current_user.profile_picture }}" alt="Profile picture" style="margin: auto; padding: 30px; border-radius: 100%;">
     <div>
         <div>
             <h1 style="padding: 20px;">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="">add name</a> {% endif %}</h1>
@@ -17,6 +16,9 @@
         </div>
         <div style="padding: 15px;">
             <a href="{{ url_for('edit_profile') }}" style=" color: blue; text-decoration: none;">Edit profile</a>
+        </div>
+        <div style="padding: 15px; padding-bottom: 40px;">
+            <a href="{{ url_for('logout')}}" style="color: rgb(0, 225, 255); text-decoration: none; margin: auto;">Log out</a>
         </div>
         <div style="padding: 15px; padding-bottom: 40px;">
             <a href="" style="color: red; text-decoration: none; margin: auto;">Delete account</a>

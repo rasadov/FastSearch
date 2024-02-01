@@ -9,10 +9,10 @@ Base = declarative_base()
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    email_address = Column(String(), nullable=False, unique=True)
+    username = Column(String(length=30), unique=True, default=None)
     name = Column(String(length=30), default=None)
+    email_address = Column(String(), nullable=False, unique=True)
     password_hash = Column(String(length=100), default=None)
-    profile_picture = Column(String(), default='../static/images/profile/user.png')
 
     
     @property
