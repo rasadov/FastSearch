@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>
+Change Password
+</title>
+{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        <div class="form-group">
+        {{ form.hidden_tag() }}
+        {{ field.label }}
+        {{ field }}
+        
+        {% for error in field.errors %}
+            <span class="form-text">{{ error }}</span>
+        {% endfor %}
+        </div>
+        {% endfor %}
+    </form>
+{% endblock %}

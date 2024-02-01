@@ -52,27 +52,45 @@ def edit_profile():
 def change_password():
     if current_user.is_anonymous:
         return redirect('/login')
+    if current_user.password_hash == None:
+        flash("You can't change your password because you haven't set it yet", category='danger')
+        return redirect('/')
     form = ChangePasswordForm()
-
     if request.method == 'POST':
         if form.validate_on_submit():
             if current_user.chech_password_correction(attempted_password=form.old_password.data):
+                if form.password.data == form.old_password.data:
+                    flash("New password can't be the same as old password", category='danger')
+                    return redirect('/change-password')
                 current_user.password = form.password.data
                 db.session.commit()
                 flash("Password changed successfully", category='success')
                 return redirect('/')
             else:
                 flash("Old password is not correct", category='danger')
-    return render_template('change-password.html') # Not working yet
+    return render_template('form_base.html', form=form) # Not working yet
 
-# @app.route('/edit-profile', methods=['GET','POST'])
-# def edit_profile():
-#     if current_user.is_anonymous:
-#         return redirect('/login')
-#     if request.method == 'POST':
-#         pass
-#     return render_template('edit_profile.html')
+@app.route('/set-password', methods=['GET','POST'])
+def set_password():
+    if current_user.is_anonymous:
+        return redirect('/login')
+    if current_user.password_hash:
+        flash("You already have set password", category='danger')
+        return redirect('/')
+    form = SetPasswordForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+                current_user.password = form.password.data
+                db.session.commit()
+                flash("Password changed successfully", category='success')
+                return redirect('/')
+        else:
+                flash("Old password is not correct", category='danger')
+    return render_template('form_base.html', form=form) # Not working yet
 
+# User credentials management page 
+
+# not created yet 
 
 # Register and login page
 
