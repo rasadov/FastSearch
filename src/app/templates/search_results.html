@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Search</title>
+{% endblock %}
+
+{% block content %}
+
+
+{% for i in results%}
+
+<div>
+    <h3>Search results for '{{ query }}'</h1>
+</div>
+<div>
+    <a href="{{ i.url }}">
+
+        <h1 style="font-size: large;">{{i.title}}</h1>
+        <p>{{i.price}}<p>
+        <p>{{i.rating}}</h1>
+        <p>{{i.item_class}}</p>
+        <p>{{i.producer}}</p>
+    </a>
+</div>
+{% endfor %}
+{% endblock %}

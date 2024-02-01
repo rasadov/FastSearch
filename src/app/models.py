@@ -31,6 +31,9 @@ class User(UserMixin, db.Model):
         if User.query.filter_by(email_address=self.email_address).count():
             return True
         return False
+    
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 class Product(db.Model):
     id = Column(Integer(), primary_key=True)
@@ -42,6 +45,8 @@ class Product(db.Model):
     amount_of_ratings = Column(Integer(), default=None)
     rating = Column(Float(), default=None)
 
+    def __repr__(self):
+        return f'<Product {self.id}>'
 
 with app.app_context():
     db.create_all()

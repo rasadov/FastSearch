@@ -12,17 +12,4 @@
     <h2 style="padding: 20px;">Search for products fast and efficiently</h2>
 </div>
 
-{% for i in records%}
-<div>
-    <a href="{{ i.url }}">
-
-        <h1 style="font-size: large;">{{i.title}}</h1>
-        <p>{{i.price}}<p>
-        <p>{{i.rating}}</h1>
-        <p>{{i.item_class}}</p>
-        <p>{{i.producer}}</p>
-    </a>
-</div>
-{% endfor %}
-
 {% endblock %}

@@ -27,8 +27,8 @@
                     </a>
                 </div>
                 <div class="nav-links">
-                    <a href="" style="width: 40px;">
-                        <p>Link</p>
+                    <a href="{{ url_for('search') }}" style="width: 40px;">
+                        <p>Search</p>
                     </a>
                 </div>
                 {% if current_user.is_authenticated %}

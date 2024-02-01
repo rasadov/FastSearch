@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for, flash, send_from_directory
+from flask import redirect, render_template, request, url_for, flash, send_from_directory
 from flask_login import login_user, logout_user, current_user
 from web import *
 from models import *
@@ -21,6 +21,17 @@ def favicon():
 def home_page():
     records = Product.query.all()
     return render_template("index.html", records=records)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        search_query = request.form.get('search_query')
+        results = Product.query.filter(Product.title.ilike(f'%{search_query}%')).all()
+        return render_template('search_results.html', results=results, query=search_query)
+
+    return render_template('search.html')
+    
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
