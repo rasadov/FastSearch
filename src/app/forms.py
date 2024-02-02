@@ -24,3 +24,16 @@ class SetPasswordForm(FlaskForm):
     password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
     confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
     submit = SubmitField(label='Submit')
+
+class ChangeUsernameForm(FlaskForm):
+    username = StringField(label='Username', validators=[Length(2), DataRequired()])
+    name = StringField(label='Name', validators=[Length(2), DataRequired()])
+    submit = SubmitField(label='Submit')
+
+# class ChangeEmailForm(FlaskForm):
+#     email_address = EmailField(label='Email Adress', validators=[DataRequired(), Email()])
+#     submit = SubmitField(label='Submit')
+
+class DeleteAccountForm(FlaskForm):
+    password = PasswordField(label='Password', validators=[Length(8), DataRequired()])
+    submit = SubmitField(label='Submit')

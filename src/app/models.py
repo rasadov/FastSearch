@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer, String, Column, Float
 from flask_login import UserMixin
 from web import db, bcrypt, app
+from datetime import datetime
 
 
 Base = declarative_base()
@@ -14,6 +15,21 @@ class User(UserMixin, db.Model):
     email_address = Column(String(), nullable=False, unique=True)
     password_hash = Column(String(length=100), default=None)
 
+    # Commented code below is not finished
+    # created_on = db.Column(db.DateTime, nullable=False)
+    # is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    # is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    # confirmed_on = db.Column(db.DateTime, nullable=True)
+
+    # def __init__(
+    #     self, email, password, is_admin=False, is_confirmed=False, confirmed_on=None
+    # ):
+    #     self.email = email
+    #     self.password = bcrypt.generate_password_hash(password)
+    #     self.created_on = datetime.now()
+    #     self.is_admin = is_admin
+    #     self.is_confirmed = is_confirmed
+    #     self.confirmed_on = confirmed_on
     
     @property
     def password(self):

@@ -9,29 +9,33 @@
 <div style="margin: 100px auto; background-color: #2f2f2f; width: 1000px; border-radius: 25px;">
     <div>
         <div>
-            <h1 style="padding: 20px;">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="" style="color: gray;">Blank</a> {% endif %}</h1>
+            <h1 style="padding: 20px;">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="{{ url_for('change_username') }}" style="color: gray;">Blank</a> {% endif %}</h1>
         </div>
         <div>
-            <h1 style="padding: 20px;">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="" style="color: gray;">Blank</a> {% endif %}</h1>
+            <h1 style="padding: 20px;">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="{{ url_for('change_username') }}" style="color: gray;">Blank</a> {% endif %}</h1>
         </div>
         
         <div>
             <h1 style="padding: 20px;">Email address: {{ current_user.email_address }}</h1>
         </div>
+        <div style="padding: 15px;">
+        <div>
+            <a href="{{ url_for('change_username')}}" style="color: white; text-decoration: none; margin: auto; font-size: 25px;">Change profile credentials</a>
+        </div>
         {% if current_user.password_hash %}
         <div style="padding: 15px;">
-            <a href="{{ url_for('change_password') }}" style=" color: blue; text-decoration: none;">Change password</a>
+            <a href="{{ url_for('change_password') }}" style=" color: white; text-decoration: none; font-size: 25px;">Change password</a>
         </div>
         {% else %}
         <div style="padding: 15px;">
-            <a href="{{ url_for('set_password') }}" style=" color: blue; text-decoration: none;">Set password</a> <!-- Not finished -->
+            <a href="{{ url_for('set_password') }}" style=" color: white; text-decoration: none; font-size: 25px;">Set password</a>
         </div>
         {% endif %}
-        <div style="padding: 15px;">
-            <a href="{{ url_for('logout')}}" style="color: rgb(0, 225, 255); text-decoration: none; margin: auto;">Log out</a>
+        <div>
+        <a href="{{ url_for('logout')}}" style="color: red; text-decoration: none; margin: auto; font-size: 25px;">Log out</a>
         </div>
-        <div style="padding: 15px; padding-bottom: 40px;">
-            <a href="" style="color: red; text-decoration: none; margin: auto;">Delete account</a>
+        <div style="padding: 15px; padding-bottom: 40px; font-size: 25px;">
+            <a href="{{ url_for('delete_account') }}" style="color: red; text-decoration: none; margin: auto;">Delete account</a>
         </div>
     </div>
 </div>

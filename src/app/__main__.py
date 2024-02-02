@@ -34,19 +34,11 @@ def search():
 
     return render_template('search.html')
 
-# Profile page 
+# Profile management page 
 
 @app.route('/profile', methods=['GET','POST'])
 def profile_page():
     return render_template('profile.html')
-
-@app.route('/edit-profile', methods=['GET','POST'])
-def edit_profile():
-    if current_user.is_anonymous:
-        return redirect('/login')
-    if request.method == 'POST':
-        pass
-    return render_template('edit_profile.html')
     
 @app.route('/change-password', methods=['GET','POST'])
 def change_password():
@@ -68,7 +60,7 @@ def change_password():
                 return redirect('/')
             else:
                 flash("Old password is not correct", category='danger')
-    return render_template('form_base.html', form=form) # Not working yet
+    return render_template('form_base.html', form=form) 
 
 @app.route('/set-password', methods=['GET','POST'])
 def set_password():
@@ -86,11 +78,46 @@ def set_password():
                 return redirect('/')
         else:
                 flash("Old password is not correct", category='danger')
-    return render_template('form_base.html', form=form) # Not working yet
+    return render_template('form_base.html', form=form) 
 
-# User credentials management page 
+@app.route('/change-username', methods=['GET','POST'])
+def change_username():
+    if current_user.is_anonymous:
+        return redirect('/login')
+    form = ChangeUsernameForm()
+    if current_user.name:
+        form.name.data = current_user.name
+    if current_user.username:
+        form.username.data = current_user.username
+    
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if User.query.filter_by(username=form.username.data).count():
+                flash("This username is already taken", category='danger')
+                return redirect('/change-username')
+            current_user.username = form.username.data
+            current_user.name = form.name.data
+            db.session.commit()
+            flash("Username changed successfully", category='success')
+            return redirect('/')
+    return render_template('form_base.html', form=form) 
 
-# not created yet 
+@app.route('/delete-account', methods=['GET','POST'])
+def delete_account():
+    if current_user.is_anonymous:
+        return redirect('/login')
+    form = DeleteAccountForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if current_user.chech_password_correction(attempted_password=form.password.data):
+                db.session.delete(current_user)
+                db.session.commit()
+                flash("Account deleted successfully", category='success')
+                return redirect('/')
+            else:
+                flash("Password is not correct", category='danger')
+    h1 = "Are you sure you want to delete your account?"
+    return render_template('form_base.html', form=form, h1=h1)
 
 # Register and login page
 
@@ -100,7 +127,6 @@ def register_page():
     if form.validate_on_submit():
         if not User.query.filter_by(email_address=form.email_address.data).count():
             user = User(password=form.password.data, email_address=form.email_address.data)
-            # db.create_all()
             db.session.add(user)
             db.session.commit()
             login_user(user)
@@ -108,7 +134,7 @@ def register_page():
         else:
             flash('This Email is already used', category='danger')
     
-    if form.errors != {}: # if there are no errors from validations
+    if form.errors != {}: 
         for err_msg in form.errors.values():
             print(f"There was an error: {err_msg[0]}")
     return render_template("register.html", form=form)
