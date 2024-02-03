@@ -52,9 +52,34 @@
             </div>
         </div>
     </nav>
+    
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="">
+            {% for message in messages %}
+            <div class="flash-messages {{ message[0] }}">
+                <p class="flash-message">{{ message[1] }}</p>
+                <button type="button" class="flash-close" data-dismiss="alert">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    
     <div class="content">
+        
         {% block content %}
+    
         {% endblock %}
+    
     </div>
 </body>
+<script>
+    let flashClose = document.querySelectorAll('.flash-close');
+    flashClose.forEach((close) => {
+        close.addEventListener('click', () => {
+            close.parentElement.style.display = 'none';
+        });
+    });
+</script>
 </html>

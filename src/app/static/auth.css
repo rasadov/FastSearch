@@ -44,10 +44,10 @@ div.login-container {
     padding-left: 20px;
 }
 
-.input-field::selection {
-    border: 100px;
+.input-field:focus {
+    outline: none;
+    border: 2px solid #00d9ff;
 }
-
 
 .submit-btn {
     cursor: pointer;

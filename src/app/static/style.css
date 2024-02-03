@@ -56,3 +56,58 @@ nav p {
 div.row {
     display: flex;
 }
+
+
+div.flash-messages {
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    margin: 15px auto !important;
+}
+
+p.flash-message {
+    padding: 10px;
+    margin: 0;
+    border-radius: 15px;
+    text-align: center;
+    padding-right: 60px;
+    padding-left: 90px;
+}
+
+button.flash-close {
+    background: none;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    margin: 0;
+    cursor: pointer;
+    font-size: 20px;
+
+    bottom: 20px;
+    text-align: right;
+}
+
+div.danger {
+    background: #ff0000;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+div.success {
+    background: #00ff00;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+div.info {
+    background: #0000ff;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}

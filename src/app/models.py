@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, String, Column, Float
+from sqlalchemy import Integer, String, Column, Float, DateTime, Boolean
 from flask_login import UserMixin
 from web import db, bcrypt, app
 from datetime import datetime
@@ -15,21 +15,10 @@ class User(UserMixin, db.Model):
     email_address = Column(String(), nullable=False, unique=True)
     password_hash = Column(String(length=100), default=None)
 
-    # Commented code below is not finished
-    # created_on = db.Column(db.DateTime, nullable=False)
-    # is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    # is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    # confirmed_on = db.Column(db.DateTime, nullable=True)
-
-    # def __init__(
-    #     self, email, password, is_admin=False, is_confirmed=False, confirmed_on=None
-    # ):
-    #     self.email = email
-    #     self.password = bcrypt.generate_password_hash(password)
-    #     self.created_on = datetime.now()
-    #     self.is_admin = is_admin
-    #     self.is_confirmed = is_confirmed
-    #     self.confirmed_on = confirmed_on
+    created_on = Column(DateTime, nullable=False, default=datetime.utcnow)
+    role = Column(String, nullable=False, default=False)
+    is_confirmed = Column(Boolean, nullable=False, default=False)
+    confirmed_on = Column(DateTime, nullable=True)
     
     @property
     def password(self):
@@ -42,12 +31,13 @@ class User(UserMixin, db.Model):
     def chech_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
     
-    def user_exists(self) -> bool:
-        """Returns True if user is registrated"""
-        if User.query.filter_by(email_address=self.email_address).count():
-            return True
-        return False
+    def check_username(username):
+        return User.query.filter_by(username=username).count()
     
+    def user_exists(email_address) -> bool:
+        """Returns True if user is registrated"""
+        return User.query.filter_by(email_address=email_address).count()
+        
     def __repr__(self):
         return f'<User {self.id}>'
 

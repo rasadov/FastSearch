@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, EmailField
 from wtforms.validators import Length, DataRequired, EqualTo, Email
 import email_validator
+from flask_login import current_user
 
 class LoginForm(FlaskForm):
     email_address = EmailField(label='Email Adress', validators=[DataRequired(), Email()])
@@ -26,8 +27,8 @@ class SetPasswordForm(FlaskForm):
     submit = SubmitField(label='Submit')
 
 class ChangeUsernameForm(FlaskForm):
-    username = StringField(label='Username', validators=[Length(2), DataRequired()])
-    name = StringField(label='Name', validators=[Length(2), DataRequired()])
+    username = StringField(label='Username', validators=[Length(3)])
+    name = StringField(label='Name', validators=[Length(3)])
     submit = SubmitField(label='Submit')
 
 # class ChangeEmailForm(FlaskForm):
