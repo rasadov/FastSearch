@@ -6,7 +6,7 @@
 
 {% block content %}
 {% if current_user.is_authenticated %}
-<div style="margin: 100px auto; background-color: #2f2f2f; width: 1000px; border-radius: 25px;">
+<div style="margin: 50px auto; background-color: #2f2f2f; width: 1000px; border-radius: 25px;">
     <div>
         <div>
             <h1 style="padding: 20px;">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="{{ url_for('change_username') }}" style="color: gray;">Blank</a> {% endif %}</h1>

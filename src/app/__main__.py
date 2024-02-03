@@ -60,7 +60,7 @@ def change_password():
                 return redirect('/')
             else:
                 flash("Old password is not correct", category='danger')
-    return render_template('form_base.html', form=form) 
+    return render_template('form_base.html', form=form)
 
 @app.route('/set-password', methods=['GET','POST'])
 def set_password():
@@ -105,8 +105,12 @@ def change_username():
             current_user.name = form.name.data
             db.session.commit()
             return redirect('/profile')
-    
-    return render_template('change_credentials.html', form=form, current_username=current_user.username, current_name=current_user.name) 
+        
+    if request.method == 'GET':
+        form.username.data = current_user.username
+        form.name.data = current_user.name
+
+    return render_template('form_base.html', form=form) 
 
 @app.route('/delete-account', methods=['GET','POST'])
 def delete_account():
