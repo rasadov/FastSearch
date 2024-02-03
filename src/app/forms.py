@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, EmailField
 from wtforms.validators import Length, DataRequired, EqualTo, Email
 import email_validator
-from flask_login import current_user
+from wtforms.validators import Regexp
 
 class LoginForm(FlaskForm):
     email_address = EmailField(label='Email Adress', validators=[DataRequired(), Email()])
@@ -27,7 +27,7 @@ class SetPasswordForm(FlaskForm):
     submit = SubmitField(label='Submit')
 
 class ChangeUsernameForm(FlaskForm):
-    username = StringField(label='Username', validators=[Length(3)])
+    username = StringField(label='Username', validators=[Length(3), Regexp(r'^[a-zA-Z0-9_]*$', message='Username must not contain special characters')])
     name = StringField(label='Name', validators=[Length(3)])
     submit = SubmitField(label='Submit')
 
@@ -37,4 +37,11 @@ class ChangeUsernameForm(FlaskForm):
 
 class DeleteAccountForm(FlaskForm):
     password = PasswordField(label='Password', validators=[Length(8), DataRequired()])
+    submit = SubmitField(label='Submit')
+
+class VerificationForm(FlaskForm):
+    code = IntegerField(label='Verification Code', validators=[DataRequired()])
+    submit = SubmitField(label='Submit')
+
+class SubmitForm(FlaskForm):
     submit = SubmitField(label='Submit')

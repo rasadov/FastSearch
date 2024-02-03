@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     password_hash = Column(String(length=100), default=None)
 
     created_on = Column(DateTime, nullable=False, default=datetime.utcnow)
-    role = Column(String, nullable=False, default=False)
+    role = Column(String, nullable=False, default='user')
     is_confirmed = Column(Boolean, nullable=False, default=False)
     confirmed_on = Column(DateTime, nullable=True)
     

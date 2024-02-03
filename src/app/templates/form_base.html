@@ -13,18 +13,18 @@ Change Password
     </h1> 
     <form method="POST">
         {% for field in form if field.widget.input_type != 'hidden' %}
-        <div class="form-group">
-        {{ form.hidden_tag() }}
-        {% if field.label.text == 'Submit' %}
-        {{ field(class='submit-btn', value='Submit') }}
-        {% else %}
-        {{ field(class='input-field', placeholder=field.label.text ) }}
-        {% endif %}
-        
-        {% for error in field.errors %}
-            <span class="form-text">{{ error }}</span>
-        {% endfor %}
-        </div>
+            <div class="form-group">
+                {{ form.hidden_tag() }}
+                {% if field.label.text == 'Submit' %}
+                    {{ field(class='submit-btn', value='Submit') }}
+                {% else %}
+                    {{ field(class='input-field', placeholder=field.label.text) }}
+                {% endif %}
+                
+                {% for error in field.errors %}
+                    <div class="form-text error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
         {% endfor %}
     </form>
 {% endblock %}

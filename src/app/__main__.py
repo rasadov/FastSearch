@@ -1,8 +1,10 @@
+import random
 from flask import redirect, render_template, request, url_for, flash, send_from_directory
 from flask_login import login_user, logout_user, current_user
 from web import *
 from models import *
 from forms import *
+from email_sender import send_email
 
 
 @login_manager.user_loader
@@ -37,13 +39,13 @@ def search():
 # Profile management page 
 
 @app.route('/profile', methods=['GET','POST'])
+@login_required
 def profile_page():
     return render_template('profile.html')
     
 @app.route('/change-password', methods=['GET','POST'])
+@login_required
 def change_password():
-    if current_user.is_anonymous:
-        return redirect('/login')
     if current_user.password_hash == None:
         flash("You can't change your password because you haven't set it yet", category='danger')
         return redirect('/')
@@ -57,36 +59,38 @@ def change_password():
                 current_user.password = form.password.data
                 db.session.commit()
                 flash("Password changed successfully", category='success')
-                return redirect('/')
+                return redirect('/profile')
             else:
                 flash("Old password is not correct", category='danger')
     return render_template('form_base.html', form=form)
 
 @app.route('/set-password', methods=['GET','POST'])
+@login_required
 def set_password():
-    if current_user.is_anonymous:
-        return redirect('/login')
     if current_user.password_hash:
         flash("You already have set password", category='danger')
-        return redirect('/')
+        return redirect('/profile')
     form = SetPasswordForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-                current_user.password = form.password.data
-                db.session.commit()
-                flash("Password changed successfully", category='success')
-                return redirect('/')
+            current_user.password = form.password.data
+            db.session.commit()
+            flash("Password changed successfully", category='success')
+            return redirect('/profile')
         else:
-                flash("Old password is not correct", category='danger')
+            flash("Old password is not correct", category='danger')
     return render_template('form_base.html', form=form) 
 
 @app.route('/change-username', methods=['GET','POST'])
+@login_required
 def change_username():
-    if current_user.is_anonymous:
-        return redirect('/login')
     form = ChangeUsernameForm()
     
     if request.method == 'POST':
+        if not form.username.data:
+            form.username.validators = []
+        if not form.name.data:
+            form.name.validators = []
         if form.validate_on_submit():
             if User.check_username(form.username.data) and form.username.data != current_user.username:
                 flash("This username is already taken", category='danger')
@@ -113,9 +117,8 @@ def change_username():
     return render_template('form_base.html', form=form) 
 
 @app.route('/delete-account', methods=['GET','POST'])
+@login_required
 def delete_account():
-    if current_user.is_anonymous:
-        return redirect('/login')
     form = DeleteAccountForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -131,14 +134,55 @@ def delete_account():
 
 # Verify email page
 
-@app.route('/verify-email', methods=['GET','POST'])
-def verify_email():
-    pass
-    # return render_template('verify_email.html')
+@app.route('/ask-of-verification', methods=['GET','POST'])
+@login_required
+def ask_for_verification():
+    if current_user.is_confirmed:
+        flash('Your email is already verified', category='info')
+        return redirect('/profile')
+    # form = SubmitForm()
+    if request.method == 'POST':
+            global verification_code
+            verification_code = random.randint(100000, 999999)
+            send_email(f'Your verification code is {verification_code}', current_user.email_address)
+            flash('Email verification email sent!', category='info')
+            return redirect('/verify-email')
 
+    return render_template('verification.html')
+
+@app.route('/verify-email', methods=['GET','POST'])
+@login_required
+def verify_email():
+    if current_user.is_confirmed:
+        flash('Your email is already verified', category='info')
+        return redirect('/profile')
+    
+    global verification_code
+    # verification_code = random.randint(100000, 999999)
+
+    form = VerificationForm()
+    
+
+    if request.method == 'POST':        
+        # Verification code is correct
+        if form.code.data == verification_code:
+            current_user.is_confirmed = True
+            current_user.confirmed_on = datetime.now()
+            db.session.commit()
+            flash('Email verified successfully', category='success')
+            return redirect('/profile')
+        
+        # Verification code is not correct
+        flash('Invalid verification code', category='danger')
+        return render_template('verify_email.html', form=form)
+    return render_template('verify_email.html', form=form)
+    
+
+    
 # Register and login page
 
 @app.route('/register', methods=['GET', 'POST'])
+@logout_required
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -156,11 +200,9 @@ def register_page():
             print(f"There was an error: {err_msg[0]}")
     return render_template("register.html", form=form)
 
-
 @app.route('/login', methods=['GET','POST'])
+@logout_required
 def login_page():
-    if current_user.is_authenticated:
-        return redirect('/')
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(email_address=form.email_address.data).first()
@@ -171,32 +213,34 @@ def login_page():
             flash("Username or password is not correct", category='danger')
 
     return render_template("login.html", form=form)
-    
+
 @app.route('/login-with-google',methods=['GET','POST'])
+@logout_required
 def login_with_google():
-    if current_user.is_authenticated:
-        return redirect('/')
     google = oauth.create_client('google')  # create the google oauth client
     redirect_uri = url_for('authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
 
 @app.route('/authorize')
+@logout_required
 def authorize():
-    if current_user.is_authenticated:
-        return redirect('/')
     google = oauth.create_client('google')  # create the google oauth client
     token = google.authorize_access_token()  # Access token from google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
 
-    user_to_add = User(email_address=user['email'], name=user['name'])
-    if not user_to_add.user_exists():
+    user_to_add = User(email_address=user['email'], name=user['name'], is_confirmed=True, confirmed_on=datetime.now())
+    if not User.user_exists(user_to_add.email_address):
         db.session.add(user_to_add)
         db.session.commit()
         login_user(user_to_add)
     else:
         user_to_login = User.query.filter_by(email_address=user_to_add.email_address).first()
+        if not user_to_login.is_confirmed:
+            user_to_login.is_confirmed = True
+            user_to_login.confirmed_on = datetime.now()
+            db.session.commit()
         login_user(user_to_login)    
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
@@ -205,6 +249,7 @@ def authorize():
 # Logout page
 
 @app.route('/logout', methods=['GET','POST'])
+@login_required
 def logout():
     logout_user()
     return redirect('/')

@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 import dotenv
@@ -23,13 +23,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 db = SQLAlchemy(app)
-
-app.config['UPLOAD_FOLDER'] = 'static/images/profile_pics'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 oauth = OAuth(app)
@@ -54,12 +47,21 @@ from functools import wraps
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        user = dict(session).get('profile', None)
-        # You would add a check here and usethe user id or something to fetch
-        # the other data for that user/check if they exist
-        if user:
-            return f(*args, **kwargs)
-        return 'You aint logged in, no page for u!'
+        if current_user.is_anonymous:
+            flash("You are not authenticated.", "info")
+            return redirect(url_for("home_page"))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def logout_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            flash("You are already authenticated.", "info")
+            return redirect(url_for("home_page"))
+        return f(*args, **kwargs)
+
     return decorated_function
 
 bcrypt = Bcrypt(app)
