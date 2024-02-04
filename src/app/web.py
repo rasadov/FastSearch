@@ -64,6 +64,37 @@ def logout_required(f):
 
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_anonymous or (current_user.role != 'admin' and current_user.role != 'owner'):
+            flash("You are not authorized to view this page.", "info")
+            return redirect(url_for("home_page"))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def confirmed_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_confirmed:
+            flash("You need to confirm your email address.", "info")
+            return redirect(url_for("home_page"))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def unconfirmed_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_confirmed:
+            flash("You are already confirmed.", "info")
+            return redirect(url_for("home_page"))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 bcrypt = Bcrypt(app)
 
 login_manager = LoginManager(app)

@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send Verification Email</title>
-</head>
+{% block title %}
+<title>
+  Send Verification Email
+</title>
+<link rel="stylesheet" href="../static/auth.css">
+{% endblock %}
 
-<body>
-  <h1>Send Verification Email</h1>
-
+{% block content %}
+  <h1>Verify account by email</h1>
+  <p>We will send verification code to your email address to verify your account</p>
   <form method="POST">   
-    <button type="submit">Send verification code</button>
+    <button type="submit" class="submit-btn" style="height: auto;">Send verification code</button>
   </form>
-
-</body>
-
-</html>
+{% endblock %}

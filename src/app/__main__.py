@@ -136,6 +136,7 @@ def delete_account():
 
 @app.route('/ask-of-verification', methods=['GET','POST'])
 @login_required
+@unconfirmed_required
 def ask_for_verification():
     if current_user.is_confirmed:
         flash('Your email is already verified', category='info')
@@ -152,17 +153,12 @@ def ask_for_verification():
 
 @app.route('/verify-email', methods=['GET','POST'])
 @login_required
+@unconfirmed_required
 def verify_email():
-    if current_user.is_confirmed:
-        flash('Your email is already verified', category='info')
-        return redirect('/profile')
     
     global verification_code
-    # verification_code = random.randint(100000, 999999)
 
     form = VerificationForm()
-    
-
     if request.method == 'POST':        
         # Verification code is correct
         if form.code.data == verification_code:
@@ -177,8 +173,6 @@ def verify_email():
         return render_template('verify_email.html', form=form)
     return render_template('verify_email.html', form=form)
     
-
-    
 # Register and login page
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -191,7 +185,7 @@ def register_page():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return redirect('/')
+            return redirect('/ask-of-verification')
         else:
             flash('This Email is already used', category='danger')
     
