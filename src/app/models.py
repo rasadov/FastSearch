@@ -50,6 +50,7 @@ class Product(db.Model):
     producer = Column(String(), default=None)
     amount_of_ratings = Column(Integer(), default=None)
     rating = Column(Float(), default=None)
+    
 
     def __repr__(self):
         return f'<Product {self.id}>'
