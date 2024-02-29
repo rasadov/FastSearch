@@ -74,6 +74,8 @@
     
     </div>
 </body>
+
+
 <script>
     let flashClose = document.querySelectorAll('.flash-close');
     flashClose.forEach((close) => {
@@ -81,5 +83,7 @@
             close.parentElement.style.display = 'none';
         });
     });
+    {% block scripts %}
+    {% endblock %}
 </script>
 </html>

@@ -1,16 +1,15 @@
 # FastSearch
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
-____
+
 ## About project
 Application for tracking prices on several stores. Allows to find best prices for products and analyze market. 
-____
+
 ## Installation
 1. Get API for Google search engine and Google OAuth authentication
 2. Download required packages
 ```bash
 $ pip install -r requirements.txt
 ```
-____
 
 ## Built With
 * ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)

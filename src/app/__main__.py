@@ -237,7 +237,7 @@ def authorize():
             db.session.commit()
         login_user(user_to_login)    
     session['profile'] = user_info
-    session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
     return redirect('/')
 
 # Logout page
@@ -252,7 +252,7 @@ def logout():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return "<h1>Page not found</h1>"
+    return render_template('404.html'), 404
 
 
 

@@ -40,7 +40,7 @@ def google_custom_search(query, start_index):
         print(f"Error: {e}")
         return None
 
-def search(query: str, method: str, total_pages: int | None = None) -> [str, str]:
+def search(query: str, method: str, total_pages: int | None = None):
     """
 Returns link for the page\n
 `query`
