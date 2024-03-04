@@ -43,5 +43,9 @@ class VerificationForm(FlaskForm):
     code = IntegerField(label='Verification Code', validators=[DataRequired()])
     submit = SubmitField(label='Submit')
 
+class SearchForm(FlaskForm):
+    search = StringField(label='Search', validators=[DataRequired()])
+    submit = SubmitField(label='Submit')
+
 class SubmitForm(FlaskForm):
     submit = SubmitField(label='Submit')
