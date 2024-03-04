@@ -2,7 +2,7 @@ from utils import *
 from scrapy import *
 from myproject.myproject.spiders import MySpider
 
-spider = MySpider("https://www.gamestop.com/pc-gaming/pc-components/graphics-cards/products/pny-geforce-rtx-3060-12gb-xlr8-gaming-revel-epic-x-rgb-single-fan-graphics-card-gmr3061n4jcet1bktp-brown-box/11185352.html", "url")
+spider = MySpider("https://www.amazon.com/b?_encoding=UTF8&tag=593a2799-20&linkCode=ur2&linkId=9a5d2a626ea6c02b657f33f5ed26e741&camp=1789&creative=9325&node=193870011", "url")
 
 
 spider.run()

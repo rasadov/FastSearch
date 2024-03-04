@@ -37,6 +37,13 @@
                         <p>Profile</p>
                     </a>
                 </div>
+                {% if current_user.is_admin() %}
+                <div class="nav-links">
+                    <a href="{{ url_for('admin_page') }}" style="width: 40px;">
+                        <p>Admin</p>
+                    </a>
+                </div>
+                {% endif %}
                 {% else %}
                 <div class="nav-links">
                     <a href="{{ url_for('register_page') }}" style="width: 40px;">
@@ -83,7 +90,7 @@
             close.parentElement.style.display = 'none';
         });
     });
-    {% block scripts %}
-    {% endblock %}
 </script>
+{% block scripts %}
+{% endblock %}
 </html>

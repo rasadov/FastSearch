@@ -257,9 +257,9 @@ def scrap_excaliberpc_item(response, url : None | str = None):
 def parsing_method(response):
     url = response.meta.get('url', '')
 
-    # html_content = response.body.decode(response.encoding)
-    # with open('.html', 'w', encoding=response.encoding) as f:
-    #     f.write(html_content)
+    html_content = response.body.decode(response.encoding)
+    with open('.html', 'w', encoding=response.encoding) as f:
+        f.write(html_content)
 
     if 'ebay' in url:
         scrap_ebay_item(response, url)

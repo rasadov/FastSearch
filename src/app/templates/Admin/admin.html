@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Admin</title>
+<style>
+    .section {
+        background-color: #404040;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        width: 30%;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    h3 {
+        margin: 0 0  0;
+        padding: 0 ;
+
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div>
+    <h1>Admin</h1>
+    <div>
+        <h2>Admin Panel</h2>
+        <div class="section">
+            <h3 style="padding: 20px;">Manage Users</h3>
+            <p>(currently {{ count_of_users }} users registered)</p>
+            <a href="{{ url_for('admin_users_page') }}">
+                <button>Manage Users</button>
+            </a>
+        </div>
+        <div class="section">
+            <h3 style="padding: 20px;">Manage Products</h3>
+            <p>(currently {{ count_of_products }} product in database)</p>
+            <a href="{{ url_for('admin_products_page') }}">
+                <button>Manage Products</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

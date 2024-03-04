@@ -20,6 +20,9 @@ class User(UserMixin, db.Model):
     is_confirmed = Column(Boolean, nullable=False, default=False)
     confirmed_on = Column(DateTime, nullable=True)
     
+    def is_admin(self):
+        return self.role == 'admin' or self.role == 'owner'
+
     @property
     def password(self):
         return self.password
@@ -37,7 +40,7 @@ class User(UserMixin, db.Model):
     def user_exists(email_address) -> bool:
         """Returns True if user is registrated"""
         return User.query.filter_by(email_address=email_address).count()
-        
+
     def __repr__(self):
         return f'<User {self.id}>'
 
