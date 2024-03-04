@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<title>404 Error</title>
+<title>Delete User</title>
 <style>
     body {
     font-family: Arial, sans-serif;
@@ -129,10 +129,17 @@ div.form-text {
 {% endblock %}
 
 {% block content %}
-    <h1>404 Error</h1>
-    <p>This page doesn't exist</p>
+<div>
+    <h1>Delete User</h1>
+    <form method="POST">
+        {{ form.hidden_tag()}}
+        <div>
+            <p>Are you sure you want to delete user {{ user.username }}?</p>
+            <button type="submit">Delete</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block scripts %}
 {% endblock %}
-```

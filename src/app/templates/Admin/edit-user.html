@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Edit User</title>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #202020;
+    color: white;
+}
+
+nav {
+    background:color-mix(in hsl shorter hue, #2f2f2f 50%, #282828 50%);
+    display: flex;
+}
+
+.half-width {
+    width: 50%;
+}
+
+nav h1 {
+    margin: 0 ;
+    padding: 20px;
+}
+
+.nav-links {
+    width: 100px;
+    margin: auto 10px
+}
+
+nav div a {
+    width: 40px;
+    text-decoration: none;
+    color: white;
+}
+
+nav a:hover {
+    text-shadow: 0 0 10px;
+}
+
+nav p {
+    height: auto;
+    margin: 0;
+    padding: 20px;
+    font-size: 25px;
+}
+
+.content {
+    text-align: center;
+}
+
+.section {
+    background: #2f2f2f;
+    width: 80%;
+    margin: 10px auto;
+    border-radius: 15px;
+}
+
+div.row {
+    display: flex;
+}
+
+
+div.flash-messages {
+    display: flex;
+    justify-content: center;
+    width: 20%;
+    margin: 15px auto !important;
+}
+
+p.flash-message {
+    padding: 10px;
+    margin: 0;
+    border-radius: 15px;
+    text-align: center;
+    padding-right: 60px;
+    padding-left: 90px;
+}
+
+button.flash-close {
+    background: none;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    margin: 0;
+    cursor: pointer;
+    font-size: 20px;
+
+    bottom: 20px;
+    text-align: right;
+}
+
+div.danger {
+    background: #ff0000;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+div.success {
+    background: #00ff00;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+div.info {
+    background: #00a2ff;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+div.form-text {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    background: #ff3131;
+    width: 15%;
+    margin: 10px auto;
+}
+
+.input-field {
+    font-size: 20px;
+    width: 22%;
+    height: 50px;
+    margin: 15px auto;
+    border-radius: 15px;
+    padding-left: 20px;
+}
+
+.input-field:focus {
+    outline: none;
+    border: 2px solid #00d9ff;
+}
+
+.submit-btn {
+    cursor: pointer;
+    width: 24%;
+    background-color: rgb(47, 189, 255);
+    font-size: 20px;
+    padding: 10px 7%;
+    height: 50px;
+    margin: 15px auto;
+    border-radius: 55px;
+    text-align: center;
+    color: white;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>User info</h1>
+    <div>
+        <p>
+            User ID: {{ id }}
+        </p>
+        <p>
+            Username: {{ username }}
+        </p>
+        <p>  
+            Email address: {{ email_address }}
+        </p>
+        <p>
+            Confirmed: {{ is_confirmed }}
+        </p>
+        <p>
+            Name: {{ name }}
+        </p>
+        <p>
+            role: {{ role }}
+        </p>
+    </div>
+    <h1>Edit User</h1>
+    <form method="POST">
+        <div>
+            <label for="username">Username:</label><br>
+            <input class="input-field" type="text" id="username" name="username" value="{{ username }}">
+        </div>
+        <div>
+            <label for="name">Name:</label><br>
+            <input class="input-field" type="text" id="name" name="name" value="{{ name }}">
+        </div>
+        <div>
+            <label for="email">Email:</label><br>
+            <input class="input-field" type="email" id="email" name="email" value="{{ email_address }}">
+        </div>
+        <div>
+            <label for="role">Role:</label><br>
+            <input class="input-field" type="text" id="role" name="role" value="{{ role }}">
+        </div>
+        <div>
+            <label for="confirmed">Confirmed:</label><br>
+            <select class="input-field" id="confirmed" name="confirmed">
+                {% if is_confirmed %}
+                <option value="True" selected>True</option>
+                <option value="False">False</option>
+                {% else %}
+                <option value="False" selected>False</option>
+                <option value="True">True</option>
+                {% endif %}
+            </select>
+        </div>
+        <button class="submit-btn" type="submit">Edit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
