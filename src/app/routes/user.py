@@ -58,7 +58,7 @@ def authorize():
     user_info = resp.json()
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
 
-    user_to_add = User(email_address=user['email'], name=user['name'], is_confirmed=True, confirmed_on=datetime.now())
+    user_to_add = User(email_address=user['email'], name=user['name'], is_confirmed=True, confirmed_on=str(datetime.now())[:19])
     if not User.user_exists(user_to_add.email_address):
         db.session.add(user_to_add)
         db.session.commit()
@@ -67,7 +67,7 @@ def authorize():
         user_to_login = User.query.filter_by(email_address=user_to_add.email_address).first()
         if not user_to_login.is_confirmed:
             user_to_login.is_confirmed = True
-            user_to_login.confirmed_on = datetime.now()
+            user_to_login.confirmed_on = str(datetime.now())[:19]
             db.session.commit()
         login_user(user_to_login)    
     session['profile'] = user_info
@@ -87,7 +87,7 @@ def ask_for_verification():
     if request.method == 'POST':
             global verification_code
             verification_code = random.randint(100000, 999999)
-            send_email(f'Your verification code is {verification_code}', current_user.email_address)
+            send_email(f'Your verification code is {verification_code}', current_user.email_address, 'Email verification', 'Verification code for abyssara')
             flash('Email verification email sent!', category='info')
             return redirect('/verify-email')
 
@@ -105,7 +105,7 @@ def verify_email():
         # Verification code is correct
         if form.code.data == verification_code:
             current_user.is_confirmed = True
-            current_user.confirmed_on = datetime.now()
+            current_user.confirmed_on = str(datetime.now())[:19]
             db.session.commit()
             flash('Email verified successfully', category='success')
             return redirect('/profile')

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>User Info</title>
+<link rel="stylesheet" href="../../static/style.css">
+<link rel="stylesheet" href="../../static/auth.css">
+<style>
+    .user-info {
+        width: 30%;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>User Info</h1>
+    <div class="user-info">
+        <p>Username: {{ user.username }}</p>
+        <p>Name: {{ user.name }}</p>
+        <p>Email: {{ user.email_address }}</p>
+        <p>Role: {{ user.role }}</p>
+        <p>Created on: {{ user.created_on }}</p>
+
+        {% if user.is_confirmed %}
+        <p>Confirmed on {{ user.confirmed_on }}</p>
+        {% else %}
+        <p>Not confirmed</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

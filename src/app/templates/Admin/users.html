@@ -110,6 +110,9 @@
         <a href="{{ url_for('admin_user_edit_page', id=users[i].id) }}">
             <button>Edit</button>
         </a>
+        <a href="{{ url_for('admin_user_info_page', id=users[i].id) }}">
+            <button>Info</button>
+        </a>
         <a href="{{ url_for('admin_user_delete_page', id=users[i].id) }}">
             <button>Delete</button>
         </a>

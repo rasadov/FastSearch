@@ -16,9 +16,9 @@ def favicon():
 
 from routes.product import *
 
-######## Profile pages ########
+######## User pages ########
     
-from routes.profile import *
+from routes.user import *
 
 ######## Admin pages ########
 

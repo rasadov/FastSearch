@@ -195,7 +195,31 @@ div.form-text {
         </div>
         <div>
             <label for="role">Role:</label><br>
-            <input class="input-field" type="text" id="role" name="role" value="{{ role }}">
+            <select class="input-field" id="role" name="role">
+                {% if role == 'user' %}
+                <option value="user" selected>User</option>
+                <option value="admin">Admin</option>
+                {% if current_user.role == 'owner' %}
+                    <option value="owner">Owner</option>
+                {% endif %}
+                    
+                {% elif role == 'admin' %}
+                <option value="admin" selected>Admin</option>
+                <option value="user">User</option>
+                {% if current_user.role == 'owner' %}
+                    <option value="owner">Owner</option>
+                {% endif %}
+
+
+                {% elif role == 'owner' %}
+                <option value="owner" selected>Owner</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                {% endif %}
+                
+
+                
+            </select>
         </div>
         <div>
             <label for="confirmed">Confirmed:</label><br>
