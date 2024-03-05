@@ -1,6 +1,6 @@
-from flask import Flask, flash, redirect, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for , send_from_directory
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 import dotenv
