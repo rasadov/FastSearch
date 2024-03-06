@@ -89,11 +89,11 @@
 
 {% block content %}
 <div>
-    <form method="POST" action="{{ url_for('admin_users_page', page=page) }}">
-        {{ form.hidden_tag() }}
+    <form method="GET" action="{{ url_for('admin_users_page') }}">
         <div class="search-container">
 
-            {{ form.search(class="search-field") }}
+
+            <input type="text" name="search" class="search-field" placeholder="Search...">
 
             <button type="submit" class="search-btn">Search</button>
         </div>
@@ -101,37 +101,51 @@
 </div>
 
 <div style="display: flexbox;">
-    {% for i in range(amount_of_users) %}
-    <div class="user" style="display: inline-block; width: 30%;">
-        <p>{{ users[i].username }}</p>
-        <p>{{ users[i].email_address }}</p>
-        <p>{{ users[i].is_confirmed }}</p>
-        <p>{{ users[i].role }}</p>
-        <a href="{{ url_for('admin_user_edit_page', id=users[i].id) }}">
-            <button>Edit</button>
-        </a>
-        <a href="{{ url_for('admin_user_info_page', id=users[i].id) }}">
-            <button>Info</button>
-        </a>
-        <a href="{{ url_for('admin_user_delete_page', id=users[i].id) }}">
-            <button>Delete</button>
-        </a>
+    {% for user in users.items %}
+    <div class="user" style="display: inline-block; width: 30%; ">
+        <p>{{ user.username }}</p>
+        <p>{{ user.email_address }}</p>
+        <p>{{ user.is_confirmed }}</p>
+        <p>{{ user.role }}</p>
+        <div>
+            
+            <a href="{{ url_for('admin_user_edit_page', id=user.id) }}">
+                <button>Edit</button>
+            </a>
+            <a href="{{ url_for('admin_user_info_page', id=user.id) }}">
+                <button>Info</button>
+            </a>
+            <a href="{{ url_for('admin_user_delete_page', id=user.id) }}">
+                <button>Delete</button>
+            </a>
+        </div>
     </div>
-    {% if (i + 1) % 3 == 0 %}
+    {% if loop.index % 3 == 0 %}
     <br><br><br>
     {% endif %}
     {% endfor %}
 </div>
 
+
 <div class="pagination-container"></div>
     <ul class="pagination">
         {% if total_pages <= 4 %}
-            {% for num in range(1, total_pages+1) %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=num) }}">{{ num }}</a>
-            {% endfor %}
+            {% if total_pages == 2 %}
+                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
+            {% elif total_pages == 3 %}
+                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=3, search=search_query) }}">3</a>
+            {% elif total_pages == 4 %}
+                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=3, search=search_query) }}">3</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=4, search=search_query) }}">4</a>
+            {% endif %}
         {% else %}
             {% if page > 2 %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=1 ) }}">1</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query ) }}">1</a>
                 {% if page > 3 %}
                 <p style="margin: 0; padding-top: 10px;">...</p>
                 {% endif %}
@@ -139,20 +153,20 @@
             {% endif %}
 
             {% if page > 1 %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=page-1) }}">{{ page - 1}}</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=page-1, search=search_query) }}">{{ page - 1}}</a>
             {% endif %}
             
-            <p class="page-link current-page disabled" href="{{ url_for('admin_users_page', page=page) }}">{{ page }}</p>
+            <p class="page-link current-page disabled" href="{{ url_for('admin_users_page', page=page, search=search_query) }}">{{ page }}</p>
             
             {% if page < total_pages %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=page+1) }}">{{ page + 1 }}</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=page+1, search=search_query) }}">{{ page + 1 }}</a>
             {% endif %}
 
             {% if page < total_pages-1 %}
                 {% if page < total_pages - 2 %}
                 <p style="margin: 0; padding-top: 10px;">...</p>
                 {% endif %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=total_pages) }}">{{ total_pages }}</a>
+                <a class="page-link" href="{{ url_for('admin_users_page', page=total_pages, search=search_query) }}">{{ total_pages }}</a>
             {% endif %}
         {% endif %}
 

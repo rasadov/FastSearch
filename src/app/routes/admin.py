@@ -12,33 +12,28 @@ def admin_page():
     return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users)
 
 
-@app.route('/admin/users', methods=['GET','POST'])
+@app.route('/admin/users', methods=['GET'])
 @admin_required
-def admin_users_page(page=1):
-    form = SearchForm()
-    total_pages = User.query.count() // 10
+def admin_users_page():
+    page = request.args.get('page', 1, type=int)
+    per_page = 3
 
-    search_query = ''           
+    search_query = request.args.get('search', '')
 
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            search_query = form.search.data
-    try:
-        users = User.query.filter(
+    users = User.query.filter(
             (User.username.ilike(f'%{search_query}%')) |
             (User.name.ilike(f'%{search_query}%')) |
             (User.email_address.ilike(f'%{search_query}%'))
-        )
-        amount_of_users = users.count()
-    except IndexError:
-        users = User.query.filter(
-            (User.username.ilike(f'%{search_query}%')) |
-            (User.name.ilike(f'%{search_query}%')) |
-            (User.email_address.ilike(f'%{search_query}%'))
-        )
-        amount_of_users = users.count()
-    return render_template('Admin/users.html', users=users, page=page, total_pages=total_pages, search_query=search_query, amount_of_users=amount_of_users, form=form)
+        ).paginate(page=page, per_page=per_page)
     
+    cnt = users.total
+    
+    total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
+
+
+    return render_template('Admin/users.html', users=users, total_pages=total_pages,
+                            search_query=search_query)
+
 @app.route('/admin/user/<int:id>', methods=['GET','POST'])
 @admin_required
 def admin_user_info_page(id):
