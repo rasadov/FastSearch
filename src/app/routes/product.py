@@ -11,11 +11,9 @@ def home_page():
 
 # Product search page
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
 def search():
-    if request.method == 'POST':
-        search_query = request.form.get('search_query')
-        results = Product.query.filter(Product.title.ilike(f'%{search_query}%')).all()
-        return render_template('Main/search_results.html', results=results, query=search_query)
-    if request.method == 'GET':
-        return render_template('Main/search.html')
+    query = request.args.get('search_query', '') 
+    page = request.args.get('page', 1, type=int)  
+    products = Product.query.filter(Product.title.ilike(f'%{query}%')).paginate(page=page, per_page=10)
+    return render_template('Main/search.html', products=products, query=query)
