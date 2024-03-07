@@ -32,7 +32,7 @@ def admin_users_page():
 
 
     return render_template('Admin/users.html', users=users, total_pages=total_pages,
-                            search_query=search_query)
+                            search_query=search_query, page=page)
 
 @app.route('/admin/user/<int:id>', methods=['GET','POST'])
 @admin_required

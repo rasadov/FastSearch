@@ -93,7 +93,7 @@
         <div class="search-container">
 
 
-            <input type="text" name="search" class="search-field" placeholder="Search...">
+            <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
 
             <button type="submit" class="search-btn">Search</button>
         </div>
@@ -131,17 +131,14 @@
     <ul class="pagination">
         {% if total_pages <= 4 %}
             {% if total_pages == 2 %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
-            {% elif total_pages == 3 %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=3, search=search_query) }}">3</a>
-            {% elif total_pages == 4 %}
-                <a class="page-link" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=3, search=search_query) }}">3</a>
-                <a class="page-link" href="{{ url_for('admin_users_page', page=4, search=search_query) }}">4</a>
+                <a class="page-link{% if page == 1 %} current-page {% endif %}" href="{{ url_for('admin_users_page', page=1, search=search_query) }}">1</a>
+                <a class="page-link{% if page == 2 %} current-page {% endif %}" href="{{ url_for('admin_users_page', page=2, search=search_query) }}">2</a>
+            {% endif %}
+            {% if total_pages == 3 %}
+                <a class="page-link{% if page == 3 %} current-page {% endif %}" href="{{ url_for('admin_users_page', page=3, search=search_query) }}">3</a>
+            {% endif %}
+            {% if total_pages == 4 %}
+                <a class="page-link{% if page == 4 %} current-page {% endif %}" href="{{ url_for('admin_users_page', page=4, search=search_query) }}">4</a>
             {% endif %}
         {% else %}
             {% if page > 2 %}

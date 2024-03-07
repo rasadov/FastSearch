@@ -16,4 +16,6 @@ def search():
     query = request.args.get('search_query', '') 
     page = request.args.get('page', 1, type=int)  
     products = Product.query.filter(Product.title.ilike(f'%{query}%')).paginate(page=page, per_page=10)
-    return render_template('Main/search.html', products=products, query=query)
+    total_pages = products.pages
+    return render_template('Main/search.html', products=products, query=query, total_pages=total_pages, page=page)
+
