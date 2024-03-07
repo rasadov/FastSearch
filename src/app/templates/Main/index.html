@@ -2,6 +2,138 @@
 
 {% block title %}
 <title>Abyssara</title>
+<style>
+    .buy-sections {
+        display: flex;
+        width: 90%;
+        margin: 0 auto 150px;
+        padding: 50px;
+    }
+
+    /* General for all buy sections */
+    .buy-section {
+        background-color:  #333;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        width: 15%;
+        border-radius: 15px;
+        margin: 20px auto;
+        padding: 40px;
+        transition: transform 0.5s;
+
+    }
+    .buy-button {
+        padding: 30px;
+    }
+    .buy-button  a{
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #333;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .buy-button a:hover {
+        color: #ffffff;
+        transition: 0.5s;
+    }
+    .subscription-price {
+        color: #fff;
+        font-size: 30px;
+    }
+    .crossed-out-price {
+        color: #6c6c6c;
+    }
+
+    /* Specific for each buy section */
+
+    /* first buy section */
+    .buy-section:nth-child(1) {
+        background-color: #333;        
+    }
+    .buy-section:nth-child(1):hover {
+        border: #FFFF00 2px solid;
+        transform:scale(1.03);
+    }
+    .time-period-1 {
+        color: #FFFF00;
+        padding: 10px;
+        border-radius: 50px;
+    }
+
+    .buy-section:nth-child(1) a{
+        background-color: #333;
+        color: #FFFF00;
+        border: 2px solid #FFFF00;
+
+    }
+
+    .buy-section:nth-child(1) a:hover {
+        background-color: #FFFF00;
+        color: #333;
+        border: 2px solid #FFFF00;
+    }
+
+    /* second buy section */
+    .buy-section:nth-child(2) {
+        background-color: #333;
+    }
+    .buy-section:nth-child(2):hover {
+        border: #CC00FF 2px solid;
+        transform: scale(1.03);
+    }
+    .time-period-2 {
+        color: #CC00FF;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+
+    .buy-section:nth-child(2) a{
+        background-color: #333;
+        color: #CC00FF;
+        border: 2px solid #CC00FF;
+
+    }
+
+    .buy-section:nth-child(2) a:hover {
+        background-color: #CC00FF;
+        color: #333;
+        border: 2px solid #CC00FF;
+    }
+
+    /* 3th buy section */
+    .buy-section:nth-child(3) {
+        background-color: #333;
+    }
+    
+    .buy-section:nth-child(3):hover {
+        border: #00FF00 2px solid;
+        transform:scale(1.03);
+    }
+    .time-period-3 {
+        color: #00FF00;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+
+    .buy-section:nth-child(3) a{
+        background-color: #333;
+        color: #00FF00;
+        border: 2px solid #00FF00;
+    }
+
+    .buy-section:nth-child(3) a:hover {
+        background-color: #00FF00;
+        color: #333;
+        border: 2px solid #00FF00;
+    }
+    
+</style>
 {% endblock %}
 
 {% block content %}
@@ -9,7 +141,58 @@
     <h1>Abyssara</h1>
 </div>
 <div class="section">
-    <h2 style="padding: 20px;">Search for products fast and efficiently</h2>
+    <div style="padding: 20px;">
+        <h2>Premium price tracking</h2>
+        <p>Analyze whole market in a few minutes</p>
+        <p>Find the best prices for products</p>
+        <p>Build your setup the most efficient way</p>
+    </div>
+</div>
+
+
+<div>
+    <h1>Subscription plans</h1>
+</div>
+
+<div class="buy-sections">
+    <div class="buy-section">
+        <div class="time-period-1">
+            <p>1 month</p>
+        </div>
+        <h2 class="subscription-price">4.99$</h2>
+        <h3 class="crossed-out-price"><del>14.99$</del></h3>
+        <div class="buy-button">
+            <a href="/auth/register">Get started</a>
+        </div>
+    </div>
+    
+    <div class="buy-section">
+        <div class="time-period-2">
+            <p>3 months</p>
+        </div>
+        <h2 class="subscription-price">11.99$</h2>
+        <h3 class="crossed-out-price"><del>35.99$</del></h3>
+        <div class="buy-button">
+            <a href="/auth/register">Get started</a>
+        </div>
+    </div>
+    
+    <div class="buy-section">
+        <div class="time-period-3">
+            <p>1 year</p>
+        </div>
+        <h2 class="subscription-price">44.99$</h2>
+        <h3 class="crossed-out-price"><del>134.99$</del></h3>
+        <div class="buy-button">
+            <a href="/auth/register">Get started</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+</script>
+{% endblock %}
+```

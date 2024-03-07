@@ -31,6 +31,13 @@ nav div a {
     color: white;
 }
 
+nav a {
+    text-decoration: none;
+    color: white;
+    transition: 0.5s;
+
+}
+
 nav a:hover {
     text-shadow: 0 0 10px;
 }
