@@ -1,6 +1,11 @@
 from web import *
 from models import *
 from forms import *
+import sys
+
+sys.path.append('../../fastsearch/')
+
+from fastsearch import *
 
 # Admin page
 
@@ -113,4 +118,134 @@ def admin_user_delete_page(id):
 @app.route('/admin/products', methods=['GET','POST'])
 @admin_required
 def admin_products_page():
-    pass
+    amount = Product.query.count()
+    return render_template('Admin/products.html', amount=amount)
+
+@app.route('/admin/products/search', methods=['GET','POST'])
+@admin_required
+def admin_products_search_page():
+    search_query = request.args.get('search', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 3
+
+    products = Product.query.filter(
+            (Product.title.ilike(f'%{search_query}%')) |
+            (Product.url.ilike(f'%{search_query}%'))
+        ).paginate(page=page, per_page=per_page)
+
+    cnt = products.total
+    
+    total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
+
+    return render_template('Admin/products-search.html', products=products, total_pages=total_pages,
+                            search_query=search_query, page=page)
+
+@app.route('/admin/product/<int:id>', methods=['GET','POST'])
+@admin_required
+def admin_product_info_page(id):
+    product = Product.query.get(id)
+    return render_template('Admin/product-info.html', product=product)
+
+@app.route('/admin/product/edit/<int:id>', methods=['GET','POST'])
+@admin_required
+def admin_product_edit_page(id):
+    product = Product.query.get(id)
+
+    if request.method == 'POST':
+        # Title, price, item_class, producer, amount_of_ratings, rating, availability
+        title = request.form.get('title')
+        price = request.form.get('price')
+        item_class = request.form.get('item_class')
+        producer = request.form.get('producer')
+        amount_of_ratings = request.form.get('amount_of_ratings')
+        rating = request.form.get('rating')
+        availability = request.form.get('availability')
+
+        if title != product.title:
+            product.title = title
+        if price != product.price:
+            product.price = price
+        if item_class != product.item_class:
+            product.item_class = item_class
+        if producer != product.producer:
+            product.producer = producer
+        if amount_of_ratings != product.amount_of_ratings:
+            product.amount_of_ratings = amount_of_ratings
+        if rating != product.rating:
+            product.rating = rating
+        if availability != product.availability:
+            product.availability = availability
+
+        db.session.commit()
+        flash("Product edited successfully", category='success')
+        return redirect(f'/admin/product/{id}')
+
+    return render_template('Admin/edit-product.html', product=product)
+
+@app.route('/admin/product/delete/<int:id>', methods=['GET','POST'])
+@admin_required
+def admin_product_delete_page(id):
+    form = SubmitForm()
+    product = Product.query.get(id)
+    if form.validate_on_submit():
+        db.session.delete(product)
+        db.session.commit()
+        flash("Product deleted successfully", category='success')
+        return redirect('/admin/products')
+    return render_template('Admin/delete-product.html', form=form, product=product)
+
+@app.route('/admin/product/add', methods=['GET','POST'])
+@admin_required
+def admin_product_add_page():
+    return render_template('Admin/add-product.html')
+
+@app.route('/admin/product/add/google-search', methods=['GET','POST'])
+@admin_required
+def admin_product_add_google_search_page():
+    url = request.form.get('query')
+    
+    if request.method == 'POST':
+        if not url:
+            flash("Enter query", category='danger')
+            return redirect('/admin/product/add/google-search')
+    
+        spider = MySpider(url, 'google')
+        spider.run()
+        spider.close()
+        flash("Function runned successfully", category='success')
+        return redirect('/admin/products')
+        
+
+    
+@app.route('/admin/product/add/manual', methods=['GET','POST'])
+@admin_required
+def admin_product_add_manual_page():
+    url = request.form.get('query')
+    
+
+    if request.method == 'POST':
+        if not url:
+            flash("Enter query", category='danger')
+            return redirect('/admin/product/add/manual')
+        
+        
+        product = Product.query.filter_by(url=url)
+        if product.count():
+            flash("Product already in database", category='info')
+            product = product.first()
+            return redirect(f'/admin/product/{product.id}')
+        
+        spider = MySpider(url)
+
+        spider.run()
+        spider.close()
+        product = Product.query.filter_by(url=url)
+        if product.count():
+            flash("Product added to database succesfully", category='success')
+            return redirect(f'/admin/product/{product.id}')
+        else:
+            flash("Product could not be added to database", category='danger')
+            flash("Check if the URL is correct and supported by our program", category='danger')
+            return redirect('/admin/product/add/manual')
+
+    return render_template('Admin/add-product-manual.html')   

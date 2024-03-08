@@ -13,14 +13,14 @@ class MySpider(scrapy.Spider):
     """Spider recieves and processes requests\n"""
     name = 'myspider'
     start_urls = []
-    def __init__(self, query: str, method:str, pages = None, results_per_page = None) -> None:
+    def __init__(self, query: str = '', method:str = 'url', pages = None, results_per_page = None) -> None:
         self.query = query
         self.method = method
         self.pages = pages
         self.results_per_page = results_per_page
 
     def start_requests(self):
-        self.start_urls = [link for title, link in search(self.query, self.method, self.pages)]
+        self.start_urls = [link for link in search(self.query, self.method, self.pages)]
         try:
             self.start_urls = self.start_urls[:self.results_per_page]
         except IndexError:

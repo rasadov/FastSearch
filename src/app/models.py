@@ -61,6 +61,8 @@ class User(UserMixin, db.Model):
         return self.confirmed_on != None
 
     def is_subscribed(self):
+        if self.role == 'admin' or self.role == 'owner':
+            return True
         return self.subscribed_till > datetime.now()
 
     def __repr__(self):

@@ -57,12 +57,11 @@ If it is one page website, no need to set `total_pages` parameter
             results = google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)
             if results:
                 for item in results.get('items', []):
-                    title = item.get('title')
                     link = item.get('link')
-                    yield title, link
+                    yield link
 
     elif method == 'url':
-        yield 'no title for custom url', query
+        yield query
 
     elif method == 'newegg':
         query = query.split(' ')
@@ -71,7 +70,7 @@ If it is one page website, no need to set `total_pages` parameter
             res += i
             if i != len(query) - 1:
                 res += "+"
-        yield 'no title for this url', f"https://www.newegg.com/p/pl?d={res}"
+        yield f"https://www.newegg.com/p/pl?d={res}"
 
 ################### Database functions
 
