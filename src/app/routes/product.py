@@ -1,3 +1,4 @@
+from datetime import timedelta
 from web import *
 from models import *
 
@@ -12,6 +13,8 @@ def home_page():
 # Product search page
 
 @app.route('/search', methods=['GET'])
+@login_required
+@subscribed_required
 def search():
     query = request.args.get('search_query', '') 
     page = request.args.get('page', 1, type=int)  
@@ -19,3 +22,31 @@ def search():
     total_pages = products.pages
     return render_template('Main/search.html', products=products, query=query, total_pages=total_pages, page=page)
 
+# Subcribtions
+
+@app.route('/subcribe/monthly', methods=['GET', 'POST'])
+@login_required
+def subcribe_monthly():
+    user = User.query.get(current_user.id)
+    user.subscribed_till = datetime.now() + timedelta(days=30)
+    flash('Subcribed successfully for 1 month', category='success')
+    db.session.commit()
+    return redirect(url_for('search', query='', page=1))
+
+@app.route('/subcribe/quarterly', methods=['GET', 'POST'])
+@login_required
+def subcribe_quarterly():
+    user = User.query.get(current_user.id)
+    user.subscribed_till = datetime.now() + timedelta(days=90)
+    flash('Subcribed successfully for 3 months', category='success')
+    db.session.commit()
+    return redirect(url_for('search', query='', page=1))
+
+@app.route('/subcribe/yearly', methods=['GET', 'POST'])
+@login_required
+def subcribe_yearly():
+    user = User.query.get(current_user.id)
+    user.subscribed_till = datetime.now() + timedelta(days=365)
+    flash('Subcribed successfully for 1 year', category='success')
+    db.session.commit()
+    return redirect(url_for('search', query='', page=1))

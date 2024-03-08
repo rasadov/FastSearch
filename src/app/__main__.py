@@ -18,7 +18,7 @@ from routes.product import *
 
 ######## User pages ########
     
-from routes.user import *
+from routes.account import *
 
 ######## Admin pages ########
 

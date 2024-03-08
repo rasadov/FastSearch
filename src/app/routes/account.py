@@ -58,15 +58,14 @@ def authorize():
     user_info = resp.json()
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
 
-    user_to_add = User(email_address=user['email'], name=user['name'], is_confirmed=True, confirmed_on=str(datetime.now())[:19])
+    user_to_add = User(email_address=user['email'], name=user['name'], confirmed_on=str(datetime.now())[:19])
     if not User.user_exists(user_to_add.email_address):
         db.session.add(user_to_add)
         db.session.commit()
         login_user(user_to_add)
     else:
         user_to_login = User.query.filter_by(email_address=user_to_add.email_address).first()
-        if not user_to_login.is_confirmed:
-            user_to_login.is_confirmed = True
+        if not user_to_login.is_confirmed():
             user_to_login.confirmed_on = str(datetime.now())[:19]
             db.session.commit()
         login_user(user_to_login)    
@@ -80,7 +79,7 @@ def authorize():
 @login_required
 @unconfirmed_required
 def ask_for_verification():
-    if current_user.is_confirmed:
+    if current_user.is_confirmed():
         flash('Your email is already verified', category='info')
         return redirect('/profile')
     # form = SubmitForm()
@@ -104,7 +103,6 @@ def verify_email():
     if request.method == 'POST':        
         # Verification code is correct
         if form.code.data == verification_code:
-            current_user.is_confirmed = True
             current_user.confirmed_on = str(datetime.now())[:19]
             db.session.commit()
             flash('Email verified successfully', category='success')
@@ -179,7 +177,7 @@ def change_username():
         if not form.name.data:
             form.name.validators = []
         if form.validate_on_submit():
-            if User.check_username(form.username.data) and form.username.data != current_user.username:
+            if User.username_exists(form.username.data) and form.username.data != current_user.username:
                 flash("This username is already taken", category='danger')
                 return redirect('/change-username')
             if form.username.data == current_user.username and form.name.data == current_user.name:

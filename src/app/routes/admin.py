@@ -56,7 +56,7 @@ def admin_user_edit_page(id):
         email_address = request.form.get('email')
 
         if username != user.username:
-            if User.check_username(username):
+            if User.username_exists(username):
                 flash("This username is already taken", category='danger')
                 return redirect(f'/admin/user/edit/{id}')
             user.username = username
@@ -71,18 +71,16 @@ def admin_user_edit_page(id):
         # Confimation
         confirmation = request.form.get('confirmed')
         if confirmation == 'True':
-            if user.is_confirmed == False:
-                user.is_confirmed = True
+            if not user.is_confirmed():
                 user.confirmed_on = str(datetime.now())[:19]
         if confirmation == 'False':
-            if user.is_confirmed == True:
-                user.is_confirmed = False
+            if user.is_confirmed():
                 user.confirmed_on = None
 
         # Role
         role = request.form.get('role')
         
-        if current_user.role != 'owner' and role == 'owner':
+        if user.is_owner() and not current_user.is_owner():
             flash("You can't change owner role", category='danger')
             return redirect(f'/admin/user/edit/{id}')
 
@@ -93,7 +91,7 @@ def admin_user_edit_page(id):
         flash("User edited successfully", category='success')
         return redirect('/admin/users')
     return render_template('Admin/edit-user.html', name=user.name, username=user.username, 
-                           email_address=user.email_address, is_confirmed=user.is_confirmed, role=user.role, id=user.id)
+                           email_address=user.email_address, is_confirmed=user.is_confirmed(), role=user.role, id=user.id)
 
 @app.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -101,7 +99,7 @@ def admin_user_delete_page(id):
     form = SubmitForm()
     user = User.query.get(id)
     if form.validate_on_submit():
-        if user.role == 'owner' and current_user.role != 'owner':
+        if user.is_owner() and not current_user.is_owner():
             flash("You can't delete owner", category='danger')
             return redirect('/admin/users')
         
