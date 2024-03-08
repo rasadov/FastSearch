@@ -1,3 +1,13 @@
+"""
+This module contains functions for searching, parsing and saving data to the database.
+
+Functions:
+    search functions for spider: search, google_custom_search
+    database functions for storing scraped data: save_product_to_database
+    parsing functions for spider: scrap_ebay_item, scrap_amazon_uk_item, scrap_newegg_item, scrap_gamestop_item, scrap_excaliberpc_item, parsing_method
+
+"""
+
 import psycopg2
 import dotenv
 import os

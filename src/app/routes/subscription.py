@@ -1,6 +1,10 @@
+"""
+The routes related to subscription are defined here
+
+All payment related proccesses are handled here  
+"""
+
 from web import *
-from models import *
-from datetime import datetime, timedelta
 
 
 # Subcribtions

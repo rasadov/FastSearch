@@ -1,6 +1,5 @@
-"""This is the main file for the application. It contains the main function and the routes for the application.
-
-The main function is used to run the application. The routes are used to define the different pages of the application.
+"""This file is the brain of the application. It contains the main function that runs the application.
+It runs all the routes and the main configuration of the application.
 """
 
 

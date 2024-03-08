@@ -1,4 +1,6 @@
-from myproject.myproject.spiders import MySpider
+"""This is file imports all the spiders"""
+
+from myproject.myproject.spiders import *
 from scrapy import *
 
 

@@ -1,3 +1,5 @@
+"""Error handling routes."""
+
 from web import *
 
 @app.errorhandler(400)

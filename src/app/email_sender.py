@@ -1,3 +1,7 @@
+"""
+This module is responsible for sending emails to the users.
+"""
+
 import smtplib
 from email.message import EmailMessage
 from string import Template

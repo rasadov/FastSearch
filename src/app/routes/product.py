@@ -1,3 +1,9 @@
+"""
+All the routes related to the product are defined here.
+- The home page is defined here.
+- The product search page is defined here.
+"""
+
 from web import *
 from models import *
 

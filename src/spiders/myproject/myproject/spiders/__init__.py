@@ -1,3 +1,17 @@
+"""
+This module contains the spider class
+
+MySpider Class:
+    __init__(url, method):
+        The constructor method
+    start_requests():
+        Method to start the requests
+    parse:
+        Method to parse the response
+    run:
+        Method to run the spider
+"""
+
 from scrapy.crawler import CrawlerProcess
 import scrapy
 from .utils import *

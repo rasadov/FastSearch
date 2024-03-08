@@ -1,3 +1,7 @@
+"""
+Routes for other files like robots.txt, humans.txt, etc.
+"""
+
 from web import *
 
 @app.route('/robots.txt')

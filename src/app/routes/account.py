@@ -1,9 +1,13 @@
-import random
-from web import *
-from models import *
-from forms import *
-from email_sender import send_email
+"""
+This file contains all the routes related to the user's account management.
+- The register page is defined here.
+- The login page is defined here.
+- The email verification page is defined here.
+- The logout page is defined here.
+- The profile management page is defined here.
+"""
 
+from web import *
 
 ######## Profile pages ########
 
@@ -89,7 +93,7 @@ def ask_for_verification():
     # form = SubmitForm()
     if request.method == 'POST':
             global verification_code
-            verification_code = random.randint(100000, 999999)
+            verification_code = randint(100000, 999999)
             send_email(f'Your verification code is {verification_code}', current_user.email_address, 'Email verification', 'Verification code for abyssara')
             flash('Email verification email sent!', category='info')
             return redirect('/verify-email')
