@@ -1,11 +1,11 @@
 from web import *
 from models import *
 from forms import *
+
 import sys
+sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src')
 
-sys.path.append('../../fastsearch/')
-
-from fastsearch import *
+from spiders import *
 
 # Admin page
 

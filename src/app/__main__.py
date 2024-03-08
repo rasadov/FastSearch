@@ -1,3 +1,9 @@
+"""This is the main file for the application. It contains the main function and the routes for the application.
+
+The main function is used to run the application. The routes are used to define the different pages of the application.
+"""
+
+
 from web import *
 
 @login_manager.user_loader
@@ -19,6 +25,10 @@ from routes.product import *
 ######## User pages ########
     
 from routes.account import *
+
+######## Subscription pages ########
+
+from routes.subscription import *
 
 ######## Admin pages ########
 

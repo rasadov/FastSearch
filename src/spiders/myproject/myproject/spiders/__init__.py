@@ -1,8 +1,6 @@
 from scrapy.crawler import CrawlerProcess
 import scrapy
-import sys
-sys.path.append(r'..\fastsearch')
-from utils import *
+from .utils import *
 import warnings
 
 

@@ -71,7 +71,11 @@ def authorize():
         login_user(user_to_login)    
     session['profile'] = user_info
     session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
-    return redirect('/')
+    
+    if current_user.is_subscribed():
+        return redirect('/search')
+    
+    return redirect('/#subscription')
 
 # Verify email page
 
@@ -106,7 +110,11 @@ def verify_email():
             current_user.confirmed_on = str(datetime.now())[:19]
             db.session.commit()
             flash('Email verified successfully', category='success')
-            return redirect('/profile')
+            
+            if current_user.is_subscribed():
+                return redirect('/profile')
+            
+            return redirect('/#subscription')
         
         # Verification code is not correct
         flash('Invalid verification code', category='danger')

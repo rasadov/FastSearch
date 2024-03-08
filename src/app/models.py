@@ -63,7 +63,7 @@ class User(UserMixin, db.Model):
     def is_subscribed(self):
         if self.role == 'admin' or self.role == 'owner':
             return True
-        return self.subscribed_till > datetime.now()
+        return self.subscribed_till and self.subscribed_till > datetime.now()
 
     def __repr__(self):
         return f'<User {self.id}>'

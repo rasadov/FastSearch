@@ -158,27 +158,6 @@ div.form-text {
 
 {% block content %}
 <div>
-    <h1>User info</h1>
-    <div>
-        <p>
-            User ID: {{ id }}
-        </p>
-        <p>
-            Username: {{ username }}
-        </p>
-        <p>  
-            Email address: {{ email_address }}
-        </p>
-        <p>
-            Confirmed: {{ is_confirmed }}
-        </p>
-        <p>
-            Name: {{ name }}
-        </p>
-        <p>
-            role: {{ role }}
-        </p>
-    </div>
     <h1>Edit User</h1>
     <form method="POST">
         <div>
@@ -224,16 +203,11 @@ div.form-text {
         <div>
             <label for="confirmed">Confirmed:</label><br>
             <select class="input-field" id="confirmed" name="confirmed">
-                {% if is_confirmed %}
-                <option value="True" selected>True</option>
-                <option value="False">False</option>
-                {% else %}
-                <option value="False" selected>False</option>
-                <option value="True">True</option>
-                {% endif %}
+                <option value="True" {% if is_confirmed %} selected {% endif %}>True</option>
+                <option value="False" {% if not is_confirmed %} selected {% endif %}>False</option>
             </select>
         </div>
-        <button class="submit-btn" type="submit">Edit</button>
+        <button class="submit-btn" type="submit">Submit</button>
     </form>
 </div>
 {% endblock %}
