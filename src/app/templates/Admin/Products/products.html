@@ -11,16 +11,16 @@
         <p>There are currently {{ amount }} products in database</p>
     </div>
     <div>
-        <div class="section" style="padding: 50px; width: 50%;">
-            <a style="text-decoration: none; color: white;" href="{{ url_for('admin_products_search_page') }}">
+        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_products_search_page') }}">
+            <div class="section" style="padding: 50px; width: 50%;">
                 <h2>View products in database</h2>
-            </a>
-        </div>
-        <div class="section" style="padding: 50px; width: 50%;">
-            <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_page') }}">
+            </div>
+        </a>
+        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_page') }}">
+            <div class="section" style="padding: 50px; width: 50%;">
                 <h2>Add products to database (Scrape)</h2>
-            </a>
-        </div>
+            </div>
+        </a>
     </div>
 </div>
 

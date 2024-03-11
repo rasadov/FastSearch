@@ -94,7 +94,8 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
     Else:\n
     \tAdds new record in `product` table and starts tracking the price in `price_history` table"""
 
-    url = urlparse(url).netloc + urlparse(url).path  # Shortening url to avoid duplicates in the database
+    parsed_url = urlparse(url)
+    url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()
@@ -234,9 +235,14 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     producer = parsed_data.get('brand')
     title = parsed_data.get('name')
 
-    rating = parsed_data.get('aggregateRating').get('ratingValue')
-    amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
-    
+    try:
+        rating = parsed_data.get('aggregateRating').get('ratingValue')
+        amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+    except AttributeError:
+        rating = None
+        amount_of_ratings = 0
+
+
     # ------------------------- Processing and saving data from response -------------------------
     save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
 
@@ -248,9 +254,6 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     script_content = response.css('script[type="application/ld+json"]::text').get()
 
     parsed_data = json.loads(script_content)
-
-    with open("Sample.json", "+a", encoding="utf-8") as file:
-        file.writelines(script_content)
 
     title = parsed_data.get('name')
     price = parsed_data.get('offers')[0].get('price')
@@ -292,9 +295,9 @@ def parsing_method(response):
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
     
-    html_content = response.body.decode(response.encoding)
-    with open('.html', 'w', encoding=response.encoding) as f:
-        f.write(html_content)
+    # html_content = response.body.decode(response.encoding)
+    # with open('.html', 'w', encoding=response.encoding) as f:
+    #     f.write(html_content)
 
 
     if 'ebay' in url:

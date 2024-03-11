@@ -11,6 +11,7 @@ from models import *
 sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src')
 
 from spiders import *
+from multiprocessing import Process
 
 ########## Main admin page.  ##########
 
@@ -154,7 +155,7 @@ def admin_products_search_page():
         ).paginate(page=page, per_page=per_page)
 
     cnt = products.total
-    
+
     total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
 
     return render_template('Admin/Products/view.html', products=products, total_pages=total_pages,
@@ -221,64 +222,65 @@ This section contains routes for running the scrapy spider.
 - The spider can be runned by entering the URL of the product manually.
 - The spider can be runned by entering the query to the search engine.
 """
-# Three routes below need to be optimized
 
-@app.route('/admin/product/add')
+def run_spider(url, method=None, pages=None, results_per_page=None):
+    spider = MySpider(url, method, pages, results_per_page)
+    spider.run()
+
+@app.route('/admin/product/add', methods=['GET','POST'])
 @admin_required
 def admin_product_add_page():
+    if request.method == 'POST':
+        method = request.form.get('source')
+        if method == 'custom':
+            url = request.form.get('query')
+            
+
+            if not url:
+                flash("Enter query", category='danger')
+                return redirect('/admin/product/add/manual')
+            
+            parsed_url = urlparse(url)
+            url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+            print(url)
+        
+            product = Product.query.filter_by(url=url)
+            if product.count():
+                flash("Product already in database", category='info')
+                product = product.first()
+                return redirect(f'/admin/product/{product.id}')
+
+            p = Process(target=run_spider, args=(url, "url"))
+            p.start()
+            p.join()
+            
+            product = Product.query.filter_by(url=url)
+            print(product.first())
+            if product.count():
+                flash("Product added to database succesfully", category='success')
+                product = product.first()
+                return redirect(f'/admin/product/{product.id}')
+            else:
+                flash("Product could not be added to database", category='danger')
+                flash("Check if the URL is correct and supported by our program", category='danger')
+                return redirect('/admin/product/add')
+            
+        elif method == 'google':
+            url = request.form.get('query')
+            pages = request.form.get('pages')
+            results_per_page = request.form.get('results_per_page')
+
+
+            if not url:
+                flash("Enter query", category='danger')
+                return redirect('/admin/product/add')
+
+            p = Process(target=run_spider, args=(url, "google", pages, results_per_page))
+            p.start()
+            p.join()
+
+            flash("Function runned successfully", category='success')
+            return redirect('/admin/Products/products')
+
     return render_template('Admin/Products/add.html')
-
-@app.route('/admin/product/add/google-search', methods=['GET','POST'])
-@admin_required
-def admin_product_add_google_search_page():
-    url = request.form.get('query')
-    pages = request.form.get('pages')
-    results_per_page = request.form.get('results_per_page')
-
-
-    if request.method == 'POST':
-        if not url:
-            flash("Enter query", category='danger')
-            return redirect('/admin/product/add/google-search')
-    
-        spider = MySpider(url, 'google', pages, results_per_page)
-        spider.run()
-        spider.close()
-        flash("Function runned successfully", category='success')
-        return redirect('/admin/Products/products')
-    return render_template('Admin/Products/add-google-search.html')
-        
-
-    
-@app.route('/admin/product/add/manual', methods=['GET','POST'])
-@admin_required
-def admin_product_add_manual_page():
-    url = request.form.get('query')
-    
-
-    if request.method == 'POST':
-        if not url:
-            flash("Enter query", category='danger')
-            return redirect('/admin/product/add/manual')
-        
-        
-        product = Product.query.filter_by(url=url)
-        if product.count():
-            flash("Product already in database", category='info')
-            product = product.first()
-            return redirect(f'/admin/product/{product.id}')
-        
-        spider = MySpider(url)
-
-        spider.run()
-        spider.close()
-        product = Product.query.filter_by(url=url)
-        if product.count():
-            flash("Product added to database succesfully", category='success')
-            return redirect(f'/admin/product/{product.id}')
-        else:
-            flash("Product could not be added to database", category='danger')
-            flash("Check if the URL is correct and supported by our program", category='danger')
-            return redirect('/admin/product/add/manual')
-
-    return render_template('Admin/Products/add-manual.html')   

@@ -2,29 +2,58 @@
 
 {% block title %}
 <title>Scrape Product</title>
+<link rel="stylesheet" href="../../../static/auth.css">
 {% endblock %}
 
 {% block content %}
 <div style="padding: 50px;">
     <h1>Scrape Product</h1>
-    <div>
-        <h3>Choose method of scraping</h3>
-        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_manual_page') }}">
-        <div class="section" style="padding: 50px; width: 50%;">
-                <h2>Scrape product manually</h2>
-                <p>Enter url of product and it will scrape and add it to database</p>
+    <form method="POST" action="{{ url_for('admin_product_add_page') }}">
+        <div>
+            <select class="input-field" id="source" name="source" onchange="showFields(this.value)">
+                <option value="custom">Custom</option>
+                <option value="google">Google</option>
+            </select>
+        </div>
+        <div id="customFields">
+            <div>
+                <input class="input-field" type="text" id="url" name="query" placeholder="Enter URL">
             </div>
-        </a>
-
-        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_google_search_page') }}">
-        <div class="section" style="padding: 50px; width: 50%;">
-                <h2>Scrape product using Google search</h2>
-                <p>Enter query and it will scrape through several websites that appear when you search for that query in google</p>
+            <div>
+                <p>Enter URL for product and spider will scrape it</p>
             </div>
-        </a>
-    </div>
+        </div>
+        <div id="googleFields" style="display: none;">
+            <div>
+                <input class="input-field" type="text" id="url" name="query" placeholder="Enter query to search">
+            </div>
+            <div>
+                <input class="input-field" type="number" id="pages" name="pages" placeholder="Amount of pages">
+            </div>
+            <div>
+                <input class="input-field" type="number" id="results_per_page" name="results_per_page" placeholder="Results per page">
+            </div>
+            <div>
+                <p>This method will search for your query in google and scrape the results</p>
+            </div>
+        </div>
+        <div>
+            <input class="submit-btn" type="submit" value="Scrape">
+        </div>
+    </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+function showFields(source) {
+    if (source === 'custom') {
+        document.getElementById('customFields').style.display = 'block';
+        document.getElementById('googleFields').style.display = 'none';
+    } else if (source === 'google') {
+        document.getElementById('customFields').style.display = 'none';
+        document.getElementById('googleFields').style.display = 'block';
+    }
+}
+</script>
 {% endblock %}
