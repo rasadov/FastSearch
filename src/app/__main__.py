@@ -4,6 +4,8 @@ It runs all the routes and the main configuration of the application.
 
 
 from web import *
+from models import *
+
 
 @login_manager.user_loader
 def load_user(user_id):

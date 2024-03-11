@@ -14,6 +14,8 @@ import os
 import re
 import requests
 import json
+from urllib.parse import urlparse
+
 
 dotenv.load_dotenv()
 
@@ -163,8 +165,27 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
     conn.close()
 
 ################### Web Scraping functions
+"""
+Note: All functions that start with `scrape` are parsing functions for different websites.
+"""
+    
+def scrape_amazon_item(response, url: None | str = None):
+    """
+    Extracts data from the item page in amazon.com
+    """
+    title = response.css('#productTitle::text').get().strip()
+    price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'.strip()
+    rating = float(re.findall(r'\d+\.\d+', response.css("span.a-icon-alt::text").get())[0])
+    amount_of_ratings = int(response.css("a#acrCustomerReviewLink span#acrCustomerReviewText::text").get().strip().replace(',', '').split(' ')[0])
+    producer = response.css('tr.po-brand span.po-break-word::text').get().strip()
+    item_class = response.css("div#wayfinding-breadcrumbs_feature_div ul li")[-1].css("a::text").get().strip()
 
-def scrap_ebay_item(response, url: str, method : str = "add"):
+    save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+
+
+    
+
+def scrape_ebay_item(response, url: str, method : str = "add"):
     """
     Extracts data from the item page on `ebay.com`
     Not finished
@@ -173,7 +194,7 @@ def scrap_ebay_item(response, url: str, method : str = "add"):
     price = response.css('div.x-price-primary span.ux-textspans::text').get()
         
 
-def scrap_amazon_uk_item(response, url: None | str = None):
+def scrape_amazon_uk_item(response, url: None | str = None):
     """
     Extracts data from item page in amazon.co.uk
     Not finished
@@ -189,7 +210,7 @@ def scrap_amazon_uk_item(response, url: None | str = None):
             file.write(f"ERROR! price: {price} | {title} \n")
 
 
-def scrap_newegg_item(response, url: None | str = None):
+def scrape_newegg_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
@@ -217,7 +238,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     # ------------------------- Processing and saving data from response -------------------------
     save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
 
-def scrap_gamestop_item(response, url: None | str = None):
+def scrape_gamestop_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
@@ -247,7 +268,7 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     # ------------------------- Processing and saving data from response -------------------------
     save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
 
-def scrap_excaliberpc_item(response, url : None | str = None):
+def scrape_excaliberpc_item(response, url : None | str = None):
     # ------------------------- Taking data from response -------------------------
     price = response.css('meta[property="price"]::attr(content)').get()
     if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
@@ -266,23 +287,28 @@ def scrap_excaliberpc_item(response, url : None | str = None):
 def parsing_method(response):
     url = response.meta.get('url', '')
 
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc
+    
     html_content = response.body.decode(response.encoding)
     with open('.html', 'w', encoding=response.encoding) as f:
         f.write(html_content)
 
+
     if 'ebay' in url:
-        scrap_ebay_item(response, url)
+        scrape_ebay_item(response, url)
     
-    elif "amazon" in url:
-        with open(f'data.txt', 'a+', encoding="utf-8") as file:
-            file.write(f"url: {url}\n")
-        scrap_amazon_uk_item(response, url)
+    elif domain == 'www.amazon.com':
+        scrape_amazon_item(response, url)
+
+    elif domain == 'www.amazon.co.uk':
+        scrape_amazon_uk_item(response, url)
 
     elif 'newegg' in url:
-        scrap_newegg_item(response, url)
+        scrape_newegg_item(response, url)
 
     elif 'gamestop' in url:
-        scrap_gamestop_item(response, url)
+        scrape_gamestop_item(response, url)
 
     elif 'excaliberpc' in url:
-        scrap_excaliberpc_item(response, url)
+        scrape_excaliberpc_item(response, url)

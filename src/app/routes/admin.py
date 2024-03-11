@@ -6,20 +6,30 @@ Routes for managing users and products are defined here.
 """
 
 from web import *
+from models import *
 
 sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src')
 
 from spiders import *
 
-# Admin page
+########## Main admin page.  ##########
 
 @app.route('/admin', methods=['GET','POST'])
 @admin_required
 def admin_page():
+    """
+    Contains links to user management, product management and scraping pages.
+    """
     count_of_users = User.query.count()
     count_of_products = Product.query.count()
     return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users)
 
+########## User management ##########
+"""
+This section contains routes for managing users.
+- User search in database
+- User editing, deleting and viewing pages
+"""
 
 @app.route('/admin/users', methods=['GET'])
 @admin_required
@@ -118,6 +128,12 @@ def admin_user_delete_page(id):
         return redirect('/admin/users')
     return render_template('Admin/Users/delete-user.html', form=form, user=user)
 
+########## Product management ##########
+"""
+This section contains routes for managing products.
+- Product search in database
+- Product editing, deleting and viewing pages
+"""
 
 @app.route('/admin/products', methods=['GET','POST'])
 @admin_required
@@ -197,6 +213,14 @@ def admin_product_delete_page(id):
         flash("Product deleted successfully", category='success')
         return redirect('/admin/products')
     return render_template('Admin/Products/delete-product.html', form=form, product=product)
+
+
+########## Scraping ##########
+"""
+This section contains routes for running the scrapy spider.
+- The spider can be runned by entering the URL of the product manually.
+- The spider can be runned by entering the query to the search engine.
+"""
 
 @app.route('/admin/product/add', methods=['GET','POST'])
 @admin_required

@@ -8,6 +8,7 @@ This file contains all the routes related to the user's account management.
 """
 
 from web import *
+from models import *
 
 ######## Profile pages ########
 

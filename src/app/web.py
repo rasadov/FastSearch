@@ -20,7 +20,6 @@ from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 
-from models import *
 from forms import *
 from email_sender import send_email
 

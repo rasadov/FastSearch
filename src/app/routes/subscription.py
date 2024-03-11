@@ -5,6 +5,7 @@ All payment related proccesses are handled here
 """
 
 from web import *
+from models import *
 
 
 # Subcribtions
