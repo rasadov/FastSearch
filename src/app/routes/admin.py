@@ -221,8 +221,9 @@ This section contains routes for running the scrapy spider.
 - The spider can be runned by entering the URL of the product manually.
 - The spider can be runned by entering the query to the search engine.
 """
+# Three routes below need to be optimized
 
-@app.route('/admin/product/add', methods=['GET','POST'])
+@app.route('/admin/product/add')
 @admin_required
 def admin_product_add_page():
     return render_template('Admin/Products/add.html')
@@ -231,17 +232,21 @@ def admin_product_add_page():
 @admin_required
 def admin_product_add_google_search_page():
     url = request.form.get('query')
-    
+    pages = request.form.get('pages')
+    results_per_page = request.form.get('results_per_page')
+
+
     if request.method == 'POST':
         if not url:
             flash("Enter query", category='danger')
             return redirect('/admin/product/add/google-search')
     
-        spider = MySpider(url, 'google')
+        spider = MySpider(url, 'google', pages, results_per_page)
         spider.run()
         spider.close()
         flash("Function runned successfully", category='success')
         return redirect('/admin/Products/products')
+    return render_template('Admin/Products/add-google-search.html')
         
 
     

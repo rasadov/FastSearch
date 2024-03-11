@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Scrape Product</title>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 50px;">
+    <h1>Scrape Product</h1>
+    <div>
+        <h3>Choose method of scraping</h3>
+        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_manual_page') }}">
+        <div class="section" style="padding: 50px; width: 50%;">
+                <h2>Scrape product manually</h2>
+                <p>Enter url of product and it will scrape and add it to database</p>
+            </div>
+        </a>
+
+        <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_google_search_page') }}">
+        <div class="section" style="padding: 50px; width: 50%;">
+                <h2>Scrape product using Google search</h2>
+                <p>Enter query and it will scrape through several websites that appear when you search for that query in google</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
