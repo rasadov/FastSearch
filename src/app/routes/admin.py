@@ -57,7 +57,7 @@ def admin_users_page():
 @admin_required
 def admin_user_info_page(id):
     user = User.query.get(id)
-    return render_template('Admin/Users/user-info.html', user=user)
+    return render_template('Admin/Users/info.html', user=user)
 
 @app.route('/admin/user/edit/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -109,7 +109,7 @@ def admin_user_edit_page(id):
         db.session.commit()
         flash("User edited successfully", category='success')
         return redirect('/admin/users')
-    return render_template('Admin/Users/edit-user.html', name=user.name, username=user.username, 
+    return render_template('Admin/Users/edit.html', name=user.name, username=user.username, 
                            email_address=user.email_address, is_confirmed=user.is_confirmed(), role=user.role, id=user.id)
 
 @app.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
@@ -126,7 +126,7 @@ def admin_user_delete_page(id):
         db.session.commit()
         flash("User deleted successfully", category='success')
         return redirect('/admin/users')
-    return render_template('Admin/Users/delete-user.html', form=form, user=user)
+    return render_template('Admin/Users/delete.html', form=form, user=user)
 
 ########## Product management ##########
 """
@@ -157,14 +157,14 @@ def admin_products_search_page():
     
     total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
 
-    return render_template('Admin/Products/products-search.html', products=products, total_pages=total_pages,
+    return render_template('Admin/Products/view.html', products=products, total_pages=total_pages,
                             search_query=search_query, page=page)
 
 @app.route('/admin/product/<int:id>', methods=['GET','POST'])
 @admin_required
 def admin_product_info_page(id):
     product = Product.query.get(id)
-    return render_template('Admin/Products/product-info.html', product=product)
+    return render_template('Admin/Products/info.html', product=product)
 
 @app.route('/admin/product/edit/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -200,7 +200,7 @@ def admin_product_edit_page(id):
         flash("Product edited successfully", category='success')
         return redirect(f'/admin/product/{id}')
 
-    return render_template('Admin/Products/edit-product.html', product=product)
+    return render_template('Admin/Products/edit.html', product=product)
 
 @app.route('/admin/product/delete/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -212,7 +212,7 @@ def admin_product_delete_page(id):
         db.session.commit()
         flash("Product deleted successfully", category='success')
         return redirect('/admin/products')
-    return render_template('Admin/Products/delete-product.html', form=form, product=product)
+    return render_template('Admin/Products/delete.html', form=form, product=product)
 
 
 ########## Scraping ##########
@@ -225,7 +225,7 @@ This section contains routes for running the scrapy spider.
 @app.route('/admin/product/add', methods=['GET','POST'])
 @admin_required
 def admin_product_add_page():
-    return render_template('Admin/Products/add-product.html')
+    return render_template('Admin/Products/add.html')
 
 @app.route('/admin/product/add/google-search', methods=['GET','POST'])
 @admin_required
@@ -276,4 +276,4 @@ def admin_product_add_manual_page():
             flash("Check if the URL is correct and supported by our program", category='danger')
             return redirect('/admin/product/add/manual')
 
-    return render_template('Admin/Products/add-product-manual.html')   
+    return render_template('Admin/Products/add-manual.html')   

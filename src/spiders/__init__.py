@@ -1,4 +1,8 @@
+import sys
+
 """This is file imports all the spiders"""
+
+sys.path.append('src\spiders')
 
 from myproject.myproject.spiders import *
 

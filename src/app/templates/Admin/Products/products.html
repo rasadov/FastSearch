@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Product management</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div>
+        <h1>Product management</h1>
+        <p>There are currently {{ amount }} products in database</p>
+    </div>
+    <div>
+        <div class="section" style="padding: 50px; width: 50%;">
+            <a style="text-decoration: none; color: white;" href="{{ url_for('admin_products_search_page') }}">
+                <h2>View products in database</h2>
+            </a>
+        </div>
+        <div class="section" style="padding: 50px; width: 50%;">
+            <a style="text-decoration: none; color: white;" href="{{ url_for('admin_product_add_page') }}">
+                <h2>Add products to database (Scrape)</h2>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

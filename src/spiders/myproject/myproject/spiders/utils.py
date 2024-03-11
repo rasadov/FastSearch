@@ -94,6 +94,8 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
     Else:\n
     \tAdds new record in `product` table and starts tracking the price in `price_history` table"""
 
+    url = urlparse(url).netloc + urlparse(url).path  # Shortening url to avoid duplicates in the database
+
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()
  

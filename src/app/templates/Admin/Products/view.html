@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>View products</title>
+<style>
+        .search-field {
+        width: 24%;
+        font-size: 15px;
+        padding: 10px;
+        margin: 20px 0 20px 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .search-btn {
+        width: 3%;
+        padding: 0;
+        font-size: 15px;
+        margin: 20px 0;
+        border: 1px solid #ccc;
+        border-radius: 0 10px 10px 0;
+        cursor: pointer;
+    }
+
+    .search-btn:focus {
+        outline: none;
+    }
+    .search-field:focus {
+        outline: none;
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .user {
+        width: 30%;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .page-link {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 0 5px;
+        color: #333;
+        background-color: #ccc;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .page-link:hover {
+        background-color: #aaa;
+    }
+
+    .page-link.active {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .current-page {
+        background-color: rgb(0, 153, 255);
+        color: #fff;
+        pointer-events: none;
+    }
+
+    .current-page:hover {
+        background-color: rgb(0, 153, 255) !important;
+        color: #fff !important;
+        pointer-events: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %} 
+<div style="text-align: center;">
+    <div>
+        <div>    
+            <h2>View products</h2>
+            <form method="GET" action="{{ url_for('admin_products_search_page') }}">
+                <div class="search-container">
+        
+        
+                    <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
+        
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+            </form>
+            {% if products.total == 0 %}
+                <p>No products found</p>
+            {% else %}
+                <p>{{ products.total }} products found by this query</p>
+            {% endif %}
+            {% for product in products %}
+            <a href="{{product.url}}" style="text-decoration: none; color: white;">
+                <div class="section" style="max-width: 50%; max-height: 50%; padding: 20px; ">
+                    <h4>
+                        {% if product.title|length > 60 %}
+                            {{ product.title[:60] }}...
+                        {% else %}
+                            {{ product.title }}
+                        {% endif %}
+                    </h4>
+                    <p>{{ product.price }}</p>
+                    <div style="width: 20%; margin: auto; display: flex; justify-content: space-between;">
+                        <a href="{{ url_for('admin_product_info_page', id=product.id )}}" style="text-decoration: none; color: white;">
+                            <h4>Info</h4>
+                        </a>
+                        <a href="{{ url_for('admin_product_edit_page', id=product.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
+                            <h4>Edit</h4>
+                        </a>
+                        <a href="{{ url_for('admin_product_delete_page', id=product.id) }}" style="text-decoration: none; color: red;">
+                            <h4>Delete</h4>
+                        </a>
+                    </div>
+                </div>
+            </a>
+            
+            {% endfor %}
+
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}
