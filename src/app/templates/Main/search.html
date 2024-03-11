@@ -75,7 +75,7 @@
 
 {% block content %}
 <div>
-    <form method="GET" action="{{ url_for('search') }}">
+    <form method="GET" action="{{ url_for('search_page') }}">
         <div class="search-container">
             <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{query}}" required>
             <button type="submit" class="search-btn">Search</button>
@@ -83,59 +83,45 @@
     </form>
 </div>
 
-
+<div style="display: flex">    
 {% for product in products %}
-<div style="background: #2f2f2f; width: 240px; margin: 10px auto; border-radius: 25px;">
-    <a href="{{ product.url }}" style="text-decoration: none; color: white; ">
+    <div style="background: #2f2f2f; width: 30%; margin: 10px auto; border-radius: 25px;">
+        <a href="{{ product.url }}" style="text-decoration: none; color: white; ">
 
-        <h1 style="font-size: large; max-width: 180px; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
-        <p style="padding: 10px;">Price: {{product.price}}<p>
-        <p style="padding: 10px;">Rating: {{product.rating}}</h1>
-    </a>
-</div>
+            <h1 style="font-size: large; max-width: 180px; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
+            <p style="padding: 10px;">Price: {{product.price}}<p>
+            <p style="padding: 10px;">Rating: {{product.rating}}</h1>
+        </a>
+    </div>
+    {% if loop.index % 4 == 3 %}
+        </div>
+        <div style="display: flex;">
+    {% endif %}
 {% endfor %}
+</div>
 
-<div class="pagination-container"></div>
-    <ul class="pagination">
-        {% if total_pages <= 4 %}
-            {% if total_pages == 2 %}
-                <a class="page-link{% if page == 1 %} current-page {% endif %}" href="{{ url_for('search', page=1, search=search_query) }}">1</a>
-                <a class="page-link{% if page == 2 %} current-page {% endif %}" href="{{ url_for('search', page=2, search=search_query) }}">2</a>
-            {% endif %}
-            {% if total_pages == 3 %}
-                <a class="page-link{% if page == 3 %} current-page {% endif %}" href="{{ url_for('search', page=3, search=search_query) }}">3</a>
-            {% endif %}
-            {% if total_pages == 4 %}
-                <a class="page-link{% if page == 4 %} current-page {% endif %}" href="{{ url_for('search', page=4, search=search_query) }}">4</a>
-            {% endif %}
-        {% else %}
-            {% if page > 2 %}
-                <a class="page-link" href="{{ url_for('search', page=1, search=search_query ) }}">1</a>
-                {% if page > 3 %}
-                <p style="margin: 0; padding-top: 10px;">...</p>
-                {% endif %}
-
-            {% endif %}
-
-            {% if page > 1 %}
-                <a class="page-link" href="{{ url_for('search', page=page-1, search=search_query) }}">{{ page - 1}}</a>
-            {% endif %}
-            
-            <p class="page-link current-page disabled" href="{{ url_for('search', page=page, search=search_query) }}">{{ page }}</p>
-            
-            {% if page < total_pages %}
-                <a class="page-link" href="{{ url_for('search', page=page+1, search=search_query) }}">{{ page + 1 }}</a>
-            {% endif %}
-
-            {% if page < total_pages-1 %}
-                {% if page < total_pages - 2 %}
-                <p style="margin: 0; padding-top: 10px;">...</p>
-                {% endif %}
-                <a class="page-link" href="{{ url_for('search', page=total_pages, search=search_query) }}">{{ total_pages }}</a>
-            {% endif %}
+<div style="text-align: center;">
+    <div class="pagination">
+        {% if products.has_prev %}
+            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num) }}">Previous</a>
         {% endif %}
-
-    </ul>
+        
+        {% for num in products.iter_pages() %}
+            {% if num %}
+                {% if products.page == num %}
+                    <a class="page-link current-page" href="{{ url_for('search_page', page=num) }}">{{ num }}</a>
+                {% else %}
+                    <a class="page-link" href="{{ url_for('search_page', page=num) }}">{{ num }}</a>
+                {% endif %}
+            {% else %}
+                <span class="page-link">...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if products.has_next %}
+            <a class="page-link" href="{{ url_for('search_page', page=products.next_num) }}">Next</a>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}

@@ -147,7 +147,7 @@ def admin_products_page():
 def admin_products_search_page():
     search_query = request.args.get('search', '')
     page = request.args.get('page', 1, type=int)
-    per_page = 3
+    per_page = 9
 
     products = Product.query.filter(
             (Product.title.ilike(f'%{search_query}%')) |
@@ -242,8 +242,6 @@ def admin_product_add_page():
             
             parsed_url = urlparse(url)
             url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-
-            print(url)
         
             product = Product.query.filter_by(url=url)
             if product.count():
