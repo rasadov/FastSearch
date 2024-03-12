@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>View products</title>
+<style>
+        .search-field {
+        width: 24%;
+        font-size: 15px;
+        padding: 10px;
+        margin: 20px 0 20px 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .search-btn {
+        width: 3%;
+        padding: 0;
+        font-size: 15px;
+        margin: 20px 0;
+        border: 1px solid #ccc;
+        border-radius: 0 10px 10px 0;
+        cursor: pointer;
+    }
+
+    .search-btn:focus {
+        outline: none;
+    }
+    .search-field:focus {
+        outline: none;
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .user {
+        width: 30%;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 15px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .page-link {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 0 5px;
+        color: #333;
+        background-color: #ccc;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .page-link:hover {
+        background-color: #aaa;
+    }
+
+    .page-link.active {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .current-page {
+        background-color: rgb(0, 153, 255);
+        color: #fff;
+        pointer-events: none;
+    }
+
+    .current-page:hover {
+        background-color: rgb(0, 153, 255) !important;
+        color: #fff !important;
+        pointer-events: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %} 
+<div style="text-align: center;">
+    <div>
+        <div>    
+            <h2>View {{ data_type }}s in database</h2>
+            <form method="GET" action="{{ url_for('admin_products_search_page') }}">
+                <div class="search-container">
+                    <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+            </form>
+            {% if items.total == 0 %}
+                <p>No items found</p>
+            {% else %}
+                <p>{{ items.total }} results found by this query</p>
+            {% endif %}
+            <div style="display: flex;">
+            {% for item in items %}
+                {% if data_type == 'Product' %}
+                <a href="{{item.url}}" style="text-decoration: none; color: white;">
+                    <div class="section" style="max-width: 30%; max-height: 50%; padding: 20px; ">
+                        <h4>
+                            {% if item.title|length > 60 %}
+                                {{ item.title[:60] }}...
+                            {% else %}
+                                {{ item.title }}
+                            {% endif %}
+                        </h4>
+                        <p>{{ item.price }}</p>
+                        <div style="width: 40%; margin: auto; display: flex; justify-content: space-between;">
+                            <a href="{{ url_for('admin_product_info_page', id=item.id )}}" style="text-decoration: none; color: white;">
+                                <h4>Info</h4>
+                            </a>
+                            <a href="{{ url_for('admin_product_edit_page', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
+                                <h4>Edit</h4>
+                            </a>
+                            <a href="{{ url_for('admin_product_delete_page', id=item.id) }}" style="text-decoration: none; color: red;">
+                                <h4>Delete</h4>
+                            </a>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
+                {% if data_type == 'User' %}
+                    <div class="user" style="display: inline-block; width: 30%;">
+                        <p>{{ item.username }}</p>
+                        <p>{{ item.email_address }}</p>
+                        <p>{{ item.is_confirmed() }}</p>
+                        <p>{{ item.role }}</p>
+                        <div>
+                            <a href="{{ url_for('admin_user_edit_page', id=item.id) }}">
+                                <button>Edit</button>
+                            </a>
+                            <a href="{{ url_for('admin_user_info_page', id=item.id) }}">
+                                <button>Info</button>
+                            </a>
+                            <a href="{{ url_for('admin_user_delete_page', id=item.id) }}">
+                                <button>Delete</button>
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if loop.index % 4 == 3 %}
+                    </div>
+                    <div style="display: flex;">
+                {% endif %}
+                
+            {% endfor %}
+            
+            </div>
+        </div>    
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <div class="pagination">
+            {% if items.has_prev %}
+                <a class="page-link" href="{{ url_for(function, page=items.prev_num) }}">Previous</a>
+            {% endif %}
+            
+            {% for num in items.iter_pages() %}
+                {% if num %}
+                    {% if items.page == num %}
+                        <a class="page-link current-page" href="{{ url_for(function, page=num) }}">{{ num }}</a>
+                    {% else %}
+                        <a class="page-link" href="{{ url_for(function, page=num) }}">{{ num }}</a>
+                    {% endif %}
+                {% else %}
+                    <span class="page-link">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if items.has_next %}
+                <a class="page-link" href="{{ url_for(function, page=items.next_num) }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}

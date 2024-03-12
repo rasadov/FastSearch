@@ -15,7 +15,7 @@ import re
 import requests
 import json
 from urllib.parse import urlparse
-
+from flask import flash
 
 dotenv.load_dotenv()
 
@@ -176,15 +176,28 @@ def scrape_amazon_item(response, url: None | str = None):
     """
     Extracts data from the item page in amazon.com
     """
-    title = response.css('#productTitle::text').get().strip()
-    price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'.strip()
-    rating = float(re.findall(r'\d+\.\d+', response.css("span.a-icon-alt::text").get())[0])
-    amount_of_ratings = int(response.css("a#acrCustomerReviewLink span#acrCustomerReviewText::text").get().strip().replace(',', '').split(' ')[0])
-    producer = response.css('tr.po-brand span.po-break-word::text').get().strip()
-    item_class = response.css("div#wayfinding-breadcrumbs_feature_div ul li")[-1].css("a::text").get().strip()
+    try:
+        title = response.css('#productTitle::text').get().strip()
+        price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'.strip()
+        try:
+            rating = float(re.findall(r'\d+\.\d+', response.css("span.a-icon-alt::text").get())[0])
+            amount_of_ratings = int(response.css("a#acrCustomerReviewLink span#acrCustomerReviewText::text").get().strip().replace(',', '').split(' ')[0])
+        except Exception:
+            rating = None
+            amount_of_ratings = 0
+        try:
+            producer = response.css('tr.po-brand span.po-break-word::text').get().strip()
+        except Exception:
+            producer = None
+        try:
+            item_class = response.css("div#wayfinding-breadcrumbs_feature_div ul li")[-1].css("a::text").get().strip()
+        except Exception:
+            item_class = None
 
-    save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
-
+        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+    
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
 
     
 
@@ -218,76 +231,107 @@ def scrape_newegg_item(response, url: None | str = None):
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
     """
     # ------------------------- Getting data from response -------------------------
-    item_elements = response.css('ol.breadcrumb li a::text').getall()
     try:
-        item_class = item_elements[len(item_elements) - 2]
-    except IndexError:
-        item_class = None
-    
+        try:
+            item_elements = response.css('ol.breadcrumb li a::text').getall()
+            try:
+                item_class = item_elements[len(item_elements) - 2]
+            except Exception:
+                item_class = None
+        except Exception:
+            item_class = None
 
-    script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
+        
+        script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
 
-    parsed_data = json.loads(script_content)
+        parsed_data = json.loads(script_content)
 
-    price = parsed_data.get('offers').get('price')
-    if parsed_data.get('offers').get('priceCurrency') == "USD":
-        price += '$' 
-    producer = parsed_data.get('brand')
-    title = parsed_data.get('name')
+        price = parsed_data.get('offers').get('price')
+        title = parsed_data.get('name')
+        
+        if parsed_data.get('offers').get('priceCurrency') == "USD":
+            price += '$' 
+        
+        try:
+            producer = parsed_data.get('brand')
+        except Exception:
+            producer = None
 
-    try:
-        rating = parsed_data.get('aggregateRating').get('ratingValue')
-        amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
-    except AttributeError:
-        rating = None
-        amount_of_ratings = 0
+        try:
+            rating = parsed_data.get('aggregateRating').get('ratingValue')
+            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+        except Exception:
+            rating = None
+            amount_of_ratings = 0
 
 
-    # ------------------------- Processing and saving data from response -------------------------
-    save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        # ------------------------- Processing and saving data from response -------------------------
+        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
 
 def scrape_gamestop_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
     # ------------------------- Taking data from response -------------------------
-    script_content = response.css('script[type="application/ld+json"]::text').get()
 
-    parsed_data = json.loads(script_content)
+    try:
+        script_content = response.css('script[type="application/ld+json"]::text').get()
 
-    title = parsed_data.get('name')
-    price = parsed_data.get('offers')[0].get('price')
-    if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
-        price += '$' 
-    producer = parsed_data.get('brand')
-    item_class = parsed_data.get('category')
+        parsed_data = json.loads(script_content)
 
-    rating = parsed_data.get('aggregateRating')
-    if rating:
-        rating = rating.get('ratingValue')
+        title = parsed_data.get('name')
+        price = parsed_data.get('offers')[0].get('price')
+        if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
+            price += '$' 
+        producer = parsed_data.get('brand')
+        item_class = parsed_data.get('category')
 
-    amount_of_ratings = parsed_data.get('aggregateRating')
-    if amount_of_ratings:
-        amount_of_ratings = amount_of_ratings.get('reviewCount')
-    
-    # ------------------------- Processing and saving data from response -------------------------
-    save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        try:
+            rating = parsed_data.get('aggregateRating').get('ratingValue')
+        except Exception:
+            rating = None
+
+        try:
+            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+        except Exception:
+            amount_of_ratings = 0
+
+        # ------------------------- Processing and saving data from response -------------------------
+        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
 
 def scrape_excaliberpc_item(response, url : None | str = None):
     # ------------------------- Taking data from response -------------------------
-    price = response.css('meta[property="price"]::attr(content)').get()
-    if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
-        price += "$"
+    try:
+        price = response.css('meta[property="price"]::attr(content)').get()
+        if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
+            price += "$"
 
-    producer = response.css('meta[property="brand"]::attr(content)').get()
-    title = response.css('h1.product-head_name::text').get().strip()
-    
-    item_class = response.css('ul.breadcrumbs li span::text').getall()[2]
-    rating = response.css('meta[property="ratingValue"]::attr(content)').get()
-    amount_of_ratings = response.css('meta[property="reviewCount"]::attr(content)').get()
+        title = response.css('h1.product-head_name::text').get().strip()
+        
+        try:
+            producer = response.css('meta[property="brand"]::attr(content)').get()
+        except Exception:
+            producer = None
 
-    # ------------------------- Processing and saving data from response -------------------------
-    save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        try:
+            item_class = response.css('ul.breadcrumbs li span::text').getall()[2]
+        except Exception:
+            item_class = None
+        try:
+            rating = response.css('meta[property="ratingValue"]::attr(content)').get()
+            amount_of_ratings = response.css('meta[property="reviewCount"]::attr(content)').get()
+        except Exception:
+            rating = None
+            amount_of_ratings = 0
+
+        # ------------------------- Processing and saving data from response -------------------------
+        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
 
 def parsing_method(response):
     url = response.meta.get('url', '')

@@ -34,7 +34,7 @@ This section contains routes for managing users.
 
 @app.route('/admin/users', methods=['GET'])
 @admin_required
-def admin_users_page():
+def admin_user_search_page():
     page = request.args.get('page', 1, type=int)
     per_page = 3
 
@@ -51,8 +51,8 @@ def admin_users_page():
     total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
 
 
-    return render_template('Admin/Users/users.html', users=users, total_pages=total_pages,
-                            search_query=search_query, page=page)
+    return render_template('Admin/search.html', items=users, total_pages=total_pages,
+                            search_query=search_query, page=page, data_type='User', function='admin_user_search_page')
 
 @app.route('/admin/user/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -158,8 +158,8 @@ def admin_products_search_page():
 
     total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
 
-    return render_template('Admin/Products/view.html', products=products, total_pages=total_pages,
-                            search_query=search_query, page=page)
+    return render_template('Admin/search.html', items=products, total_pages=total_pages,
+                            search_query=search_query, page=page, data_type='Product', function='admin_products_search_page')
 
 @app.route('/admin/product/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -195,7 +195,7 @@ def admin_product_edit_page(id):
         if rating != product.rating:
             product.rating = rating
         if availability != product.availability:
-            product.availability = availability
+            product.availability = (availability == 'True')
 
         db.session.commit()
         flash("Product edited successfully", category='success')
