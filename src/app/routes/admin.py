@@ -23,7 +23,7 @@ def admin_page():
     """
     count_of_users = User.query.count()
     count_of_products = Product.query.count()
-    return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users)
+    return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users,)
 
 ########## User management ##########
 """
@@ -58,7 +58,7 @@ def admin_user_search_page():
 @admin_required
 def admin_user_info_page(id):
     user = User.query.get(id)
-    return render_template('Admin/Users/info.html', user=user)
+    return render_template('Admin/Item/info.html', item=user)
 
 @app.route('/admin/user/edit/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -116,9 +116,8 @@ def admin_user_edit_page(id):
 @app.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
 @admin_required
 def admin_user_delete_page(id):
-    form = SubmitForm()
     user = User.query.get(id)
-    if form.validate_on_submit():
+    if request.method == 'POST':
         if user.is_owner() and not current_user.is_owner():
             flash("You can't delete owner", category='danger')
             return redirect('/admin/users')
@@ -127,7 +126,7 @@ def admin_user_delete_page(id):
         db.session.commit()
         flash("User deleted successfully", category='success')
         return redirect('/admin/users')
-    return render_template('Admin/Users/delete.html', form=form, user=user)
+    return render_template('Admin/Item/delete.html', item=user, func='admin_user_delete_page')
 
 ########## Product management ##########
 """
@@ -135,12 +134,6 @@ This section contains routes for managing products.
 - Product search in database
 - Product editing, deleting and viewing pages
 """
-
-@app.route('/admin/products', methods=['GET','POST'])
-@admin_required
-def admin_products_page():
-    amount = Product.query.count()
-    return render_template('Admin/Products/products.html', amount=amount)
 
 @app.route('/admin/products/search', methods=['GET','POST'])
 @admin_required
@@ -165,7 +158,7 @@ def admin_products_search_page():
 @admin_required
 def admin_product_info_page(id):
     product = Product.query.get(id)
-    return render_template('Admin/Products/info.html', product=product)
+    return render_template('Admin/Item/info.html', item=product)
 
 @app.route('/admin/product/edit/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -206,14 +199,16 @@ def admin_product_edit_page(id):
 @app.route('/admin/product/delete/<int:id>', methods=['GET','POST'])
 @admin_required
 def admin_product_delete_page(id):
-    form = SubmitForm()
     product = Product.query.get(id)
-    if form.validate_on_submit():
+    price_history = PriceHistory.query.filter_by(product_id=id)
+    if request.method == 'POST':
+        for price in price_history:
+            db.session.delete(price)
         db.session.delete(product)
         db.session.commit()
         flash("Product deleted successfully", category='success')
-        return redirect('/admin/products')
-    return render_template('Admin/Products/delete.html', form=form, product=product)
+        return redirect('/admin/search')
+    return render_template('Admin/Item/delete.html', item=product, func='admin_product_delete_page')
 
 
 ########## Scraping ##########
@@ -254,7 +249,6 @@ def admin_product_add_page():
             p.join()
             
             product = Product.query.filter_by(url=url)
-            print(product.first())
             if product.count():
                 flash("Product added to database succesfully", category='success')
                 product = product.first()

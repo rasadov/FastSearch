@@ -49,7 +49,6 @@ def google_custom_search(query, start_index):
         search_results = response.json()
         return search_results
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
         return None
 
 def search(query: str, method: str, total_pages: int | None = None):
@@ -139,9 +138,6 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
                     amount_of_ratings = %s, rating = %s
                 WHERE url = %s;
             """, (price, title, item_class, producer, amount_of_ratings, rating, url))
-            print(f"Product with URL {url} updated.")
-        else:
-            print(f"Product with URL {url} already exists in the database, no update needed.")
     else:
         # This product does not exist, insert a new record into the database
         curr.execute("""
@@ -161,8 +157,6 @@ def save_product_to_database(url, title, price, rating = None, amount_of_ratings
             VALUES (%s, %s, CURRENT_DATE);
         """, (product_id, price))
         
-        print(f"New product with URL {url} inserted into the database.")
-
     conn.commit()
     curr.close()
     conn.close()

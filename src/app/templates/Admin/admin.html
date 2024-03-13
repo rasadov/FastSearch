@@ -45,9 +45,15 @@
         </div>
         <div class="section">
             <h3 style="padding: 20px;">Manage Products</h3>
-            <p>(currently {{ count_of_products }} product in database)</p>
-            <a href="{{ url_for('admin_products_page') }}">
-                <button>Manage Products</button>
+            <p>(currently {{ count_of_products }} products in database)</p>
+            <a href="{{ url_for('admin_products_search_page') }}">
+                <button>View products in database</button>
+            </a>
+        </div>
+        <div class="section">
+            <h3 style="padding: 20px;">Scrape Websites</h3>
+            <a href="{{ url_for('admin_product_add_page') }}">
+                <button>Scrape websites</button>
             </a>
         </div>
     </div>

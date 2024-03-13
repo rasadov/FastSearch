@@ -1,5 +1,6 @@
+from sqlalchemy import Integer, String, Column, Float, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, String, Column, Float, DateTime, Boolean
 from flask_login import UserMixin
 from web import db, bcrypt, app
 from datetime import datetime
@@ -64,6 +65,17 @@ class User(UserMixin, db.Model):
         if self.role == 'admin' or self.role == 'owner':
             return True
         return self.subscribed_till and self.subscribed_till > datetime.now()
+    
+    def items(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'name': self.name,
+            'email_address': self.email_address,
+            'role': self.role,
+            'confirmed_on': self.confirmed_on,
+            'subscribed_till': self.subscribed_till
+        }.items()
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -89,12 +101,40 @@ class Product(db.Model):
     rating = Column(Float(), default=None)
     availability = Column(Boolean(), default=None)
 
+    price_history = relationship("PriceHistory", backref="product")
+
+
     def is_avialable(self):
         return self.availability == "In stock"
+    
+    def items(self):
+        return {
+            'id': self.id,
+            'url': self.url,
+            'title': self.title,
+            'price': self.price,
+            'item_class': self.item_class,
+            'producer': self.producer,
+            'rating': self.rating,
+            'amount_of_ratings': self.amount_of_ratings,
+            'availability': self.is_avialable()
+        }.items()
 
     def __repr__(self):
         return f'<Product {self.id}>'
     
+
+class PriceHistory(db.Model):
+    __tablename__ = 'price_history'
+    def __init__(self, product_id, price, date):
+        self.product_id = product_id
+        self.price = price
+        self.date = date
+
+    price_history_id = Column(Integer(), primary_key=True)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
+    price = Column(String(), nullable=False)
+    change_date = Column(DateTime(), nullable=False, default=str(datetime.now())[:19])
 
 with app.app_context():
     db.create_all()

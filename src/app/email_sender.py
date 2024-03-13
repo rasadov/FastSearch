@@ -22,8 +22,6 @@ def send_email(reciever, message, subject, title):
 
     gmail_username = os.environ.get('MAIL_USERNAME')
     gmail_password = os.environ.get('MAIL_PASSWORD')
-    print(gmail_username, gmail_password)
-    # email.set_content(html.substitute({'name': 'TinTin'}), 'html')
 
     # Load the HTML template
     html_template = Template(Path(os.path.join(os.path.dirname(__file__), 'templates', 'email.html')).read_text())
@@ -38,4 +36,3 @@ def send_email(reciever, message, subject, title):
         smtp.starttls()
         smtp.login(gmail_username, gmail_password)
         smtp.send_message(email)
-        print('all done')
