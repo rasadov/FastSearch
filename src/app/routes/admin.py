@@ -67,44 +67,33 @@ def admin_user_edit_page(id):
     if user.role == 'owner' and current_user.role != 'owner':
         flash("You can't edit owner", category='danger')
         return redirect('/admin/users')
-    
+
     if request.method == 'POST':    
-        # Username, name, email
-        username = request.form.get('username')
-        name = request.form.get('name')
-        email_address = request.form.get('email')
+        fields = {
+            'username': {
+                'validator': User.username_exists,
+                'error_message': "This username is already taken"
+            },
+            'name': {},
+            'email_address': {
+                'validator': lambda email: User.query.filter_by(email_address=email).count(),
+                'error_message': "This email is already taken"
+            },
+            'confirmed': {},
+            'role': {}
+        }
 
-        if username != user.username:
-            if User.username_exists(username):
-                flash("This username is already taken", category='danger')
-                return redirect(f'/admin/user/edit/{id}')
-            user.username = username
-        if name != user.name:
-            user.name = name
-        if email_address != user.email_address:
-            if User.query.filter_by(email_address=email_address).count():
-                flash("This email is already taken", category='danger')
-                return redirect(f'/admin/user/edit/{id}')
-            user.email_address = email_address
-            
-        # Confimation
-        confirmation = request.form.get('confirmed')
-        if confirmation == 'True':
-            if not user.is_confirmed():
-                user.confirmed_on = str(datetime.now())[:19]
-        if confirmation == 'False':
-            if user.is_confirmed():
-                user.confirmed_on = None
-
-        # Role
-        role = request.form.get('role')
-        
-        if user.is_owner() and not current_user.is_owner():
-            flash("You can't change owner role", category='danger')
-            return redirect(f'/admin/user/edit/{id}')
-
-        if role != user.role:
-            user.role = role
+        for field, options in fields.items():
+            value = request.form.get(field)
+            if field == 'confirmed':
+                if value != f"{user.is_confirmed()}":
+                    user.confirmed_on = str(datetime.now())[:19] if value == 'True' else None
+                continue
+            if getattr(user, field) != value:
+                if 'validator' in options and options['validator'](value):
+                    flash(options['error_message'], category='danger')
+                    return redirect(f'/admin/user/edit/{id}')
+                setattr(user, field, value)
 
         db.session.commit()
         flash("User edited successfully", category='success')
@@ -166,28 +155,14 @@ def admin_product_edit_page(id):
 
     if request.method == 'POST':
         # Title, price, item_class, producer, amount_of_ratings, rating, availability
-        title = request.form.get('title')
-        price = request.form.get('price')
-        item_class = request.form.get('item_class')
-        producer = request.form.get('producer')
-        amount_of_ratings = request.form.get('amount_of_ratings')
-        rating = request.form.get('rating')
-        availability = request.form.get('availability')
+        fields = ['title', 'price', 'item_class', 'producer', 'amount_of_ratings', 'rating', 'availability']
 
-        if title != product.title:
-            product.title = title
-        if price != product.price:
-            product.price = price
-        if item_class != product.item_class:
-            product.item_class = item_class
-        if producer != product.producer:
-            product.producer = producer
-        if amount_of_ratings != product.amount_of_ratings:
-            product.amount_of_ratings = amount_of_ratings
-        if rating != product.rating:
-            product.rating = rating
-        if availability != product.availability:
-            product.availability = (availability == 'True')
+        for field in fields:
+            value = request.form.get(field)
+            if field == 'availability':
+                value = (value == 'True')
+            if getattr(product, field) != value:
+                setattr(product, field, value)
 
         db.session.commit()
         flash("Product edited successfully", category='success')
@@ -223,7 +198,7 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
 
 @app.route('/admin/product/add', methods=['GET','POST'])
 @admin_required
-def admin_product_add_page():
+def admin_scrape_page():
     if request.method == 'POST':
         method = request.form.get('source')
         if method == 'custom':
