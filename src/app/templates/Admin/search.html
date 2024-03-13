@@ -129,19 +129,21 @@
                 {% endif %}
                 {% if data_type == 'User' %}
                     <div class="user" style="display: inline-block; width: 30%;">
-                        <p>{{ item.username }}</p>
-                        <p>{{ item.email_address }}</p>
-                        <p>{{ item.is_confirmed() }}</p>
-                        <p>{{ item.role }}</p>
                         <div>
-                            <a href="{{ url_for('admin_user_edit_page', id=item.id) }}">
-                                <button>Edit</button>
+                            <p>{{ item.username }}</p>
+                            <p>{{ item.email_address }}</p>
+                            <p>{{ item.is_confirmed() }}</p>
+                            <p>{{ item.role }}</p>
+                        </div>
+                        <div style="width: 50%; margin: auto; display: flex; justify-content: space-between;">
+                            <a href="{{ url_for('admin_user_edit_page', id=item.id) }}" style="text-decoration: none; color: white;">
+                                <h4>Edit</h4>
                             </a>
-                            <a href="{{ url_for('admin_user_info_page', id=item.id) }}">
-                                <button>Info</button>
+                            <a href="{{ url_for('admin_user_info_page', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
+                                <h4>Info</h4>
                             </a>
-                            <a href="{{ url_for('admin_user_delete_page', id=item.id) }}">
-                                <button>Delete</button>
+                            <a href="{{ url_for('admin_user_delete_page', id=item.id) }}" style="text-decoration: none; color: red;">
+                                <h4>Delete</h4>
                             </a>
                         </div>
                     </div>

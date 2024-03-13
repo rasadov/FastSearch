@@ -31,21 +31,10 @@ class ChangeUsernameForm(FlaskForm):
     name = StringField(label='Name', validators=[Length(3)])
     submit = SubmitField(label='Submit')
 
-# class ChangeEmailForm(FlaskForm):
-#     email_address = EmailField(label='Email Adress', validators=[DataRequired(), Email()])
-#     submit = SubmitField(label='Submit')
-
 class DeleteAccountForm(FlaskForm):
     password = PasswordField(label='Password', validators=[Length(8), DataRequired()])
     submit = SubmitField(label='Submit')
 
 class VerificationForm(FlaskForm):
     code = IntegerField(label='Verification Code', validators=[DataRequired()])
-    submit = SubmitField(label='Submit')
-
-class SearchForm(FlaskForm):
-    search = StringField(label='Search', validators=[DataRequired()])
-    submit = SubmitField(label='Submit')
-
-class SubmitForm(FlaskForm):
     submit = SubmitField(label='Submit')

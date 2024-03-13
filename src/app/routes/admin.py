@@ -36,7 +36,7 @@ This section contains routes for managing users.
 @admin_required
 def admin_user_search_page():
     page = request.args.get('page', 1, type=int)
-    per_page = 3
+    per_page = 9
 
     search_query = request.args.get('search', '')
 
@@ -64,12 +64,11 @@ def admin_user_info_page(id):
 @admin_required
 def admin_user_edit_page(id):
     user = User.query.get(id)
-    if request.method == 'POST':
-
-        if user.role == 'owner' and current_user.role != 'owner':
-            flash("You can't edit owner", category='danger')
-            return redirect('/admin/users')
-
+    if user.role == 'owner' and current_user.role != 'owner':
+        flash("You can't edit owner", category='danger')
+        return redirect('/admin/users')
+    
+    if request.method == 'POST':    
         # Username, name, email
         username = request.form.get('username')
         name = request.form.get('name')
@@ -110,18 +109,18 @@ def admin_user_edit_page(id):
         db.session.commit()
         flash("User edited successfully", category='success')
         return redirect('/admin/users')
-    return render_template('Admin/Users/edit.html', name=user.name, username=user.username, 
-                           email_address=user.email_address, is_confirmed=user.is_confirmed(), role=user.role, id=user.id)
+    
+    return render_template('Admin/Item/edit.html', user=user, data_type='User')
 
 @app.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
 @admin_required
 def admin_user_delete_page(id):
     user = User.query.get(id)
-    if request.method == 'POST':
-        if user.is_owner() and not current_user.is_owner():
-            flash("You can't delete owner", category='danger')
-            return redirect('/admin/users')
-        
+    if user.role == 'owner' and current_user.role != 'owner':
+        flash("You can't edit owner", category='danger')
+        return redirect('/admin/users')
+    
+    if request.method == 'POST':        
         db.session.delete(user)
         db.session.commit()
         flash("User deleted successfully", category='success')
@@ -194,7 +193,7 @@ def admin_product_edit_page(id):
         flash("Product edited successfully", category='success')
         return redirect(f'/admin/product/{id}')
 
-    return render_template('Admin/Products/edit.html', product=product)
+    return render_template('Admin/Item/edit.html', product=product, data_type='Product')
 
 @app.route('/admin/product/delete/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -275,4 +274,4 @@ def admin_product_add_page():
             flash("Function runned successfully", category='success')
             return redirect('/admin/Products/products')
 
-    return render_template('Admin/Products/add.html')
+    return render_template('Admin/Scraping/add.html')

@@ -30,7 +30,7 @@ def register_page():
     
     if form.errors != {}: 
         for err_msg in form.errors.values():
-            flash(f"There was an error: {err_msg[0]}")
+            flash(err_msg[0], category='danger')
     return render_template("Account/register.html", form=form)
 
 @app.route('/login', methods=['GET','POST'])
@@ -91,7 +91,6 @@ def ask_for_verification():
     if current_user.is_confirmed():
         flash('Your email is already verified', category='info')
         return redirect('/profile')
-    # form = SubmitForm()
     if request.method == 'POST':
             global verification_code
             verification_code = randint(100000, 999999)
