@@ -1,5 +1,8 @@
 """
-Routes for other files like robots.txt, humans.txt, etc.
+Routes for other pages.
+
+Routes:
+- `robots.txt` : Serves the robots.txt file for web crawlers
 """
 
 from web import *

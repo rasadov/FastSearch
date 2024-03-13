@@ -1,8 +1,28 @@
 """
-Routes for managing users and products are defined here.
-- The user management page is defined here.
-- The product management page is defined here.
-- The scrapy spider is runned here.
+Routes for managing users and products are defined in this file.
+- The user management page is defined in the '/admin/users' route.
+- The product management page is defined in the '/admin/products/search' route.
+- The scrapy spider can be run by accessing the '/admin/product/add' route.
+
+User Management:
+- `/admin/users` route handles the admin user search page, where admin users can search for users in the database.
+- `/admin/user/<int:id>` route displays the information of a specific user in the admin panel.
+- `/admin/user/edit/<int:id>` route allows editing a user's information in the admin panel.
+- `/admin/user/delete/<int:id>` route is used to delete a user from the admin panel.
+
+Product Management:
+- `/admin/products/search` route handles the search functionality for admin users to search for products in the database.
+- `/admin/product/<int:id>` route displays the information of a specific product in the admin panel.
+- `/admin/product/edit/<int:id>` route allows editing a product's information in the admin panel.
+- `/admin/product/delete/<int:id>` route is used to delete a product from the admin panel.
+
+Scraping:
+- `/admin/product/add` route allows running the scrapy spider to scrape product information.
+    - The spider can be run by entering the URL of the product manually or by entering a search query to the search engine.
+
+Note:
+- All routes require the user to be logged in as an admin.
+- Certain actions, such as editing or deleting a user/product, may have additional restrictions based on user roles.
 """
 
 from web import *
@@ -12,6 +32,8 @@ sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src')
 
 from spiders import *
 from multiprocessing import Process
+
+from urllib.parse import urlparse
 
 ########## Main admin page.  ##########
 
@@ -330,6 +352,18 @@ This section contains routes for running the scrapy spider.
 """
 
 def run_spider(url, method=None, pages=None, results_per_page=None):
+    """
+    Runs a spider to scrape data from a given URL.
+
+    Args:
+        url (str): The URL to scrape data from.
+        method (str, optional): The HTTP method to use for the request. Defaults to None.
+        pages (int, optional): The number of pages to scrape. Defaults to None.
+        results_per_page (int, optional): The number of results to scrape per page. Defaults to None.
+
+    Returns:
+        None
+    """
     spider = MySpider(url, method, pages, results_per_page)
     spider.run()
 

@@ -5,13 +5,13 @@ The forms in this module are used for various purposes such as user login, regis
 password change, username change, account deletion, and verification code submission.
 
 Classes:
-- LoginForm: Form for user login with email address and password fields.
-- RegisterForm: Form for user registration with email address, password, and confirm password fields.
-- ChangePasswordForm: Form for changing the user's password with old password, new password, and confirm password fields.
-- SetPasswordForm: Form for setting a new password with password and confirm password fields.
-- ChangeUsernameForm: Form for changing the user's username with username and name fields.
-- DeleteAccountForm: Form for deleting the user's account with password field.
-- VerificationForm: Form for submitting a verification code with a code field.
+- `LoginForm`: Form for user login with email address and password fields.
+- `RegisterForm`: Form for user registration with email address, password, and confirm password fields.
+- `ChangePasswordForm`: Form for changing the user's password with old password, new password, and confirm password fields.
+- `SetPasswordForm`: Form for setting a new password with password and confirm password fields.
+- `ChangeUsernameForm`: Form for changing the user's username with username and name fields.
+- `DeleteAccountForm`: Form for deleting the user's account with password field.
+- `VerificationForm`: Form for submitting a verification code with a code field.
 """
 
 from flask_wtf import FlaskForm

@@ -57,9 +57,26 @@ DB_PORT = os.environ.get('DB_PORT')
 
 ################### Search functions
 
+import requests
+
 def google_custom_search(query, start_index):
     """
-    Searches google for query
+    Searches Google using the Custom Search API.
+
+    Args:
+        query (str): The search query.
+        start_index (int): The index of the first search result to retrieve.
+
+    Returns:
+        dict: The search results in JSON format.
+
+    Raises:
+        requests.exceptions.RequestException: If an error occurs while making the request.
+
+    Example:
+        >>> results = google_custom_search('GitHub Copilot', 1)
+        >>> print(results['items'][0]['title'])
+        'GitHub Copilot - AI Pair Programmer'
     """
     base_url = "https://www.googleapis.com/customsearch/v1"
     params = {
@@ -79,14 +96,26 @@ def google_custom_search(query, start_index):
 
 def search(query: str, method: str, total_pages: int | None = None):
     """
-Returns link for the page\n
-`query`
-    Url or query you want to search for\n
-`method`
-    Website you are going to use\n
-`total_pages`
-    amount of pages you will get links from\n
-If it is one page website, no need to set `total_pages` parameter
+    Returns links for the given query and method.
+
+    Parameters:
+        query (str): The URL or query you want to search for.
+        method (str): The website you are going to use for searching.
+        total_pages (int, optional): The number of pages to retrieve links from. 
+            If it is a one-page website, there is no need to set this parameter.
+
+    Yields:
+        str: The link for each page found.
+
+    Raises:
+        ValueError: If an invalid method is provided.
+
+    Example:
+        >>> for link in search('python', 'google', total_pages=3):
+        ...     print(link)
+        https://www.google.com/search?q=python
+        https://www.google.com/search?q=python&page=2
+        https://www.google.com/search?q=python&page=3
     """
     if method == 'google':
         for page in range(1, total_pages + 1):
@@ -108,17 +137,29 @@ If it is one page website, no need to set `total_pages` parameter
             if i != len(query) - 1:
                 res += "+"
         yield f"https://www.newegg.com/p/pl?d={res}"
+    else:
+        raise ValueError(f"Invalid method: {method}")
 
 ################### Database functions
 
-def save_product_to_database(url, title, price, rating = None, amount_of_ratings = None, item_class = None, producer = None):
-    """Checks if product is already in database:\n
-    If yes, then checks for change in price/rating:\n 
-    \tIf price changed, updates data in `product` table and saves price change in `price_history` table.\n
-    \tIf rating has changed updates record in the `product` table\n
-    Else:\n
-    \tAdds new record in `product` table and starts tracking the price in `price_history` table"""
+def save_product_to_database(url, title, price, rating=None, amount_of_ratings=None, item_class=None, producer=None):
+    """
+    Saves a product to the database or updates an existing product if it already exists.
 
+    Parameters:
+    - url (str): The URL of the product.
+    - title (str): The title of the product.
+    - price (str): The price of the product.
+    - rating (float, optional): The rating of the product. Defaults to None.
+    - amount_of_ratings (int, optional): The number of ratings for the product. Defaults to None.
+    - item_class (str, optional): The class/category of the product. Defaults to None.
+    - producer (str, optional): The producer/manufacturer of the product. Defaults to None.
+
+    If the product already exists in the database, the function checks for changes in price, rating, and amount of ratings.
+    If the price has changed, it updates the data in the `product` table and saves the price change in the `price_history` table.
+    If the rating has changed, it updates the record in the `product` table.
+    If the product does not exist in the database, it adds a new record to the `product` table and starts tracking the price in the `price_history` table.
+    """
     parsed_url = urlparse(url)
     url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
@@ -195,6 +236,19 @@ Note: All functions that start with `scrape` are parsing functions for different
 def scrape_amazon_item(response, url: None | str = None):
     """
     Extracts data from the item page in amazon.com
+
+    Args:
+        response (obj): The response object from the web scraping request.
+        url (str, optional): The URL of the item page. Defaults to None.
+
+    Returns:
+        None
+
+    Raises:
+        None
+
+    Example:
+        >>> scrape_amazon_item(response, 'https://www.amazon.com/product')
     """
     try:
         title = response.css('#productTitle::text').get().strip()
@@ -218,7 +272,6 @@ def scrape_amazon_item(response, url: None | str = None):
     
     except Exception as e:
         flash(f"Error: {e}", "danger")
-
     
 
 def scrape_ebay_item(response, url: str, method : str = "add"):
@@ -248,47 +301,47 @@ def scrape_amazon_uk_item(response, url: None | str = None):
 
 def scrape_newegg_item(response, url: None | str = None):
     """
-Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `newegg.com`  
+    Scrapes data from a Newegg item page and saves it to the database.
+
+    Args:
+        response: The response object containing the HTML of the item page.
+        url (optional): The URL of the item page. Defaults to None.
+
+    Notes:
+        - This function works only with `newegg.com`.
+        - The scraped data includes the title, price, rating, amount of ratings, producer, and class of the item.
+
+    Raises:
+        Exception: If there is an error during the scraping process.
+
+    Returns:
+        None
     """
-    # ------------------------- Getting data from response -------------------------
     try:
-        try:
-            item_elements = response.css('ol.breadcrumb li a::text').getall()
-            try:
-                item_class = item_elements[len(item_elements) - 2]
-            except Exception:
-                item_class = None
-        except Exception:
-            item_class = None
+        # ------------------------- Getting data from response -------------------------
+        # Extracting item class from breadcrumb
+        item_elements = response.css('ol.breadcrumb li a::text').getall()
+        item_class = item_elements[-2] if len(item_elements) >= 2 else None
 
-        
+        # Extracting data from JSON-LD script tag
         script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
-
         parsed_data = json.loads(script_content)
 
+        # Extracting price, title, producer, rating, and amount of ratings
         price = parsed_data.get('offers').get('price')
         title = parsed_data.get('name')
-        
-        if parsed_data.get('offers').get('priceCurrency') == "USD":
-            price += '$' 
-        
-        try:
-            producer = parsed_data.get('brand')
-        except Exception:
-            producer = None
+        price_currency = parsed_data.get('offers').get('priceCurrency')
+        price += '$' if price_currency == "USD" else ''
 
-        try:
-            rating = parsed_data.get('aggregateRating').get('ratingValue')
-            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
-        except Exception:
-            rating = None
-            amount_of_ratings = 0
-
+        producer = parsed_data.get('brand')
+        rating = parsed_data.get('aggregateRating').get('ratingValue')
+        amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
     except Exception as e:
         flash(f"Error: {e}", "danger")
+
 
 def scrape_gamestop_item(response, url: None | str = None):
     """
@@ -323,15 +376,27 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
     except Exception as e:
         flash(f"Error: {e}", "danger")
 
-def scrape_excaliberpc_item(response, url : None | str = None):
-    # ------------------------- Taking data from response -------------------------
+def scrape_excaliberpc_item(response, url: None | str = None):
+    """
+    Scrapes data from the ExcaliberPC website and saves it to the database.
+
+    Args:
+        response (scrapy.http.Response): The response object containing the web page data.
+        url (str, optional): The URL of the web page. Defaults to None.
+
+    Raises:
+        Exception: If there is an error during the scraping process.
+
+    Returns:
+        None
+    """
     try:
         price = response.css('meta[property="price"]::attr(content)').get()
         if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
             price += "$"
 
         title = response.css('h1.product-head_name::text').get().strip()
-        
+
         try:
             producer = response.css('meta[property="brand"]::attr(content)').get()
         except Exception:
@@ -348,12 +413,22 @@ def scrape_excaliberpc_item(response, url : None | str = None):
             rating = None
             amount_of_ratings = 0
 
-        # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
     except Exception as e:
         flash(f"Error: {e}", "danger")
 
+################### Parsing functions
+
 def parsing_method(response):
+    """
+    Parses the response object and determines the appropriate scraping method based on the URL domain.
+
+    Args:
+        response: The response object obtained from making a request.
+
+    Returns:
+        None
+    """
     url = response.meta.get('url', '')
 
     parsed_url = urlparse(url)
