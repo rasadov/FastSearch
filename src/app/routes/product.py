@@ -1,7 +1,8 @@
 """
-All the routes related to the product are defined here.
-- The home page is defined here.
-- The product search page is defined here.
+This file contains the routes related to the product.
+
+- The home page route is defined here.
+- The product search page route is defined here.
 """
 
 from web import *

@@ -1,15 +1,12 @@
 """
-This module contains the spider class
+This module contains the spider class for web scraping.
 
-MySpider Class:
-    __init__(url, method):
-        The constructor method
-    start_requests():
-        Method to start the requests
-    parse:
-        Method to parse the response
-    run:
-        Method to run the spider
+The spider class, MySpider, is responsible for receiving and processing requests to scrape data from web pages. It utilizes the Scrapy framework to perform the scraping operation.
+
+Example usage:
+    spider = MySpider(query='scrapy', method='url', pages=5, results_per_page=10)
+    spider.run()
+
 """
 
 from scrapy.crawler import CrawlerProcess
@@ -22,16 +19,40 @@ warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWa
 
 
 class MySpider(scrapy.Spider):
-    """Spider recieves and processes requests\n"""
+    """
+    Spider class for web scraping.
+
+    This class receives and processes requests to scrape data from web pages. It inherits from the Scrapy Spider class.
+
+    Attributes:
+        name (str): The name of the spider.
+        start_urls (list): The list of URLs to start scraping from.
+
+    Args:
+        query (str): The search query to be used for scraping.
+        method (str): The method to be used for scraping, e.g., 'url', 'api'.
+        pages (int): The number of pages to scrape.
+        results_per_page (int): The number of results to scrape per page.
+
+    """
+
     name = 'myspider'
     start_urls = []
-    def __init__(self, query: str = '', method:str = 'url', pages = None, results_per_page = None) -> None:
+
+    def __init__(self, query: str = '', method: str = 'url', pages=None, results_per_page=None) -> None:
         self.query = query
         self.method = method
         self.pages = pages
         self.results_per_page = results_per_page
 
     def start_requests(self):
+        """
+        Generates the initial requests to start scraping.
+
+        Returns:
+            generator: A generator of scrapy.Request objects.
+
+        """
         self.start_urls = [link for link in search(self.query, self.method, self.pages)]
         try:
             self.start_urls = self.start_urls[:self.results_per_page]
@@ -40,22 +61,27 @@ class MySpider(scrapy.Spider):
 
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={'url': url})
-    
 
     def parse(self, response):
         """
-Gets the entire HTML content of the page\n
-Used to proccess and store data    
+        Parses the response and extracts data from the web page.
+
+        Args:
+            response (scrapy.http.Response): The response object containing the HTML content of the page.
+
         """
         parsing_method(response)
 
     def run(self):
-        """Activates spider:\n
-    Scraps data and stores it"""
+        """
+        Activates the spider and starts the scraping process.
+
+        This method creates a CrawlerProcess object and starts the spider.
+
+        """
         process = CrawlerProcess(
-        settings={
-            "FEEDS": {
-                },
+            settings={
+                "FEEDS": {},
             }
         )
         process.crawl(MySpider, self.query, self.method, self.pages, self.results_per_page)

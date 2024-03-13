@@ -1,7 +1,7 @@
-"""This file is the brain of the application. It contains the main function that runs the application.
-It runs all the routes and the main configuration of the application.
 """
-
+This file is the entry point of the application. It contains the main function that runs the application.
+It initializes the routes and configures the application.
+"""
 
 from web import *
 from models import *

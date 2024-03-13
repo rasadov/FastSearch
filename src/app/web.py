@@ -2,6 +2,50 @@
 This file contains the main web application and its configuration.
 
 All commonly imported libraries in routes and main file are defined in this file.
+
+The web application is built using Flask, a micro web framework for Python. It provides the necessary functionality for handling HTTP requests, rendering templates, and managing user authentication.
+
+The following libraries are imported in this file:
+- Flask: The main Flask module for creating the web application.
+- flash: A module for displaying flash messages to the user.
+- redirect: A function for redirecting the user to a different URL.
+- render_template: A function for rendering HTML templates.
+- request: A module for handling HTTP requests.
+- url_for: A function for generating URLs for specific routes.
+- send_from_directory: A function for sending files from a directory.
+- session: A module for managing user sessions.
+
+- Flask_Bcrypt: A module for encrypting and verifying passwords using bcrypt.
+- Flask_Login: A module for managing user authentication and sessions.
+- Flask_SQLAlchemy: A module for integrating SQLAlchemy, an Object-Relational Mapping (ORM) library, with Flask.
+- OAuth: A module for integrating OAuth authentication with Flask.
+
+- forms: A module containing the forms used in the web application.
+- email_sender: A module for sending emails.
+
+- dotenv: A module for loading environment variables from a .env file.
+- os: A module for interacting with the operating system.
+- datetime: A module for working with dates and times.
+- timedelta: A module for representing time intervals.
+- randint: A function for generating random integers.
+- sys: A module for interacting with the Python interpreter.
+
+The web application uses a PostgreSQL database for storing user data. The database connection details are read from environment variables using the dotenv module.
+
+The web application also integrates with Google OAuth for user authentication. The client ID and client secret are read from environment variables.
+
+The web application defines several decorators for handling user authentication and authorization:
+- login_required: A decorator that requires the user to be authenticated.
+- logout_required: A decorator that requires the user to be logged out.
+- admin_required: A decorator that requires the user to have the "admin" or "owner" role.
+- owner_required: A decorator that requires the user to have the "owner" role.
+- confirmed_required: A decorator that requires the user to have confirmed their email address.
+- unconfirmed_required: A decorator that requires the user to have not confirmed their email address.
+- subscribed_required: A decorator that requires the user to be subscribed.
+
+These decorators are used in the routes of the web application to control access to certain pages based on the user's authentication and authorization status.
+
+Overall, this file serves as the central configuration file for the web application, importing all necessary modules and defining important variables and decorators.
 """
 
 from flask import (

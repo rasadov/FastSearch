@@ -1,11 +1,37 @@
 """
-This module contains functions for searching, parsing and saving data to the database.
+This module contains functions for searching, parsing, and saving data to the database.
 
 Functions:
-    search functions for spider: search, google_custom_search
-    database functions for storing scraped data: save_product_to_database
-    parsing functions for spider: scrap_ebay_item, scrap_amazon_uk_item, scrap_newegg_item, scrap_gamestop_item, scrap_excaliberpc_item, parsing_method
+    - search functions for spider: search, google_custom_search
+    - database functions for storing scraped data: save_product_to_database
+    - parsing functions for spider: scrape_ebay_item, scrape_amazon_uk_item, scrape_newegg_item, scrape_gamestop_item, parsing_method
 
+Dependencies:
+    - psycopg2: Python-PostgreSQL Database Adapter
+    - dotenv: Loads environment variables from a .env file
+    - os: Provides a way to access environment variables
+    - re: Regular expression operations
+    - requests: HTTP library for making requests
+    - json: JSON encoder and decoder
+    - urllib.parse: URL handling module
+    - flask: Micro web framework for building web applications
+
+Environment Variables:
+    - GOOGLE_SEARCH_ENGINE_API: API key for Google Custom Search Engine
+    - GOOGLE_CX: Custom search engine ID
+    - DB_USER: Database username
+    - DB_NAME: Database name
+    - DB_PASSWORD: Database password
+    - DB_HOST: Database host
+    - DB_PORT: Database port
+
+Note: This module is part of a web scraping project and is intended to be used in a specific context.
+
+Usage:
+    - Import the module: `import utils`
+    - Call the desired functions from the module: `utils.search(query, method, total_pages)`
+
+For more details on each function, refer to their respective docstrings.
 """
 
 import psycopg2

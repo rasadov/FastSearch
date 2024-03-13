@@ -1,10 +1,20 @@
 """
 This file contains all the routes related to the user's account management.
-- The register page is defined here.
-- The login page is defined here.
-- The email verification page is defined here.
-- The logout page is defined here.
-- The profile management page is defined here.
+
+Profile pages:
+- `/register`: Renders the registration page and handles the registration form submission.
+- `/login`: Renders the login page and handles the login functionality.
+- `/login-with-google`: Handles the login with Google functionality.
+- `/authorize`: Handles the authorization process for the user using Google OAuth.
+- `/ask-of-verification`: Renders the ask for verification page and handles the verification form submission.
+- `/verify-email`: Handles the verification of the user's email address.
+- `/logout`: Handles the logout functionality.
+- `/profile`: Renders the profile management page.
+- `/change-password`: Allows the user to change their password.
+- `/set-password`: Allows the user to set a new password.
+- `/change-username`: Handles the functionality to change the username and name of the current user.
+- `/delete-account`: Handles the deletion of a user account.
+
 """
 
 from web import *
@@ -12,11 +22,23 @@ from models import *
 
 ######## Profile pages ########
 
-# Register and login page
-
 @app.route('/register', methods=['GET', 'POST'])
 @logout_required
 def register_page():
+    """
+    Renders the registration page and handles the registration form submission.
+
+    GET: Renders the registration page with an empty registration form.
+    POST: Validates the registration form data. If the form is valid and the email address is not already registered,
+    a new user is created and added to the database. The user is then logged in and redirected to the verification page.
+    If the email address is already registered, an error message is flashed. If there are any form validation errors,
+    the error messages are flashed.
+
+    Returns:
+        If the form is submitted successfully, redirects to the verification page.
+        If there are form validation errors, renders the registration page with the error messages.
+    """
+
     form = RegisterForm()
     if form.validate_on_submit():
         if not User.query.filter_by(email_address=form.email_address.data).count():
@@ -36,6 +58,20 @@ def register_page():
 @app.route('/login', methods=['GET','POST'])
 @logout_required
 def login_page():
+    """
+    Renders the login page and handles the login functionality.
+
+    If the request method is GET, it renders the login page template.
+    If the request method is POST, it validates the login form data.
+    If the form data is valid, it checks if the user exists and the password is correct.
+    If the user exists and the password is correct, it logs in the user and redirects to the home page.
+    If the user does not exist or the password is incorrect, it displays an error message.
+
+    Returns:
+        If the request method is GET, it returns the rendered login page template.
+        If the request method is POST and the form data is valid, it redirects to the home page.
+        If the request method is POST and the form data is invalid, it returns the rendered login page template.
+    """
     form = LoginForm()
     if form.validate_on_submit():
         attempted_user = User.query.filter_by(email_address=form.email_address.data).first()
@@ -57,6 +93,12 @@ def login_with_google():
 @app.route('/authorize')
 @logout_required
 def authorize():
+    """
+    This route handles the authorization process for the user. It uses Google OAuth to authenticate the user and retrieve their information.
+
+    Returns:
+        redirect: If the user is already subscribed, it redirects them to the '/search' page. Otherwise, it redirects them to the '/#subscription' page.
+    """
     google = oauth.create_client('google')  # create the google oauth client
     token = google.authorize_access_token()  # Access token from google (needed to get user info)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
@@ -88,15 +130,27 @@ def authorize():
 @login_required
 @unconfirmed_required
 def ask_for_verification():
+    """
+    Route handler for asking the user to verify their email address.
+
+    If the user is already confirmed, a flash message is displayed and they are redirected to their profile page.
+    If the request method is POST, a verification code is generated, sent to the user's email address, and a flash message is displayed.
+    The user is then redirected to the email verification page.
+    If the request method is GET, the verification page is rendered.
+
+    Returns:
+        If the request method is POST, redirects to '/verify-email'.
+        If the request method is GET, renders the 'Account/verification.html' template.
+    """
     if current_user.is_confirmed():
         flash('Your email is already verified', category='info')
         return redirect('/profile')
     if request.method == 'POST':
-            global verification_code
-            verification_code = randint(100000, 999999)
-            send_email(f'Your verification code is {verification_code}', current_user.email_address, 'Email verification', 'Verification code for abyssara')
-            flash('Email verification email sent!', category='info')
-            return redirect('/verify-email')
+        global verification_code
+        verification_code = randint(100000, 999999)
+        send_email(f'Your verification code is {verification_code}', current_user.email_address, 'Email verification', 'Verification code for abyssara')
+        flash('Email verification email sent!', category='info')
+        return redirect('/verify-email')
 
     return render_template('Account/verification.html')
 
@@ -104,6 +158,19 @@ def ask_for_verification():
 @login_required
 @unconfirmed_required
 def verify_email():
+    """
+    This route handles the verification of user's email address.
+    
+    When a user submits the verification code through a form, this route checks if the code is correct.
+    If the code is correct, the user's email is marked as verified and the user is redirected to the profile page if they are subscribed,
+    otherwise they are redirected to the subscription section of the page.
+    If the code is incorrect, an error message is flashed and the user is redirected back to the verification page.
+    
+    Returns:
+        If the verification code is correct and the user is subscribed, redirects to '/profile'.
+        If the verification code is correct and the user is not subscribed, redirects to '/#subscription'.
+        If the verification code is incorrect, renders the 'Account/verify_email.html' template with the verification form.
+    """
     
     global verification_code
 
@@ -143,6 +210,25 @@ def profile_page():
 @app.route('/change-password', methods=['GET','POST'])
 @login_required
 def change_password():
+    """
+    This route allows the user to change their password.
+
+    If the user hasn't set a password yet, a flash message will be displayed
+    indicating that the password cannot be changed. Otherwise, a form will be
+    rendered for the user to enter their old password and new password.
+
+    If the form is submitted via POST request, the user's old password will be
+    checked for correctness. If it is correct, the new password will be updated
+    in the database and a success flash message will be displayed. If the old
+    password is incorrect, an error flash message will be displayed.
+
+    Returns:
+        If the user is not logged in, they will be redirected to the home page.
+        If the user hasn't set a password yet, they will be redirected to the home page.
+        If the form is submitted and the old password is correct, the user will be
+        redirected to their profile page.
+        Otherwise, the change password form will be rendered.
+    """
     if current_user.password_hash == None:
         flash("You can't change your password because you haven't set it yet", category='danger')
         return redirect('/')
@@ -164,6 +250,23 @@ def change_password():
 @app.route('/set-password', methods=['GET','POST'])
 @login_required
 def set_password():
+    """
+    Route for setting a new password for the user.
+
+    If the current user already has a password set, they will be redirected to their profile page.
+    Otherwise, a form is displayed for the user to enter their new password.
+
+    If the form is submitted via POST request and the entered password is valid, the user's password is updated
+    in the database and a success message is flashed. The user is then redirected to their profile page.
+
+    If the form is submitted via POST request but the entered password is not valid, an error message is flashed.
+
+    If the request method is GET, the form is rendered for the user to enter their new password.
+
+    Returns:
+        A rendered template for the password form.
+
+    """
     if current_user.password_hash:
         flash("You already have set password", category='danger')
         return redirect('/profile')
@@ -176,11 +279,23 @@ def set_password():
             return redirect('/profile')
         else:
             flash("Old password is not correct", category='danger')
-    return render_template('form_base.html', form=form) 
+    return render_template('form_base.html', form=form)
 
 @app.route('/change-username', methods=['GET','POST'])
 @login_required
 def change_username():
+    """
+    This route handles the functionality to change the username and name of the current user.
+
+    Methods:
+    - GET: Renders the form with the current user's username and name pre-filled.
+    - POST: Updates the username and name of the current user in the database.
+
+    Returns:
+    - GET: Renders the 'form_base.html' template with the form object.
+    - POST: Redirects the user to the '/profile' route after updating the username and name.
+
+    """
     form = ChangeUsernameForm()
     
     if request.method == 'POST':
@@ -211,15 +326,27 @@ def change_username():
         form.username.data = current_user.username
         form.name.data = current_user.name
 
-    return render_template('form_base.html', form=form) 
+    return render_template('form_base.html', form=form)
 
 @app.route('/delete-account', methods=['GET','POST'])
 @login_required
 def delete_account():
+    """
+    This route handles the deletion of a user account.
+
+    Methods:
+    - GET: Renders the delete account form.
+    - POST: Deletes the user account if the password is correct.
+
+    Returns:
+    - GET: Renders the delete account form.
+    - POST: Redirects to the home page after successful deletion.
+
+    """
     form = DeleteAccountForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            if current_user.chech_password_correction(attempted_password=form.password.data):
+            if current_user.check_password_correction(attempted_password=form.password.data):
                 db.session.delete(current_user)
                 db.session.commit()
                 flash("Account deleted successfully", category='success')
