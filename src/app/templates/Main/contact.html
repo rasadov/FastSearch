@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<link rel="stylesheet" href="../static/auth.css">
+<title>Contact</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1 style="padding: 20px;">Contact</h1>
+</div>
+<div>
+    <div style="padding: 30px;">
+        <p style="max-width: 60%; margin: auto;">If you have any questions, suggestions or issues. You can contact us through the telegram. We will try to respond to your message as soon as possible. You can contact us through telegram or email</p>
+    </div>
+    <div>
+        <div class="section" style="width: 50%;">
+            <h3 style="padding: 20px;">Contact us through the telegram</h3>
+            <p style="padding: 20px;">Our telegram: <a href="https://t.me/dfoofd">@dfoofd</a></p>
+        </div>
+        <div>
+            <p style="font-size: 25px;">or</p>
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="section" style="width: 50%;">
+            <div style="padding: 30px;">
+                <h3 >Contact us through the email</h3>
+            </div>
+            <form action="{{ url_for('contact_page') }}">
+                <div>
+                    <p>Name: <br>
+                        <input type="text" name="name" id="name" class="input-field" style="width: 45%;">
+                    </p>
+                </div>
+                <div>
+                    <p>Title: <br>
+                        <input type="text" name="title" id="title" class="input-field" style="width: 45%;">
+                    </p>
+                </div>
+                <div>
+                    <p>Subject: <br>
+                        <input type="text" name="subject" id="subject" class="input-field" style="width: 45%;">
+                    </p>
+                </div>
+                <div>
+                    <p>Message: <br>
+                        <textarea name="message" id="message" cols="30" rows="10" class="input-field" style="height: 10%; padding: 10px; width: 45%;"></textarea>
+                    </p>
+                </div>
+                <div>
+                    <input type="submit" value="Send" class="submit-btn" style="width: 45%;">
+                </div>
+                
+            </form>
+        </div>
+        {% else %}
+        <div class="section" style="width: 50%;">
+            <h3 style="padding: 20px;">Contact us through the email</h3>
+            <p style="padding: 20px;">You need to login to contact us through the email. You can login <a href="{{ url_for('login_page') }}">here</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

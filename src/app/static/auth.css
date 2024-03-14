@@ -10,7 +10,7 @@ div.login-container {
 
 
 .google-button {
-    width: 22%;
+    width: 20%;
     height: 50px;
     display: inline-block;
     background-color: #2f2f2f;
@@ -29,8 +29,8 @@ div.login-container {
 }
 
 .google-icon {
-    width: 30px;
-    height: 30px;
+    width: 10%;
+    height: 60%;
     margin-top: 10px;
     margin-left: 10px;
 }

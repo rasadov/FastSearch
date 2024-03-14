@@ -3,25 +3,24 @@ This file is the entry point of the application. It contains the main function t
 It initializes the routes and configures the application.
 
 
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. 
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 26% 
 Roadmap:
 
 - DONE: Test the scraping functionality with the `google` method in the web application side. 
+- DONE: Add the functionality `Forgot Password` in the `app/routes/account.py` file.
+- DONE: Update the Email verification functionality in the `app/routes/account.py` file.
+- DONE: Add the functionality to the `app/routes/other.py` file to handle the contact and donate pages.
 
-- Add the functionality `Forgot Password` in the `app/routes/account.py` file.
-Partially DONE: functionality added but not tested yet.
 
-
-- Add the functionality to the `app/routes/other.py` file to handle the contact and about pages.
 - Add filters to the `app/routes/product.py` file to filter products by category, price, and brand.
 - Implement the `newegg` method in the web application side to scrape products from Newegg and test it.
 - Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file.
 - Add the functionality to automatically scrape products from the web everyday and update the records in the database.
-- Update the Email verification functionality in the `app/routes/account.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
 - Work on the `app/routes/product.py` file to implement the price history graph. Note: Use google charts to implement the graph.
 - Implement OAuth2.0 with Microsoft and Facebook in the `app/routes/account.py` file.
 - Use Google Analytics to track user interactions.
+- Implement the donation functionality in the `app/routes/other.py` file.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
@@ -49,11 +48,6 @@ def load_user(user_id):
         return db.session.get(User,int(user_id))
     except (ValueError, TypeError):
         return None 
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'images/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 ######## Product pages ########
 

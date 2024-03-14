@@ -161,6 +161,16 @@ div.form-text {
                         <p>Search</p>
                     </a>
                 </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('donation_page') }}" style="width: 40px;">
+                        <p>Donate</p>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('contact_page') }}" style="width: 40px;">
+                        <p>Contact</p>
+                    </a>
+                </div>
                 {% if current_user.is_authenticated %}
                 <div class="nav-links">
                     <a href="{{ url_for('profile_page') }}" style="width: 40px;">
