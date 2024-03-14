@@ -69,18 +69,55 @@
         color: #fff !important;
         pointer-events: none;
     }
+
+    .hidden {
+        display: none;
+    }
     </style>
 
 {% endblock %}
 
 {% block content %}
 <div>
-    <form method="GET" action="{{ url_for('search_page') }}">
+    <form method="GET" action="{{ url_for('search_page', brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">
         <div class="search-container">
-            <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{query}}" required>
+            <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{query}}">
             <button type="submit" class="search-btn">Search</button>
         </div>
+
+        <div>
+            
+            
+
+            <div class="hidden" id="args" style="justify-content: space-between;">
+                <div style="display: flex;">
+                    <div style="width: 30%; display: flex; margin: auto;">
+                        <input class="input-field" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 50%; margin: 10px;">
+                        <input class="input-field" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 50%; margin: 10px;">
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div style="width: 30%; display: flex; margin: auto;">
+                        <input class="input-field" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 50%; margin: 10px;">    
+                        <input class="input-field" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 20%; margin: 10px;">
+                        <input class="input-field" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 20%; margin: 10px;">
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" class="submit-btn">Filter</button>
+                </div>
+
+            </div>
+
+        </div>
+
     </form>
+    <button id="filters" type="menu">
+        filter
+    </button>
+    <button>
+        <a href="{{ url_for('search_page') }}">Clear</a>
+    </button>
 </div>
 
 <div style="display: flex">    
@@ -103,15 +140,15 @@
 <div style="text-align: center;">
     <div class="pagination">
         {% if products.has_prev %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num) }}">Previous</a>
+            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price ) }}">Previous</a>
         {% endif %}
         
         {% for num in products.iter_pages() %}
             {% if num %}
                 {% if products.page == num %}
-                    <a class="page-link current-page" href="{{ url_for('search_page', page=num) }}">{{ num }}</a>
+                    <a class="page-link current-page" href="{{ url_for('search_page', page=num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">{{ num }}</a>
                 {% else %}
-                    <a class="page-link" href="{{ url_for('search_page', page=num) }}">{{ num }}</a>
+                    <a class="page-link" href="{{ url_for('search_page', page=num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">{{ num }}</a>
                 {% endif %}
             {% else %}
                 <span class="page-link">...</span>
@@ -119,10 +156,19 @@
         {% endfor %}
         
         {% if products.has_next %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.next_num) }}">Next</a>
+            <a class="page-link" href="{{ url_for('search_page', page=products.next_num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">Next</a>
         {% endif %}
     </div>
 </div>
 
 {% endblock %}
 
+
+{% block scripts %}
+<script>
+    let div = document.getElementById('args');
+    document.getElementById('filters').addEventListener('click', function(event) {
+        document.getElementById('args').classList.toggle('hidden');
+    });
+</script>
+{% endblock %}

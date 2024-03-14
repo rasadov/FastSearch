@@ -3,16 +3,16 @@ This file is the entry point of the application. It contains the main function t
 It initializes the routes and configures the application.
 
 
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 26% 
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 33% 
 Roadmap:
 
 - DONE: Test the scraping functionality with the `google` method in the web application side. 
 - DONE: Add the functionality `Forgot Password` in the `app/routes/account.py` file.
 - DONE: Update the Email verification functionality in the `app/routes/account.py` file.
 - DONE: Add the functionality to the `app/routes/other.py` file to handle the contact and donate pages.
+- DONE: Add filters to the `app/routes/product.py` file to filter products by category, price, and brand.
 
 
-- Add filters to the `app/routes/product.py` file to filter products by category, price, and brand.
 - Implement the `newegg` method in the web application side to scrape products from Newegg and test it.
 - Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file.
 - Add the functionality to automatically scrape products from the web everyday and update the records in the database.
