@@ -2,7 +2,7 @@
 This file contains the routes related to the product.
 
 Routes:
-- `/`: Renders the home page. If the user is anonymous, it logs in a default user.
+- `/`: Renders the home page. 
 - `/search`: Renders the product search page. Requires the user to be logged in and subscribed.
 """
 
@@ -13,8 +13,6 @@ from models import *
 def home_page():
     """
     Renders the home page.
-
-    If the user is anonymous, it logs in a default user.
 
     Returns:
     - Rendered template for the home page.
@@ -39,6 +37,9 @@ def search_page():
 
     Returns:
     - Rendered template for the product search page with the search results.
+    
+    Not Finished:
+    - The price history graph is not implemented.
     """
     query = request.args.get('search', '') 
     page = request.args.get('page', 1, type=int)  

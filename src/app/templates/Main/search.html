@@ -93,7 +93,7 @@
             <p style="padding: 10px;">Rating: {{product.rating}}</h1>
         </a>
     </div>
-    {% if loop.index % 4 == 3 %}
+    {% if (loop.index) % 3 == 0 %}
         </div>
         <div style="display: flex;">
     {% endif %}

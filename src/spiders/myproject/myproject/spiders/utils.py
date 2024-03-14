@@ -59,7 +59,7 @@ DB_PORT = os.environ.get('DB_PORT')
 
 import requests
 
-def google_custom_search(query, start_index):
+def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
     """
     Searches Google using the Custom Search API.
 
@@ -123,6 +123,8 @@ def search(query: str, method: str, total_pages: int | None = None):
             results = google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)
             if results:
                 for item in results.get('items', []):
+                    title = item.get('title')
+                    print(title)
                     link = item.get('link')
                     yield link
 

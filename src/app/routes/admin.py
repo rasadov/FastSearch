@@ -422,7 +422,7 @@ def admin_scrape_page():
                 flash("Enter query", category='danger')
                 return redirect('/admin/product/add')
 
-            p = Process(target=run_spider, args=(url, "google", pages, results_per_page))
+            p = Process(target=run_spider, args=(url, "google", int(pages), int(results_per_page)))
             p.start()
             p.join()
 

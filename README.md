@@ -5,10 +5,20 @@
 Application for tracking prices on several stores. Allows to find best prices for products and analyze market. 
 
 ## Installation
-1. Get API for Google search engine and Google OAuth authentication
-2. Download required packages
+1. Clone the repo
+```bash
+git clone https://github.com/rasadov/FastSearch.git
+```
+2. Get API for Google search engine and Google OAuth authentication
+3. Download required packages
 ```bash
 $ pip install -r requirements.txt
+```
+
+## Usage
+Application gets started from `__main__.py` file in `src/app` directory
+```bash
+$ python src/app
 ```
 
 ## Built With
@@ -17,11 +27,6 @@ $ pip install -r requirements.txt
 * ![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=fff&style=for-the-badge)
 * ![SQLAlchemy Badge](https://img.shields.io/badge/SQLAlchemy-D71F00?logo=sqlalchemy&logoColor=fff&style=for-the-badge)
 
-## Usage
-Application gets started from `__main__.py` file in `src/app` directory
-```bash
-$ python src/app
-```
 
 ## Contribution
 
@@ -36,4 +41,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 ## Contact
 
 Rauf Asadov - raufasadov23@gmail.com
+
+Project link: https://github.com/rasadov/FastSearch
 
