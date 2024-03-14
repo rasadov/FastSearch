@@ -54,8 +54,7 @@ class MySpider(scrapy.Spider):
 
         """
         self.start_urls = [link for link in search(self.query, self.method, self.pages)]
-        # print(self.start_urls)
-
+        
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={'url': url})
 
@@ -67,8 +66,10 @@ class MySpider(scrapy.Spider):
             response (scrapy.http.Response): The response object containing the HTML content of the page.
 
         """
-        print(response.meta['url'])
-        parsing_method(response)
+        try:
+            parsing_method(response)
+        except Exception:
+            pass
 
     def run(self):
         """

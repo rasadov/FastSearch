@@ -25,7 +25,7 @@ from sqlalchemy import Integer, String, Column, Float, DateTime, Boolean, Foreig
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask_login import UserMixin
-from web import db, bcrypt, app
+from web import db, bcrypt, app, s, SignatureExpired
 from datetime import datetime
 
 
@@ -57,6 +57,8 @@ class User(UserMixin, db.Model):
         is_confirmed(): Checks if the user is confirmed.
         is_subscribed(): Checks if the user is subscribed.
         items(): Returns a dictionary of the user's attributes.
+        get_reset_token(expires_sec): Generates a reset token for the user.
+        verify_reset_token(token): Verifies a reset token for the user.
         __repr__(): Returns a string representation of the user.
 
     """
@@ -192,6 +194,32 @@ class User(UserMixin, db.Model):
             return True
         return self.subscribed_till and self.subscribed_till > datetime.now()
     
+    def get_reset_token(self):
+            """
+            Generates a reset token for the user.
+
+            Returns:
+                str: The reset token.
+            """
+            return s.dumps({'user_id': self.id}, salt='password-reset')
+
+    @staticmethod
+    def verify_reset_token(token):
+        """
+        Verify the validity of a password reset token.
+
+        Parameters:
+        - token (str): The password reset token to be verified.
+
+        Returns:
+        - User or None: The User object associated with the token if it is valid, otherwise None.
+        """
+        try:
+            user_id = s.loads(token, salt='password-reset', max_age=1800)['user_id']
+        except SignatureExpired:
+            return None
+        return User.query.get(user_id)
+
     def items(self):
         """
         Returns a dictionary of the user's attributes.

@@ -6,8 +6,10 @@ Profile pages:
 - `/login`: Renders the login page and handles the login functionality.
 - `/login-with-google`: Handles the login with Google functionality.
 - `/authorize`: Handles the authorization process for the user using Google OAuth.
-- `/ask-of-verification`: Renders the ask for verification page and handles the verification form submission.
-- `/verify-email`: Handles the verification of the user's email address.
+- `/forgot_password`: Handles the forgot password functionality.
+- `/reset_password/<token>`: Handles the reset password functionality using a reset token.
+- `/ask-of-verification`: Handles the ask-of-verification route.
+- `/verify_email/<token>`: Handles the email verification functionality using the provided token.
 - `/logout`: Handles the logout functionality.
 - `/profile`: Renders the profile management page.
 - `/change-password`: Allows the user to change their password.
@@ -122,75 +124,110 @@ def authorize():
     if current_user.is_subscribed():
         return redirect('/search')
     
-    return redirect('/#subscription')
+    return redirect('/')
 
-# Verify email page
+# Pages for email verification and password reset via email
 
-@app.route('/ask-of-verification', methods=['GET','POST'])
-@login_required
-@unconfirmed_required
-def ask_for_verification():
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
     """
-    Route handler for asking the user to verify their email address.
+    Handle the forgot password functionality.
 
-    If the user is already confirmed, a flash message is displayed and they are redirected to their profile page.
-    If the request method is POST, a verification code is generated, sent to the user's email address, and a flash message is displayed.
-    The user is then redirected to the email verification page.
-    If the request method is GET, the verification page is rendered.
+    This function is responsible for handling the forgot password feature. It checks if the request method is POST and the form is valid. If the form is valid, it retrieves the user with the provided email address from the database. If the user exists, it generates a reset token, sends an email to the user with the reset password link, and displays a flash message to check the email for instructions. If the user does not exist, it displays a flash message indicating that the email was not found.
 
     Returns:
-        If the request method is POST, redirects to '/verify-email'.
-        If the request method is GET, renders the 'Account/verification.html' template.
-    """
-    if current_user.is_confirmed():
-        flash('Your email is already verified', category='info')
-        return redirect('/profile')
-    if request.method == 'POST':
-        global verification_code
-        verification_code = randint(100000, 999999)
-        send_email(f'Your verification code is {verification_code}', current_user.email_address, 'Email verification', 'Verification code for abyssara')
-        flash('Email verification email sent!', category='info')
-        return redirect('/verify-email')
+        A rendered template 'form_base.html' with the form object.
 
-    return render_template('Account/verification.html')
-
-@app.route('/verify-email', methods=['GET','POST'])
-@login_required
-@unconfirmed_required
-def verify_email():
     """
-    This route handles the verification of user's email address.
-    
-    When a user submits the verification code through a form, this route checks if the code is correct.
-    If the code is correct, the user's email is marked as verified and the user is redirected to the profile page if they are subscribed,
-    otherwise they are redirected to the subscription section of the page.
-    If the code is incorrect, an error message is flashed and the user is redirected back to the verification page.
-    
+    form = ForgotPasswordForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email_address=form.email_address.data).first()
+        if user:
+            token = user.get_reset_token()
+            send_email(user.email_address, f'Link to reset the password 127.0.0.1:5000{ url_for("reset_password", token=token) }', 'Reset Password', 'Password Reset Request')
+            flash('Check your email for instructions to reset your password', 'info')
+        else:
+            flash('Email not found', 'warning')
+    return render_template('form_base.html', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """
+    Reset the password for a user using a reset token.
+
+    Args:
+        token (str): The reset token for the user.
+
     Returns:
-        If the verification code is correct and the user is subscribed, redirects to '/profile'.
-        If the verification code is correct and the user is not subscribed, redirects to '/#subscription'.
-        If the verification code is incorrect, renders the 'Account/verify_email.html' template with the verification form.
-    """
-    
-    global verification_code
+        A redirect response to the appropriate page.
 
+    Raises:
+        None
+    
+    """
+    form = ResetPasswordForm()
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('Token is invalid or has expired', 'warning')
+        return redirect(url_for('forgot_password'))
+    if request.method == 'POST' and form.validate_on_submit():
+        user.password = form.password.data
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login_page'))
+    return render_template('form_base.html', form=form)
+
+@app.route('/ask-of-verification', methods=['GET', 'POST'])
+@login_required
+def ask_of_verification():
+    """
+    Handle the ask-of-verification route.
+
+    This route is used to ask for email verification. It renders a form for the user to enter their verification code.
+    If the form is submitted and valid, it sends an email to the user's email address with a verification token.
+    The user is then redirected to the verify_email route.
+
+    Returns:
+        If the form is submitted and valid, the user is redirected to the verify_email route.
+        Otherwise, the ask-of-verification page is rendered with the verification form.
+
+    """
     form = VerificationForm()
-    if request.method == 'POST':        
-        # Verification code is correct
-        if form.code.data == verification_code:
-            current_user.confirmed_on = str(datetime.now())[:19]
-            db.session.commit()
-            flash('Email verified successfully', category='success')
-            
-            if current_user.is_subscribed():
-                return redirect('/profile')
-            
-            return redirect('/#subscription')
-        
-        # Verification code is not correct
-        flash('Invalid verification code', category='danger')
-        return render_template('Account/verify_email.html', form=form)
-    return render_template('Account/verify_email.html', form=form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email_address=current_user.email_address).first()
+        token = user.get_verification_token()
+        send_email(user.email_address, f'Verify your email 127.0.0.1:5000{ url_for("verify_email", token=token) }', 'Email Verification', 'Verification Code')
+        flash('Check your email for the verification code', 'info')
+        return redirect(url_for('verify_email'))
+    return render_template('form_base.html', form=form)
+
+@app.route('/verify_email/<token>', methods=['GET'])
+def verify_email(token):
+    """
+    Verify the email address using the provided token.
+
+    Parameters:
+    - token (str): The token used for email verification.
+
+    Returns:
+    - redirect: If the email is successfully verified, redirects to the home page.
+    - redirect: If the token is invalid or expired, redirects to the 'unconfirmed' page.
+
+    Raises:
+    - None
+
+    """
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=1800)
+    except SignatureExpired:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+        return redirect(url_for('unconfirmed'))
+    user = User.query.filter_by(email_address=email).first()
+    user.confirmed_on = str(datetime.now())[:19]
+    db.session.add(user)
+    db.session.commit()
+    flash('Thank you for confirming your email address!', 'success')
+    return redirect('/')
 
 # Logout page
 
@@ -279,7 +316,7 @@ def set_password():
             return redirect('/profile')
         else:
             flash("Old password is not correct", category='danger')
-    return render_template('form_base.html', form=form)
+    return render_template('form_base.html', form=form)    
 
 @app.route('/change-username', methods=['GET','POST'])
 @login_required

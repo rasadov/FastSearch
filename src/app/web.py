@@ -19,6 +19,7 @@ The following libraries are imported in this file:
 - Flask_Login: A module for managing user authentication and sessions.
 - Flask_SQLAlchemy: A module for integrating SQLAlchemy, an Object-Relational Mapping (ORM) library, with Flask.
 - OAuth: A module for integrating OAuth authentication with Flask.
+- URLSafeTimedSerializer: A module for generating and verifying URL-safe timed signatures.
 
 - forms: A module containing the forms used in the web application.
 - email_sender: A module for sending emails.
@@ -63,6 +64,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 from forms import *
 from email_sender import send_email
@@ -116,6 +118,8 @@ bcrypt = Bcrypt(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 
 def login_required(f):

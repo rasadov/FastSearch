@@ -12,6 +12,8 @@ Classes:
 - `ChangeUsernameForm`: Form for changing the user's username with username and name fields.
 - `DeleteAccountForm`: Form for deleting the user's account with password field.
 - `VerificationForm`: Form for submitting a verification code with a code field.
+- `ForgotPasswordForm`: Form for submitting the user's email address to reset the password with email address field.
+- `ResetPasswordForm`: Form for resetting the user's password with password and confirm password fields.
 """
 
 from flask_wtf import FlaskForm
@@ -108,4 +110,27 @@ class VerificationForm(FlaskForm):
     - submit: SubmitField for submitting the form.
     """
     code = IntegerField(label='Verification Code', validators=[DataRequired()])
+    submit = SubmitField(label='Submit')
+
+class ForgotPasswordForm(FlaskForm):
+    """
+    Form for submitting the user's email address to reset the password.
+
+    Fields:
+    - email_address: EmailField for entering the user's email address.
+    - submit: SubmitField for submitting the form.
+    """
+    email_address = EmailField(label='Email Address', validators=[DataRequired(), Email()])
+    submit = SubmitField(label='Submit')
+
+class ResetPasswordForm(FlaskForm):
+    """
+    Form for resetting the user's password.
+
+    Fields:
+    - email_address: EmailField for entering the user's email address.
+    - submit: SubmitField for submitting the form.
+    """
+    password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
+    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()]) 
     submit = SubmitField(label='Submit')
