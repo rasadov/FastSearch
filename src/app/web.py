@@ -85,10 +85,11 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
+SERVER_STARTED_ON = datetime.now()
 
 
 app = Flask(__name__)
-oauth = OAuth(app)
+
 
 SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY

@@ -20,6 +20,10 @@ Scraping:
 - `/admin/product/add` route allows running the scrapy spider to scrape product information.
     - The spider can be run by entering the URL of the product manually or by entering a search query to the search engine.
 
+Automatic Scraping:
+- The `update_records()` function is used to update the records in the database by scraping products from the web.
+- The `scheduler` is used to run the `update_records()` function at regular intervals.
+
 Note:
 - All routes require the user to be logged in as an admin.
 - Certain actions, such as editing or deleting a user/product, may have additional restrictions based on user roles.
@@ -34,6 +38,9 @@ from spiders import *
 from multiprocessing import Process
 
 from urllib.parse import urlparse
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 ########## Main admin page.  ##########
 
@@ -75,24 +82,19 @@ def admin_user_search_page():
     Returns:
         A rendered template for the admin user search page.
     """
+
     page = request.args.get('page', 1, type=int)
-    per_page = 9
-
-    search_query = request.args.get('search', '')
-
-    users = User.query.filter(
-            (User.username.ilike(f'%{search_query}%')) |
-            (User.name.ilike(f'%{search_query}%')) |
-            (User.email_address.ilike(f'%{search_query}%'))
-        ).paginate(page=page, per_page=per_page)
+    search = request.args.get('search', '')
+    users = User.query.filter(User.username.ilike(f'%{search}%') | User.email_address.ilike(f'%{search}%') | User.name.ilike(f'%{search}%'))
+    variables = {"search": search}
     
-    cnt = users.total
-    
-    total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
+    users = users.paginate(page=page, per_page=9)
+
+    total_pages = users.pages
 
 
     return render_template('Admin/search.html', items=users, total_pages=total_pages,
-                            search_query=search_query, page=page, data_type='User', function='admin_user_search_page')
+                            variables=variables, page=page, data_type='User', function='admin_user_search_page')
 
 @app.route('/admin/user/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -221,31 +223,54 @@ def admin_products_search_page():
     This route handles the search functionality for admin users to search for products.
 
     Parameters:
-        search_query (str): The search query entered by the user.
-        page (int): The page number for pagination.
-        per_page (int): The number of items to display per page.
+    - search (str, optional): The search query to filter products by title.
+    - min_price (int, optional): The minimum price to filter products by.
+    - max_price (int, optional): The maximum price to filter products by.
+    - brand (str, optional): The brand name to filter products by.
+    - min_rating (float, optional): The minimum rating to filter products by.
+    - max_rating (float, optional): The maximum rating to filter products by.
 
     Returns:
-        render_template: The rendered HTML template for the search results page.
+    - render_template: A Flask function that renders a template with the following arguments:
+        - items: The paginated products matching the search filters.
+        - total_pages: The total number of pages for the paginated products.
+        - variables: A dictionary containing the search filters and their corresponding values.
+        - data_type: A string indicating the type of data being searched (in this case, 'Product').
+        - function: A string indicating the name of the current function ('admin_products_search_page').
+        - page: The current page number for the paginated products.
 
-    Raises:
-        None
+    Example Usage:
+    - When a user visits the '/admin/products/search' route, this function is called to handle the search functionality for admin users.
+    - The function retrieves the search filters from the request arguments and applies them to the Product query.
+    - The filtered products are then paginated and rendered in the 'Admin/search.html' template along with other necessary data.
+
+    Note:
+    - This function requires the user to be an admin, as indicated by the @admin_required decorator.
     """
-    search_query = request.args.get('search', '')
+    filters = {
+        "search" : [request.args.get('search', ''), lambda search, query: query.filter(Product.title.ilike(f'%{search}%'))],
+        "min_price": [request.args.get('min_price', None, type=int), lambda min_price, query: query.filter(Product.price >= min_price)],
+        "max_price": [request.args.get('max_price', None, type=int), lambda max_price, query: query.filter(Product.price <= max_price)],
+        "brand": [request.args.get('brand', None), lambda brand, query: query.filter(Product.producer.ilike(f"%{brand}%"))],
+        "min_rating": [request.args.get('min_rating', None, type=float), lambda rating, query: query.filter(Product.rating >= rating)],
+        "max_rating": [request.args.get('max_rating', None, type=float), lambda rating, query: query.filter(Product.rating <= rating)],
+    }
+
     page = request.args.get('page', 1, type=int)
-    per_page = 9
 
-    products = Product.query.filter(
-            (Product.title.ilike(f'%{search_query}%')) |
-            (Product.url.ilike(f'%{search_query}%'))
-        ).paginate(page=page, per_page=per_page)
+    products = Product.query
+    variables = {}
+    for key, value in filters.items():
+        if value[0]:
+            products = value[1](value[0], products)
+            variables[key] = value[0]
+    
+    products = products.paginate(page=page, per_page=9)
 
-    cnt = products.total
-
-    total_pages = cnt // per_page if cnt % per_page == 0 else cnt // per_page + 1
+    total_pages = products.pages
 
     return render_template('Admin/search.html', items=products, total_pages=total_pages,
-                            search_query=search_query, page=page, data_type='Product', function='admin_products_search_page')
+                            variables=variables, data_type='Product', function='admin_products_search_page', page=page)
 
 @app.route('/admin/product/<int:id>', methods=['GET','POST'])
 @admin_required
@@ -430,3 +455,34 @@ def admin_scrape_page():
             return redirect('/admin/Products/products')
 
     return render_template('Admin/Scraping/add.html')
+
+
+########## Automatic scraping ##########
+"""
+This section contains the code for running the spider automatically at regular intervals.
+"""
+
+def update_records():
+    """
+    Updates the records in the database by scraping products from the web.
+
+    This function retrieves all the products from the database and updates their information
+    by scraping the web using a spider. If an exception occurs during the scraping process,
+    the function continues to the next product.
+
+    Returns:
+        None
+    """
+    products = Product.query.all()
+    for product in products:
+        try:
+            spider = MySpider(product.url, "url")
+            spider.run()
+        except Exception:
+            continue
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=update_records, trigger="interval", hours=24)
+scheduler.start()
+
+atexit.register(lambda: scheduler.shutdown())

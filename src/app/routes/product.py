@@ -58,9 +58,11 @@ def search_page():
     }
 
     products = Product.query
+    variables = {}
     for key, value in filters.items():
         if value[0]:
             products = value[1](value[0], products)
+            variables[key] = value[0]
                         
     total_pages = products.pages
     return render_template('Main/search.html', products=products, query=filters["search"][0], total_pages=total_pages,

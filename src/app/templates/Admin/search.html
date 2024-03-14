@@ -2,6 +2,7 @@
 
 {% block title %}
 <title>View {{data_type}}s</title>
+<link rel="stylesheet" href="../../static/auth.css">
 <style>
         .search-field {
         width: 24%;
@@ -80,6 +81,9 @@
         color: #fff !important;
         pointer-events: none;
     }
+    .hidden {
+        display: none;
+    }
 
 </style>
 {% endblock %}
@@ -89,12 +93,42 @@
     <div>
         <div>    
             <h2>View {{ data_type }}s in database</h2>
-            <form method="GET" action="{{ url_for('admin_products_search_page') }}">
+            <form method="GET" action="{{ url_for(function, **variables) }}">
                 <div class="search-container">
                     <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
                     <button type="submit" class="search-btn">Search</button>
                 </div>
+                {% if data_type == 'Product' %}
+                <div>
+                    <div class="hidden" id="args" style="justify-content: space-between;">
+                        <div style="display: flex;">
+                            <div style="width: 30%; display: flex; margin: auto;">
+                                <input class="input-field" type="number" name="min_price" id="min_price" value="{% if variables['min_price'] %}{{variables['min_price']}}{% endif %}" placeholder="Min price" style="width: 50%; margin: 10px;">
+                                <input class="input-field" type="number" name="max_price" id="max_price" value="{% if variables['max_price'] %}{{variables['max_price']}}{% endif %}" placeholder="Max price" style="width: 50%; margin: 10px;">
+                            </div>
+                        </div>
+                        <div style="display: flex;">
+                            <div style="width: 30%; display: flex; margin: auto;">
+                                <input class="input-field" type="text" name="brand" id="brand" value="{% if variables['brand'] %}{{variables['brand']}}{% endif %}" placeholder="Brand" style="width: 50%; margin: 10px;">    
+                                <input class="input-field" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if variables['min_rating'] %}{{variables['min_rating']}}{% endif %}" placeholder="Min rating" style="width: 20%; margin: 10px;">
+                                <input class="input-field" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if variables['max_rating'] %}{{variables['max_rating']}}{% endif %}" placeholder="Max rating" style="width: 20%; margin: 10px;">
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="submit-btn">Filter</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </form>
+            {% if data_type == 'Product' %}
+            <button id="filters" type="menu">
+                filter
+            </button>
+            <button>
+                <a href="{{ url_for('admin_products_search_page') }}">Clear</a>
+            </button>
+            {% endif %}
             {% if items.total == 0 %}
                 <p>No items found</p>
             {% else %}
@@ -162,15 +196,15 @@
     <div style="text-align: center;">
         <div class="pagination">
             {% if items.has_prev %}
-                <a class="page-link" href="{{ url_for(function, page=items.prev_num) }}">Previous</a>
+                <a class="page-link" href="{{ url_for(function, page=items.prev_num, **variables) }}">Previous</a>
             {% endif %}
             
             {% for num in items.iter_pages() %}
                 {% if num %}
                     {% if items.page == num %}
-                        <a class="page-link current-page" href="{{ url_for(function, page=num) }}">{{ num }}</a>
+                        <a class="page-link current-page" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
                     {% else %}
-                        <a class="page-link" href="{{ url_for(function, page=num) }}">{{ num }}</a>
+                        <a class="page-link" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
                     {% endif %}
                 {% else %}
                     <span class="page-link">...</span>
@@ -178,13 +212,18 @@
             {% endfor %}
             
             {% if items.has_next %}
-                <a class="page-link" href="{{ url_for(function, page=items.next_num) }}">Next</a>
+                <a class="page-link" href="{{ url_for(function, page=items.next_num, **variables) }}">Next</a>
             {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
 
-
 {% block scripts %}
+<script>
+    let div = document.getElementById('args');
+    document.getElementById('filters').addEventListener('click', function(event) {
+        document.getElementById('args').classList.toggle('hidden');
+    });
+</script>
 {% endblock %}

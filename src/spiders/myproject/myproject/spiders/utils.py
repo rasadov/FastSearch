@@ -129,14 +129,6 @@ def search(query: str, method: str, total_pages: int | None = None):
     elif method == 'url':
         yield query
 
-    elif method == 'newegg':
-        query = query.split(' ')
-        res = ''
-        for i in range(len(query)):
-            res += i
-            if i != len(query) - 1:
-                res += "+"
-        yield f"https://www.newegg.com/p/pl?d={res}"
     else:
         raise ValueError(f"Invalid method: {method}")
 

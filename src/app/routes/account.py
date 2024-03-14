@@ -103,8 +103,10 @@ def authorize():
     """
     google = oauth.create_client('google')  # create the google oauth client
     token = google.authorize_access_token()  # Access token from google (needed to get user info)
+    print(token)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
+    print(user_info)
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
 
     user_to_add = User(email_address=user['email'], name=user['name'], confirmed_on=str(datetime.now())[:19])
