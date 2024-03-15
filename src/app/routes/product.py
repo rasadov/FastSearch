@@ -1,5 +1,6 @@
 """
 This file contains the routes related to the product.
+~~~~~~~~~~~~~~~~~~~~~
 
 Routes:
 - `/`: Renders the home page.
@@ -60,11 +61,10 @@ def search_page():
     products = Product.query
     variables = {}
     for key, value in filters.items():
-        if value[0]:
-            products = value[1](value[0], products)
-            variables[key] = value[0]
+        val = value[0]
+        if val:
+            products = value[1](val, products)
+            variables[key] = val
                         
     total_pages = products.pages
-    return render_template('Main/search.html', products=products, query=filters["search"][0], total_pages=total_pages,
-                    page=filters["page"][0], min_price=filters["min_price"][0], max_price=filters["max_price"][0], 
-                    brand=filters["brand"][0], min_rating=filters["min_rating"][0], max_rating=filters["max_rating"][0])
+    return render_template('Main/search.html', products=products,total_pages=total_pages, **variables)

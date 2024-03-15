@@ -1,5 +1,6 @@
 """
 This file contains all the routes related to the user's account management.
+~~~~~~~~~~~~~~~~~~~~~
 
 Profile pages:
 - `/register`: Renders the registration page and handles the registration form submission.

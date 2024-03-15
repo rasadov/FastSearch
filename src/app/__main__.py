@@ -1,9 +1,9 @@
 r"""
 This file is the entry point of the application. It contains the main function that runs the application.
 It initializes the routes and configures the application.
+~~~~~~~~~~~~~~~~~~~~~
 
-
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 50% 
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 43% 
 Roadmap:
 
 - DONE: Test the scraping functionality with the `google` method in the web application side. 
@@ -13,9 +13,10 @@ Roadmap:
 - DONE: Add filters to the `app/routes/product.py` file to filter products by category, price, and brand.
 - DONE: Implement the donation functionality in the `app/routes/other.py` file.
 - DONE: Add the functionality to automatically scrape products from the web everyday and update the records in the database.
+- DONE: Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file. Functions: `scrape_ebay`, `scrape_amazon_uk`.
 
 
-- Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file. Functions: `search`, `scrape_ebay`, `scrape_bestbuy`, `scrape_amazon_uk` and scraping of uk for other countries as well.
+- Improve search functionality in the `app/routes/product.py` file.
 - Work on the `app/routes/product.py` file to implement the price history graph. Note: Use google charts to implement the graph.
 - Implement OAuth2.0 with Microsoft and Facebook in the `app/routes/account.py` file.
 - Use Google Analytics to track user interactions.
@@ -25,7 +26,8 @@ Roadmap:
 
 Extra: progress 25%
 - DONE: After implementation of filters in `/search` route, implement the same functionality in the admin panel.
-- Add new functions
+- Also improve search functionality in the admin panel.
+- Add new functions in the `spiders/myproject/myproject/spiders/utils.py` file to scrape products from other websites.
 - Implement recommendation system in the web application side.
 - Add the chatbot functionality to the web application.
 
@@ -35,6 +37,8 @@ Future Work (After the Roadmap):
 Notes:
 - The `app/routes/subscriptions.py` file is not implemented. It is a placeholder for future work.
 - Probably during development proccess, the roadmap will change.
+- function `scrape_amazon_uk` was removed. amazon.co.uk can be scraped using the `scrape_amazon` function.
+
 """
 
 from web import *

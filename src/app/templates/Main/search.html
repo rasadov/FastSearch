@@ -78,13 +78,22 @@
 {% endblock %}
 
 {% block content %}
+
+{% set params = request.args.copy() %}
+{% set page = params.pop('page', None) %}
+{% set params_copy = params.copy() %}
+{% for key, value in params_copy.items() %}
+    {% if not value %}
+        {{ params.pop(key) }}
+    {% endif %}
+{% endfor %}
+
 <div>
-    <form method="GET" action="{{ url_for('search_page', brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">
+    <form method="GET" action="{{ url_for('search_page') }}">
         <div class="search-container">
-            <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{query}}">
+            <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{search}}">
             <button type="submit" class="search-btn">Search</button>
         </div>
-
         <div>
             <div class="hidden" id="args" style="justify-content: space-between;">
                 <div style="display: flex;">
@@ -135,15 +144,15 @@
 <div style="text-align: center;">
     <div class="pagination">
         {% if products.has_prev %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price ) }}">Previous</a>
+            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num, **params ) }}">Previous</a>
         {% endif %}
         
         {% for num in products.iter_pages() %}
             {% if num %}
                 {% if products.page == num %}
-                    <a class="page-link current-page" href="{{ url_for('search_page', page=num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">{{ num }}</a>
+                    <a class="page-link current-page" href="{{ url_for('search_page', page=num, **params) }}">{{ num }}</a>
                 {% else %}
-                    <a class="page-link" href="{{ url_for('search_page', page=num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">{{ num }}</a>
+                    <a class="page-link" href="{{ url_for('search_page', page=num, **params) }}">{{ num }}</a>
                 {% endif %}
             {% else %}
                 <span class="page-link">...</span>
@@ -151,7 +160,7 @@
         {% endfor %}
         
         {% if products.has_next %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.next_num, brand=brand, search=search, min_rating=min_rating, max_rating=max_rating, min_price=min_price, max_price=max_price) }}">Next</a>
+            <a class="page-link" href="{{ url_for('search_page', page=products.next_num, **params) }}">Next</a>
         {% endif %}
     </div>
 </div>

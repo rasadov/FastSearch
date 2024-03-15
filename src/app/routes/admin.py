@@ -1,4 +1,7 @@
 """
+This file contains the routes for the admin panel of the application.
+~~~~~~~~~~~~~~~~~~~~~
+
 Routes for managing users and products are defined in this file.
 - The user management page is defined in the '/admin/users' route.
 - The product management page is defined in the '/admin/products/search' route.

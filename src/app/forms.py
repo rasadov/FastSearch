@@ -1,5 +1,6 @@
 """
 This module contains Flask forms for user authentication and account management.
+~~~~~~~~~~~~~~~~~~~~~
 
 The forms in this module are used for various purposes such as user login, registration,
 password change, username change, account deletion, and verification code submission.

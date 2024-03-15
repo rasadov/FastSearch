@@ -1,5 +1,6 @@
 """
 This module contains the models for the application.
+~~~~~~~~~~~~~~~~~~~~~
 
 The models in this module represent the entities in the application, such as users and products.
 Each model class defines the attributes and methods associated with the entity it represents.

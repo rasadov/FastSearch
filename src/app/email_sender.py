@@ -1,5 +1,6 @@
 """
 This module is responsible for sending emails to the users.
+~~~~~~~~~~~~~~~~~~~~~
 
 It uses the smtplib library to establish a connection with the SMTP server and send the email.
 The email message is created using the EmailMessage class from the email.message module.

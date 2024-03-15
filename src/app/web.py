@@ -1,5 +1,6 @@
 """
 This file contains the main web application and its configuration.
+~~~~~~~~~~~~~~~~~~~~~
 
 All commonly imported libraries in routes and main file are defined in this file.
 
@@ -114,6 +115,36 @@ google = oauth.register(
     client_kwargs={"scope": "email profile"},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )
+
+# microsft = oauth.register(
+#     name="microsoft",
+#     client_id=os.environ.get("MICROSOFT_CLIENT_ID"),
+#     client_secret=os.environ.get("MICROSOFT_CLIENT_SECRET"),
+#     authorize_url="https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+#     access_token_url="https://login.microsoftonline.com/common/oauth2/v2.0/token",
+#     userinfo_endpoint="https://graph.microsoft.com/v1.0/me",
+#     client_kwargs={"scope": "User.Read"},
+# )
+
+# facebook = oauth.register(
+#     name="facebook",
+#     client_id=os.environ.get("FACEBOOK_CLIENT_ID"),
+#     client_secret=os.environ.get("FACEBOOK_CLIENT_SECRET"),
+#     authorize_url="https://www.facebook.com/v11.0/dialog/oauth",
+#     access_token_url="https://graph.facebook.com/v11.0/oauth/access_token",
+#     userinfo_endpoint="https://graph.facebook.com/v11.0/me?fields=id,name,email",
+#     client_kwargs={"scope": "email"},
+# )
+
+# apple = oauth.register(
+#     name="apple",
+#     client_id=os.environ.get("APPLE_CLIENT_ID"),
+#     client_secret=os.environ.get("APPLE_CLIENT_SECRET"),
+#     authorize_url="https://appleid.apple.com/auth/authorize",
+#     access_token_url="https://appleid.apple.com/auth/token",
+#     userinfo_endpoint="https://appleid.apple.com/auth/me",
+#     client_kwargs={"scope": "email name"},
+# )
 
 bcrypt = Bcrypt(app)
 

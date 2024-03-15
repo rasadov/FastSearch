@@ -1,11 +1,27 @@
 """
 This module contains the spider class for web scraping.
+~~~~~~~~~~~~~~~~~~~~~
 
 The spider class, MySpider, is responsible for receiving and processing requests to scrape data from web pages. It utilizes the Scrapy framework to perform the scraping operation.
 
 Example usage:
     spider = MySpider(query='scrapy', method='url', pages=5, results_per_page=10)
     spider.run()
+
+Attributes:
+    name (str): The name of the spider.
+    start_urls (list): The list of URLs to start scraping from.
+
+Args:
+    query (str): The search query to be used for scraping.
+    method (str): The method to be used for scraping, e.g., 'url', 'api'.
+    pages (int): The number of pages to scrape.
+    results_per_page (int): The number of results to scrape per page.
+
+Methods:
+    start_requests(): Generates the initial requests to start scraping.
+    parse(response): Parses the response and extracts data from the web page.
+    run(): Activates the spider and starts the scraping process.
 
 """
 

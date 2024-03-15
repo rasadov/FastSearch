@@ -1,5 +1,6 @@
 """
-Routes for other pages.
+This module contains routes for serving static files and handling other miscellaneous requests.
+~~~~~~~~~~~~~~~~~~~~~
 
 Routes:
 - `robots.txt` : Serves the robots.txt file for web crawlers

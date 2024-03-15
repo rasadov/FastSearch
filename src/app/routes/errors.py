@@ -1,7 +1,6 @@
 """
-Error handling routes.
-
 This module defines error handling routes for handling different HTTP error codes.
+~~~~~~~~~~~~~~~~~~~~~
 
 The error handling routes are defined using the `@app.errorhandler` decorator provided by the `web` module.
 

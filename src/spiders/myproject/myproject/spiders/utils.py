@@ -1,5 +1,6 @@
 """
 This module contains functions for searching, parsing, and saving data to the database.
+~~~~~~~~~~~~~~~~~~~~~
 
 Functions:
     - search functions for spider: search, google_custom_search
@@ -269,27 +270,49 @@ def scrape_amazon_item(response, url: None | str = None):
 def scrape_ebay_item(response, url: str, method : str = "add"):
     """
     Extracts data from the item page on `ebay.com`
-    Not finished
-    """
-    title = response.css('title::text').get()
-    price = response.css('div.x-price-primary span.ux-textspans::text').get()
-        
 
-def scrape_amazon_uk_item(response, url: None | str = None):
-    """
-    Extracts data from item page in amazon.co.uk
-    Not finished
-    """
-    title = response.css('#productTitle::text').get().strip()
-    price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'
-    if title and price:
-        with open(f'data.txt', 'a+', encoding="utf-8") as file:
-            file.write(f"title: {title}\n")
-            file.write(f"price: {price}\n")
-    else:
-        with open(f'data.txt', 'a+', encoding="utf-8") as file:
-            file.write(f"ERROR! price: {price} | {title} \n")
+    Args:
+        response: The response object containing the HTML of the item page.
+        url (str): The URL of the item page.
+        method (str, optional): The method to use when processing the data. Defaults to "add".
 
+    Returns:
+        None
+
+    Raises:
+        Exception: If there is an error during data extraction.
+
+    """
+    try:
+        # ------------------------- Taking data from response -------------------------
+        script_content = response.css('script[type="application/ld+json"]::text').get()
+        parsed_data = json.loads(script_content)
+
+        title = parsed_data.get('name')
+        price = parsed_data.get('offers').get('price')
+        price_currency = parsed_data.get('offers').get('priceCurrency')
+        price = price + price_currency if price_currency == "USD" else price
+        try:
+            producer = parsed_data.get('brand').get('name')
+        except Exception:
+            producer = None
+        try:
+            item_class = parsed_data.get('category')
+        except Exception:
+            item_class = None
+
+        try:
+            rating = response.css('div.x-rating-details span[data-testid="review--start--rating"] span.ux-textspans::text').get()
+            amount_of_ratings = response.css('div.x-rating-details span.ux-summary__count::text').get()
+            amount_of_ratings = int(amount_of_ratings.split(' ')[0].replace(',', '').strip()) if amount_of_ratings else 0
+        except Exception:
+            rating = None
+            amount_of_ratings = 0
+            
+        # ------------------------- Processing and saving data from response -------------------------
+        save_product_to_database(url, title, price, None, None, item_class, producer)        
+    except Exception as e:
+        flash(f"Error: {e}", "danger")
 
 def scrape_newegg_item(response, url: None | str = None):
     """
@@ -310,7 +333,7 @@ def scrape_newegg_item(response, url: None | str = None):
         None
     """
     try:
-        # ------------------------- Getting data from response -------------------------
+        # ------------------------- Taking data from response -------------------------
         # Extracting item class from breadcrumb
         item_elements = response.css('ol.breadcrumb li a::text').getall()
         item_class = item_elements[-2] if len(item_elements) >= 2 else None
@@ -339,9 +362,9 @@ def scrape_gamestop_item(response, url: None | str = None):
     """
 Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
-    # ------------------------- Taking data from response -------------------------
 
     try:
+        # ------------------------- Taking data from response -------------------------
         script_content = response.css('script[type="application/ld+json"]::text').get()
 
         parsed_data = json.loads(script_content)
@@ -426,9 +449,9 @@ def parsing_method(response):
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
     
-    # html_content = response.body.decode(response.encoding)
-    # with open('.html', 'w', encoding=response.encoding) as f:
-    #     f.write(html_content)
+    html_content = response.body.decode(response.encoding)
+    with open('.html', 'w', encoding=response.encoding) as f:
+        f.write(html_content)
 
 
     if 'ebay' in url:
@@ -438,7 +461,7 @@ def parsing_method(response):
         scrape_amazon_item(response, url)
 
     elif domain == 'www.amazon.co.uk':
-        scrape_amazon_uk_item(response, url)
+        scrape_amazon_item(response, url)
 
     elif 'newegg' in url:
         scrape_newegg_item(response, url)
