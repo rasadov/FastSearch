@@ -3,7 +3,7 @@ This file is the entry point of the application. It contains the main function t
 It initializes the routes and configures the application.
 ~~~~~~~~~~~~~~~~~~~~~
 
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 43% 
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 60% 
 Roadmap:
 
 - DONE: Test the scraping functionality with the `google` method in the web application side. 
@@ -15,9 +15,9 @@ Roadmap:
 - DONE: Add the functionality to automatically scrape products from the web everyday and update the records in the database.
 - DONE: Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file. Functions: `scrape_ebay`, `scrape_amazon_uk`.
 - DONE: Work on the `app/routes/product.py` file to implement the price history.
+- DONE: Implement OAuth2.0 with Microsoft in the `app/routes/account.py` file.
 
-
-- Implement OAuth2.0 with Microsoft and Facebook in the `app/routes/account.py` file.
+- Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
 - Use Google Analytics to track user interactions.
 - Improve search functionality in the `app/routes/product.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.

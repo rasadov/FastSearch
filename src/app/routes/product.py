@@ -21,9 +21,9 @@ def home_page():
     Returns:
     - Rendered template for the home page.
     """
-    if current_user.is_anonymous:
-        user = User.query.filter_by(id=1).first()
-        login_user(user)
+    # if current_user.is_anonymous:
+    #     user = User.query.filter_by(id=1).first()
+    #     login_user(user)
     return render_template("Main/index.html")
 
 @app.route('/search', methods=['GET'])

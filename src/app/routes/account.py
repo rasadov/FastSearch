@@ -6,7 +6,9 @@ Profile pages:
 - `/register`: Renders the registration page and handles the registration form submission.
 - `/login`: Renders the login page and handles the login functionality.
 - `/login-with-google`: Handles the login with Google functionality.
-- `/authorize`: Handles the authorization process for the user using Google OAuth.
+- `/authorize_google`: Handles the authorization process for the user using Google OAuth.
+- `/login-with-microsoft`: Handles the login with Microsoft functionality.
+- `/authorize_microsoft`: Handles the authorization process for the user using Microsoft OAuth.
 - `/forgot_password`: Handles the forgot password functionality.
 - `/reset_password/<token>`: Handles the reset password functionality using a reset token.
 - `/ask-of-verification`: Handles the ask-of-verification route.
@@ -86,16 +88,18 @@ def login_page():
 
     return render_template("Account/login.html", form=form)
 
+######## OAuth2.0 with Google ########
+
 @app.route('/login-with-google',methods=['GET','POST'])
 @logout_required
 def login_with_google():
     google = oauth.create_client('google')  # create the google oauth client
-    redirect_uri = url_for('authorize', _external=True)
+    redirect_uri = url_for('authorize_google', _external=True)
     return google.authorize_redirect(redirect_uri)
 
-@app.route('/authorize')
+@app.route('/authorize_google')
 @logout_required
-def authorize():
+def authorize_google():
     """
     This route handles the authorization process for the user. It uses Google OAuth to authenticate the user and retrieve their information.
 
@@ -104,10 +108,8 @@ def authorize():
     """
     google = oauth.create_client('google')  # create the google oauth client
     token = google.authorize_access_token()  # Access token from google (needed to get user info)
-    print(token)
     resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
     user_info = resp.json()
-    print(user_info)
     user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
 
     user_to_add = User(email_address=user['email'], name=user['name'], confirmed_on=str(datetime.now())[:19])
@@ -128,6 +130,39 @@ def authorize():
         return redirect('/search')
     
     return redirect('/')
+
+######## OAuth2.0 with Microsoft ########
+
+@app.route('/login-with-microsoft',methods=['GET','POST'])
+@logout_required
+def login_with_microsoft():
+    microsoft = oauth.create_client('microsoft')
+    redirect_uri = url_for('authorize_microsoft', _external=True)
+    return microsoft.authorize_redirect(redirect_uri)
+
+@app.route('/authorize_microsoft')
+@logout_required
+def authorize_microsoft():
+    microsoft = oauth.create_client('microsoft')
+    token = microsoft.authorize_access_token()
+    resp = microsoft.get('userinfo')
+    user_info = resp.json()
+    user = oauth.microsoft.userinfo()
+    user_to_add = User(email_address=user['mail'], name=user['givenName'], confirmed_on=str(datetime.now())[:19])
+    if not User.user_exists(user_to_add.email_address):
+        db.session.add(user_to_add)
+        db.session.commit()
+        login_user(user_to_add)
+    else:
+        user_to_login = User.query.filter_by(email_address=user_to_add.email_address).first()
+        if not user_to_login.is_confirmed():
+            user_to_login.confirmed_on = str(datetime.now())[:19]
+            db.session.commit()
+        login_user(user_to_login)    
+    session['profile'] = user_info
+    session.permanent = True # make the session permanent, so it keeps existing after browser gets closed
+    return redirect('/')
+
 
 # Pages for email verification and password reset via email
 

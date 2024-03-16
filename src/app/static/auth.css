@@ -13,7 +13,7 @@ div.login-container {
     width: 20%;
     height: 50px;
     display: inline-block;
-    background-color: #2f2f2f;
+    background-color: #3a76ec;
     color: #fff;
     text-decoration: none;
     padding: 10px 20px;
@@ -25,7 +25,28 @@ div.login-container {
 }
 
 .google-button:hover {
-    background-color: #3a76ec;
+    background-color: white;
+    color: black;
+}
+
+.microsoft-button {
+    width: 20%;
+    height: 50px;
+    display: inline-block;
+    background-color: #2f2f2f;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 55px;
+    transition: background-color 0.3s ease;
+    display: inline-flex;
+    font-size: 20px;
+    margin: 10px auto;
+}
+
+.microsoft-button:hover {
+    background-color: white;
+    color: black;
 }
 
 .google-icon {
@@ -33,6 +54,13 @@ div.login-container {
     height: 60%;
     margin-top: 10px;
     margin-left: 10px;
+}
+
+.microsoft-icon {
+    width: 9%;
+    height: 54%;
+    margin: 0px;
+    padding: 12px;
 }
 
 .input-field {
