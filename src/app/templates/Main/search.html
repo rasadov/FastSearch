@@ -132,6 +132,44 @@
             <h1 style="font-size: large; max-width: 180px; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
             <p style="padding: 10px;">Price: {{product.price}}<p>
             <p style="padding: 10px;">Rating: {{product.rating}}</h1>
+            <p style="padding: 10px;">Category: {{product.item_class}}</p>
+            {% if product.price_change_90_days() %}
+                {% if product.price_change_90_days() != product.price_change_30_days() %}
+                <div>
+                    <p style="padding: 10px;">Price change last 90 days: </p>
+                    <p {% if product.price_change_90_days() < 0 %} style="color: green;">{% else %} style="color: red;" >+{% endif %}{{product.price_change_90_days()}}%</p>
+                </div>    
+                {% endif %}
+                {% if product.price_change_30_days() and product.price_change_30_days() != product.price_change_7_days() %}
+                <div>
+                    <p style="padding: 10px;">Price change last 30 days:</p>
+                    <p {% if product.price_change_30_days() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_30_days()}}%</p>
+                </div>
+                {% endif %}
+                {% if product.price_change_7_days() and product.price_change_7_days() != product.price_change_1_day() %}
+                <div>
+                    <p>Price change last 7 days:</p>
+                    <p {% if product.price_change_7_days() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_7_days()}}%</p>
+                </div>
+                {% endif %}
+                {% if product.price_change_1_day() %}
+                <div>
+                    <p style="padding: 10px;">Price change last 1 day:</p>
+                    <p {% if product.price_change_1_day() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_1_day()}}%</p>
+                </div>
+                {% endif %}
+            {% else %}
+                {% if product.price_change_last() %}
+                <div>
+                    <p style="padding: 10px;">Price change last time:</p><p {% if product.product.price_change_last() < 0 %} style="color: green;">{% else %} style="color: red;">+{% endif %}{{product.price_change_last()}}%</p>
+                </div>
+                {% else %}
+                <div>
+                    <p style="padding: 10px;">No price change detected yet</p>
+                </div>
+                {% endif %}
+            
+            {% endif %}
         </a>
     </div>
     {% if (loop.index) % 3 == 0 %}

@@ -22,12 +22,13 @@ Note: This module uses SQLAlchemy for database operations and Flask-Login for us
 
 """
 
+import re
 from sqlalchemy import Integer, String, Column, Float, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship 
 from sqlalchemy.ext.declarative import declarative_base
 from flask_login import UserMixin
 from web import db, bcrypt, app, s, SignatureExpired
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 Base = declarative_base()
@@ -319,7 +320,115 @@ class Product(db.Model):
             'amount_of_ratings': self.amount_of_ratings,
             'availability': self.is_available()
         }.items()
+    
+    def price_change_last(self):
+        """
+        Returns the price change of the product in the last price history entry.
 
+        Returns:
+            tuple: A tuple containing the price change direction and percentage.
+        """
+        if len(self.price_history) > 1:
+            last = self.price_history[-1]
+            prev = self.price_history[-2]
+        else:
+            return 0
+        
+        last_price = float(re.sub(r'[^\d.]', '', last.price))
+        prev_price = float(re.sub(r'[^\d.]', '', prev.price))      
+
+        if last_price > prev_price:
+            return last_price / prev_price - 1
+        elif last_price < prev_price:
+            return prev_price / last_price - 1
+        else:
+            return 0
+
+    def price_change_90_days(self):
+        """
+        Returns the price change of the product in the last 90 days.
+
+        Returns:
+            tuple: A tuple containing the price change direction and percentage.
+        """
+        if len(self.price_history) > 1:
+            last = self.price_history[-1]
+            prev = self.price_history[-2]
+        else:
+            return 0
+
+        if prev.change_date < datetime.now().date() - timedelta(days=90):
+            return 0
+        
+        last_price = float(re.sub(r'[^\d.]', '', last.price))
+        prev_price = float(re.sub(r'[^\d.]', '', prev.price))
+
+        return round(last_price / prev_price - 1, 2) * 100
+    
+    def price_change_30_days(self):
+        """
+        Returns the price change of the product in the last 30 days.
+
+        Returns:
+            tuple: A tuple containing the price change direction and percentage.
+        """
+        if len(self.price_history) > 1:
+            last = self.price_history[-1]
+            prev = self.price_history[-2]
+        else:
+            return 0
+
+        if prev.change_date < datetime.now().date() - timedelta(days=30):
+            return 0
+        
+        last_price = float(re.sub(r'[^\d.]', '', last.price))
+        prev_price = float(re.sub(r'[^\d.]', '', prev.price))
+
+        return round(last_price / prev_price - 1, 2) * 100
+    
+    def price_change_7_days(self):
+        """
+        Returns the price change of the product in the last 7 days.
+
+        Returns:
+            tuple: A tuple containing the price change direction and percentage.
+        """
+        if len(self.price_history) > 1:
+            last = self.price_history[-1]
+            prev = self.price_history[-2]
+        else:
+            return 0
+
+        if prev.change_date < datetime.now().date() - timedelta(days=7):
+            return 0
+        
+        last_price = float(re.sub(r'[^\d.]', '', last.price))
+        prev_price = float(re.sub(r'[^\d.]', '', prev.price))
+        
+        return round(last_price / prev_price - 1, 2) * 100
+    
+    def price_change_1_day(self):
+        """
+        Returns the price change of the product in the last 1 day.
+
+        Returns:
+            float: The price change percentage.
+
+        """
+        if len(self.price_history) > 1:
+            last = self.price_history[-1]
+            prev = self.price_history[-2]
+        else:
+            return 0
+
+        if prev.change_date < datetime.now().date() - timedelta(days=1):
+            return 0
+        
+        last_price = float(re.sub(r'[^\d.]', '', last.price))
+        prev_price = float(re.sub(r'[^\d.]', '', prev.price))
+
+        return round(last_price / prev_price - 1, 2) * 100
+            
     def __repr__(self):
         return f'<Product {self.id}>'
     
@@ -339,7 +448,7 @@ class PriceHistory(db.Model):
 
     """
     __tablename__ = 'price_history'
-    def __init__(self, product_id, price, date):
+    def __init__(self, product_id, price, date=str(datetime.now())[:19]):
         self.product_id = product_id
         self.price = price
         self.date = date

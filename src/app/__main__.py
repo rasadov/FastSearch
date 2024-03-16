@@ -14,18 +14,20 @@ Roadmap:
 - DONE: Implement the donation functionality in the `app/routes/other.py` file.
 - DONE: Add the functionality to automatically scrape products from the web everyday and update the records in the database.
 - DONE: Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file. Functions: `scrape_ebay`, `scrape_amazon_uk`.
+- DONE: Work on the `app/routes/product.py` file to implement the price history.
 
 
-- Improve search functionality in the `app/routes/product.py` file.
-- Work on the `app/routes/product.py` file to implement the price history graph. Note: Use google charts to implement the graph.
 - Implement OAuth2.0 with Microsoft and Facebook in the `app/routes/account.py` file.
 - Use Google Analytics to track user interactions.
+- Improve search functionality in the `app/routes/product.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
-Extra: progress 25%
+Extra: 
 - DONE: After implementation of filters in `/search` route, implement the same functionality in the admin panel.
+
+- Try to get API for scraping Amazon products. If not possible, in `scrape_amazon` function we access data from html side. In other amazon websites (amazon.co.uk, amazon.de, etc.) check if we can access data from json side. If yes, implement the functionality to scrape products from other amazon websites.
 - Also improve search functionality in the admin panel.
 - Add new functions in the `spiders/myproject/myproject/spiders/utils.py` file to scrape products from other websites.
 - Implement recommendation system in the web application side.

@@ -75,9 +75,9 @@ def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
         requests.exceptions.RequestException: If an error occurs while making the request.
 
     Example:
-        >>> results = google_custom_search('GitHub Copilot', 1)
+        >>> results = google_custom_search('Python', 1)
         >>> print(results['items'][0]['title'])
-        'GitHub Copilot - AI Pair Programmer'
+        'Welcome to Python.org'
     """
     base_url = "https://www.googleapis.com/customsearch/v1"
     params = {
@@ -285,9 +285,8 @@ def scrape_ebay_item(response, url: str, method : str = "add"):
     """
     try:
         # ------------------------- Taking data from response -------------------------
-        script_content = response.css('script[type="application/ld+json"]::text').get()
+        script_content = response.css('script[type="application/ld+json"]::text').getall()[1]
         parsed_data = json.loads(script_content)
-
         title = parsed_data.get('name')
         price = parsed_data.get('offers').get('price')
         price_currency = parsed_data.get('offers').get('priceCurrency')
@@ -308,11 +307,11 @@ def scrape_ebay_item(response, url: str, method : str = "add"):
         except Exception:
             rating = None
             amount_of_ratings = 0
-            
+
         # ------------------------- Processing and saving data from response -------------------------
-        save_product_to_database(url, title, price, None, None, item_class, producer)        
+        save_product_to_database(url, title, price,rating,amount_of_ratings, item_class, producer)        
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 def scrape_newegg_item(response, url: None | str = None):
     """
@@ -334,23 +333,29 @@ def scrape_newegg_item(response, url: None | str = None):
     """
     try:
         # ------------------------- Taking data from response -------------------------
-        # Extracting item class from breadcrumb
-        item_elements = response.css('ol.breadcrumb li a::text').getall()
-        item_class = item_elements[-2] if len(item_elements) >= 2 else None
-
-        # Extracting data from JSON-LD script tag
+        try:
+            item_elements = response.css('ol.breadcrumb li a::text').getall()
+            item_class = item_elements[-2] if len(item_elements) >= 2 else None
+        except Exception:
+            item_class = None
         script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
         parsed_data = json.loads(script_content)
 
-        # Extracting price, title, producer, rating, and amount of ratings
         price = parsed_data.get('offers').get('price')
         title = parsed_data.get('name')
         price_currency = parsed_data.get('offers').get('priceCurrency')
         price += '$' if price_currency == "USD" else ''
 
-        producer = parsed_data.get('brand')
-        rating = parsed_data.get('aggregateRating').get('ratingValue')
-        amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+        try:
+            producer = parsed_data.get('brand')
+        except Exception:
+            producer = None
+        try: 
+            rating = parsed_data.get('aggregateRating').get('ratingValue')
+            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+        except Exception:
+            rating = None
+            amount_of_ratings = 0
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
@@ -453,8 +458,10 @@ def parsing_method(response):
     with open('.html', 'w', encoding=response.encoding) as f:
         f.write(html_content)
 
+    print (domain)
+    print (url)
 
-    if 'ebay' in url:
+    if domain == 'www.ebay.com':
         scrape_ebay_item(response, url)
     
     elif domain == 'www.amazon.com':
