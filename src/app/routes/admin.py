@@ -20,7 +20,7 @@ Product Management:
 - `/admin/product/delete/<int:id>` route is used to delete a product from the admin panel.
 
 Scraping:
-- `/admin/product/add` route allows running the scrapy spider to scrape product information.
+- `/admin/product/scrape` route allows running the scrapy spider to scrape product information.
     - The spider can be run by entering the URL of the product manually or by entering a search query to the search engine.
 
 Automatic Scraping:
@@ -32,24 +32,25 @@ Note:
 - Certain actions, such as editing or deleting a user/product, may have additional restrictions based on user roles.
 """
 
-from web import *
 from models import *
+from web import *
 
-sys.path.append(r'C:\Users\RAUF\Desktop\Github_works\FastSearch\src')
+sys.path.append(r"C:\Users\RAUF\Desktop\Github_works\FastSearch\src")
 
-from spiders import *
-from multiprocessing import Process
-
-from urllib.parse import urlparse
 import atexit
+from multiprocessing import Process
+from urllib.parse import urlparse
+
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from spiders import *
 
 ########## Main admin page.  ##########
 
-@app.route('/admin', methods=['GET','POST'])
+
+@app.get("/admin")
 @admin_required
-def admin_page():
+def admin_get():
     """
     This route handles the admin page of the application.
 
@@ -59,7 +60,12 @@ def admin_page():
     # sample_run_report()
     count_of_users = User.query.count()
     count_of_products = Product.query.count()
-    return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users,)
+    return render_template(
+        "Admin/admin.html",
+        count_of_products=count_of_products,
+        count_of_users=count_of_users,
+    )
+
 
 ########## User management ##########
 """
@@ -68,9 +74,10 @@ This section contains routes for managing users.
 - User editing, deleting and viewing pages
 """
 
-@app.route('/admin/users', methods=['GET'])
+
+@app.get("/admin/users")
 @admin_required
-def admin_user_search_page():
+def admin_user_search_get():
     """
     Renders the admin user search page.
 
@@ -87,22 +94,33 @@ def admin_user_search_page():
         A rendered template for the admin user search page.
     """
 
-    page = request.args.get('page', 1, type=int)
-    search = request.args.get('search', '')
-    users = User.query.filter(User.username.ilike(f'%{search}%') | User.email_address.ilike(f'%{search}%') | User.name.ilike(f'%{search}%'))
+    page = request.args.get("page", 1, type=int)
+    search = request.args.get("search", "")
+    users = User.query.filter(
+        User.username.ilike(f"%{search}%")
+        | User.email_address.ilike(f"%{search}%")
+        | User.name.ilike(f"%{search}%")
+    )
     variables = {"search": search}
-    
+
     users = users.paginate(page=page, per_page=9)
 
     total_pages = users.pages
 
+    return render_template(
+        "Admin/search.html",
+        items=users,
+        total_pages=total_pages,
+        variables=variables,
+        page=page,
+        data_type="User",
+        function="admin_user_search_get",
+    )
 
-    return render_template('Admin/search.html', items=users, total_pages=total_pages,
-                            variables=variables, page=page, data_type='User', function='admin_user_search_page')
 
-@app.route('/admin/user/<int:id>', methods=['GET','POST'])
+@app.get("/admin/user/<int:id>")
 @admin_required
-def admin_user_info_page(id):
+def admin_user_info_get(id):
     """
     This route handles the admin user info page.
 
@@ -121,97 +139,131 @@ def admin_user_info_page(id):
     - The user ID is passed as a parameter in the URL.
     """
     user = User.query.get(id)
-    return render_template('Admin/Item/info.html', item=user)
+    return render_template("Admin/Item/info.html", item=user)
 
-@app.route('/admin/user/edit/<int:id>', methods=['GET','POST'])
+
+@app.get("/admin/user/edit/<int:id>")
 @admin_required
-def admin_user_edit_page(id):
+def admin_user_edit_get(id):
     """
-    This route handles the editing of a user in the admin panel.
+    returns the admin user edit page.
 
     Args:
         id (int): The ID of the user to be edited.
 
     Returns:
-        If the request method is GET:
-            Renders the 'Admin/Item/edit.html' template with the user and data_type as context variables.
-        If the request method is POST:
-            - Updates the user's fields based on the form data.
-            - Validates the form data using the specified validators.
-            - If validation fails, flashes an error message and redirects to the edit page.
-            - If validation succeeds, commits the changes to the database, flashes a success message, and redirects to the users page.
+        Renders the 'Admin/Item/edit.html' template with the user and data_type as context variables.
     """
     user = User.query.get(id)
-    if user.role == 'owner' and current_user.role != 'owner':
-        flash("You can't edit owner", category='danger')
-        return redirect('/admin/users')
 
-    if request.method == 'POST':    
-        fields = {
-            'username': {
-                'validator': User.username_exists,
-                'error_message': "This username is already taken"
-            },
-            'name': {},
-            'email_address': {
-                'validator': lambda email: User.query.filter_by(email_address=email).count(),
-                'error_message': "This email is already taken"
-            },
-            'confirmed': {},
-            'role': {}
-        }
+    return render_template("Admin/Item/edit.html", user=user, data_type="User")
 
-        for field, options in fields.items():
-            value = request.form.get(field)
-            if field == 'confirmed':
-                if value != f"{user.is_confirmed()}":
-                    user.confirmed_on = str(datetime.now())[:19] if value == 'True' else None
-                continue
-            if getattr(user, field) != value:
-                if 'validator' in options and options['validator'](value):
-                    flash(options['error_message'], category='danger')
-                    return redirect(f'/admin/user/edit/{id}')
-                setattr(user, field, value)
 
-        db.session.commit()
-        flash("User edited successfully", category='success')
-        return redirect('/admin/users')
-    
-    return render_template('Admin/Item/edit.html', user=user, data_type='User')
+@app.post("/admin/user/edit/<int:id>")
+def admin_user_edit_post(id):
+    """
+    Edits a user with the given ID.
 
-@app.route('/admin/user/delete/<int:id>', methods=['GET','POST'])
+    Args:
+        id (int): The ID of the user to be edited.
+
+
+    Returns:
+        - Updates the user's fields based on the form data.
+        - Validates the form data using the specified validators.
+        - If validation fails, flashes an error message and redirects to the edit page.
+        - If validation succeeds, commits the changes to the database, flashes a success message, and redirects to the users page.
+    """
+    user = User.query.get(id)
+
+    if user.role == "owner" and current_user.role != "owner":
+        flash("You can't edit owner", category="danger")
+        return redirect("/admin/users")
+
+    fields = {
+        "username": {
+            "validator": User.username_exists,
+            "error_message": "This username is already taken",
+        },
+        "name": {},
+        "email_address": {
+            "validator": lambda email: User.query.filter_by(
+                email_address=email
+            ).count(),
+            "error_message": "This email is already taken",
+        },
+        "confirmed": {},
+        "role": {},
+    }
+
+    for field, options in fields.items():
+        value = request.form.get(field)
+        if field == "confirmed":
+            if value != f"{user.is_confirmed()}":
+                user.confirmed_on = datetime.now().date() if value == "True" else None
+            continue
+        if getattr(user, field) != value:
+            if value == "None":
+                value = None
+
+            if "validator" in options and options["validator"](value):
+                flash(options["error_message"], category="danger")
+                return redirect(f"/admin/user/edit/{id}")
+            setattr(user, field, value)
+
+    db.session.commit()
+    flash("User edited successfully", category="success")
+    return redirect("/admin/users")
+
+
+@app.get("/admin/user/delete/<int:id>")
 @admin_required
-def admin_user_delete_page(id):
+def admin_user_delete_get(id):
     """
     This route is used to delete a user with the specified ID from the admin panel.
 
-    Parameters:
+    Args:
     - id (int): The ID of the user to be deleted.
 
     Returns:
-    - If the request method is GET:
         - Renders the 'Admin/Item/delete.html' template with the user object and the function name.
-    - If the request method is POST:
+    """
+    user = User.query.get(id)
+
+    return render_template(
+        "Admin/Item/delete.html", item=user, func="admin_user_delete_post"
+    )
+
+
+@app.post("/admin/user/delete/<int:id>")
+@admin_required
+def admin_user_delete_post(id):
+    """
+    Deletes a user with the specified ID from the admin panel.
+
+    Args:
+        - id (int): The ID of the user to be deleted.
+
+    Returns:
         - Deletes the user from the database.
         - Flashes a success message.
         - Redirects to the '/admin/users' route.
 
     Note:
-    - The user must have the 'admin' role to access this route.
-    - If the user to be deleted has the role 'owner' and the current user does not have the role 'owner',
-      a danger flash message is flashed and the user is redirected to the '/admin/users' route.
+        - If the user to be deleted has the role 'owner' and the current user does not have the role 'owner',
+        a danger flash message is flashed and the user is redirected to the '/admin/users' route.
+
     """
+    if user.role == "owner" and current_user.role != "owner":
+        flash("You can't edit owner", category="danger")
+        return redirect("/admin/users")
+
     user = User.query.get(id)
-    if user.role == 'owner' and current_user.role != 'owner':
-        flash("You can't edit owner", category='danger')
-        return redirect('/admin/users')
-    
-    if request.method == 'POST':        
-        db.session.delete(user)
-        db.session.commit()
-        flash("User deleted successfully", category='success')
-        return redirect('/admin/users')
-    return render_template('Admin/Item/delete.html', item=user, func='admin_user_delete_page')
+    db.session.delete(user)
+    db.session.commit()
+    flash("User deleted successfully", category="success")
+    return redirect("/admin/users")
+
 
 ########## Product management ##########
 """
@@ -220,9 +272,10 @@ This section contains routes for managing products.
 - Product editing, deleting and viewing pages
 """
 
-@app.route('/admin/products/search', methods=['GET','POST'])
+
+@app.get("/admin/products/search")
 @admin_required
-def admin_products_search_page():
+def admin_products_search_get():
     """
     This route handles the search functionality for admin users to search for products.
 
@@ -240,7 +293,7 @@ def admin_products_search_page():
         - total_pages: The total number of pages for the paginated products.
         - variables: A dictionary containing the search filters and their corresponding values.
         - data_type: A string indicating the type of data being searched (in this case, 'Product').
-        - function: A string indicating the name of the current function ('admin_products_search_page').
+        - function: A string indicating the name of the current function ('admin_products_search_get').
         - page: The current page number for the paginated products.
 
     Example Usage:
@@ -251,16 +304,9 @@ def admin_products_search_page():
     Note:
     - This function requires the user to be an admin, as indicated by the @admin_required decorator.
     """
-    filters = {
-        "search" : [request.args.get('search', ''), lambda search, query: query.filter(Product.title.ilike(f'%{search}%'))],
-        "min_price": [request.args.get('min_price', None, type=int), lambda min_price, query: query.filter(Product.price >= min_price)],
-        "max_price": [request.args.get('max_price', None, type=int), lambda max_price, query: query.filter(Product.price <= max_price)],
-        "brand": [request.args.get('brand', None), lambda brand, query: query.filter(Product.producer.ilike(f"%{brand}%"))],
-        "min_rating": [request.args.get('min_rating', None, type=float), lambda rating, query: query.filter(Product.rating >= rating)],
-        "max_rating": [request.args.get('max_rating', None, type=float), lambda rating, query: query.filter(Product.rating <= rating)],
-    }
+    page = request.args.get("page", 1, type=int)
 
-    page = request.args.get('page', 1, type=int)
+    filters = Product.get_filters()
 
     products = Product.query
     variables = {}
@@ -268,17 +314,25 @@ def admin_products_search_page():
         if value[0]:
             products = value[1](value[0], products)
             variables[key] = value[0]
-    
+
     products = products.paginate(page=page, per_page=9)
 
     total_pages = products.pages
 
-    return render_template('Admin/search.html', items=products, total_pages=total_pages,
-                            variables=variables, data_type='Product', function='admin_products_search_page', page=page)
+    return render_template(
+        "Admin/search.html",
+        items=products,
+        total_pages=total_pages,
+        variables=variables,
+        data_type="Product",
+        function="admin_products_search_get",
+        page=page,
+    )
 
-@app.route('/admin/product/<int:id>', methods=['GET','POST'])
+
+@app.get("/admin/product/<int:id>")
 @admin_required
-def admin_product_info_page(id):
+def admin_product_info_get(id):
     """
     This route handles the admin product information page.
 
@@ -299,55 +353,75 @@ def admin_product_info_page(id):
     - To access the information page of a product with ID 123, the URL would be '/admin/product/123'.
     """
     product = Product.query.get(id)
-    return render_template('Admin/Item/info.html', item=product)
+    return render_template("Admin/Item/info.html", item=product)
 
-@app.route('/admin/product/edit/<int:id>', methods=['GET','POST'])
+
+@app.get("/admin/product/edit/<int:id>")
 @admin_required
-def admin_product_edit_page(id):
+def admin_product_edit_get(id):
     """
-    Renders the admin product edit page and handles the form submission for editing a product.
+    Renders the admin product edit page.
 
     Args:
         id (int): The ID of the product to be edited.
 
     Returns:
-        If the request method is GET:
-            A rendered template of the admin product edit page with the product data.
-        If the request method is POST:
-            If the product data is successfully edited:
-                A redirect to the admin product page for the edited product.
-            If the product data is not successfully edited:
-                A rendered template of the admin product edit page with an error message.
+        A rendered template of the admin product edit page with the product data.
 
     """
     product = Product.query.get(id)
 
-    if request.method == 'POST':
-        # Title, price, item_class, producer, amount_of_ratings, rating, availability
-        fields = ['title', 'price', 'item_class', 'producer', 'amount_of_ratings', 'rating', 'availability']
+    return render_template("Admin/Item/edit.html", product=product, data_type="Product")
 
-        for field in fields:
-            value = request.form.get(field)
-            if field == 'availability':
-                # Not finished
-                continue
 
-            if getattr(product, field) != value:
-                if field == 'price':
-                    price_history = PriceHistory(product_id=id)
-                    price_history = PriceHistory(id, value, str(datetime.now())[:19])
-                    db.session.add(price_history)
-                setattr(product, field, value)
-
-        db.session.commit()
-        flash("Product edited successfully", category='success')
-        return redirect(f'/admin/product/{id}')
-
-    return render_template('Admin/Item/edit.html', product=product, data_type='Product')
-
-@app.route('/admin/product/delete/<int:id>', methods=['GET','POST'])
+@app.post("/admin/product/edit/<int:id>")
 @admin_required
-def admin_product_delete_page(id):
+def admin_product_edit_post(id):
+    """
+    Edit a product with the given ID.
+
+    Args:
+        id (int): The ID of the product to be edited.
+
+    Returns:
+        redirect: A redirect to the product details page after successful editing.
+
+    Raises:
+        None
+
+    """
+    # Title, price, item_class, producer, amount_of_ratings, rating, availability
+    fields = [
+        "title",
+        "price",
+        "item_class",
+        "producer",
+        "amount_of_ratings",
+        "rating",
+        "availability",
+    ]
+    product = Product.query.get(id)
+    for field in fields:
+        value = request.form.get(field)
+        if field == "availability":
+            # Not finished
+            continue
+
+        if getattr(product, field) != value:
+            if field == "price":
+                price_history = PriceHistory(product_id=id)
+                price_history = PriceHistory(id, value, datetime.now().date())
+                db.session.add(price_history)
+            setattr(product, field, value)
+
+    db.session.commit()
+    flash("Product edited successfully", category="success")
+    return redirect(f"/admin/product/{id}")
+
+
+@app.get("/admin/product/delete/<int:id>")
+@admin_required
+def admin_product_delete_get(id):
     """
     Renders the delete page for a specific product in the admin panel.
 
@@ -355,22 +429,36 @@ def admin_product_delete_page(id):
         id (int): The ID of the product to be deleted.
 
     Returns:
-        If the request method is POST:
-            - Redirects to the '/admin/search' route after deleting the product and its associated price history.
-        If the request method is GET:
-            - Renders the 'Admin/Item/delete.html' template with the product information and the function name.
+        - Renders the 'Admin/Item/delete.html' template with the product information and the function name.
+
+    """
+    product = Product.query.get(id)
+    return render_template(
+        "Admin/Item/delete.html", item=product, func="admin_product_delete_post"
+    )
+
+
+@app.post("/admin/product/delete/<int:id>")
+@admin_required
+def admin_product_delete_post(id):
+    """
+    Delete a product and its associated price history from the database.
+
+    Args:
+        id (int): The ID of the product to be deleted.
+
+    Returns:
+        redirect: A redirect response to the admin search page.
 
     """
     product = Product.query.get(id)
     price_history = PriceHistory.query.filter_by(product_id=id)
-    if request.method == 'POST':
-        for price in price_history:
-            db.session.delete(price)
-        db.session.delete(product)
-        db.session.commit()
-        flash("Product deleted successfully", category='success')
-        return redirect('/admin/search')
-    return render_template('Admin/Item/delete.html', item=product, func='admin_product_delete_page')
+    for price in price_history:
+        db.session.delete(price)
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product deleted successfully", category="success")
+    return redirect("/admin/search")
 
 
 ########## Scraping ##########
@@ -379,6 +467,7 @@ This section contains routes for running the scrapy spider.
 - The spider can be runned by entering the URL of the product manually.
 - The spider can be runned by entering the query to the search engine.
 """
+
 
 def run_spider(url, method=None, pages=None, results_per_page=None):
     """
@@ -396,75 +485,94 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
     spider = MySpider(url, method, pages, results_per_page)
     spider.run()
 
-@app.route('/admin/product/add', methods=['GET','POST'])
-@admin_required
-def admin_scrape_page():
-    """
-    Route for adding a product to the database through scraping.
 
-    GET: Renders the 'Admin/Scraping/add.html' template.
-    POST: Scrapes the product information from the provided URL and adds it to the database.
+@app.get("/admin/product/scrape")
+@admin_required
+def admin_scrape_get():
+    """
+    Renders the 'Admin/Scraping/add.html' template.
+    """
+
+    return render_template("Admin/Scraping/add.html")
+
+
+@app.post("/admin/product/scrape")
+@admin_required
+def admin_scrape_post():
+    """
+    Scrapes the product information from the provided URL and adds it to the database.
+
+    This function is a route handler for the '/admin/product/scrape' endpoint. It is triggered when a POST request is made to the endpoint.
+    The function first checks the 'source' parameter in the request form to determine the scraping method.
+
+    If the method is 'custom', it retrieves the 'query' parameter from the form and validates it. If the URL is valid, it checks if the product already exists in the database. If it does, it redirects to the product details page. If not, it starts a new process to run the spider for scraping the product information from the URL. After the process completes, it checks if the product was successfully added to the database and redirects accordingly.
+
+    If the method is 'google', it retrieves the 'query', 'pages', and 'results_per_page' parameters from the form. It validates the 'query' parameter and starts a new process to run the spider for scraping the product information from Google search results. After the process completes, it displays a success message and redirects to the product listing page.
 
     Returns:
         If the product is added successfully, redirects to the product details page.
         If the product already exists in the database, redirects to the existing product details page.
         If the product could not be added, redirects back to the add product page with an error message.
+
     """
-    if request.method == 'POST':
-        method = request.form.get('source')
-        if method == 'custom':
-            url = request.form.get('query')
+    method = request.form.get("source")
+    if method == "custom":
+        url = request.form.get("query")
 
-            if not url:
-                flash("Enter query", category='danger')
-                return redirect('/admin/product/add/manual')
+        if not url:
+            flash("Enter query", category="danger")
+            return redirect("/admin/product/add/manual")
 
-            parsed_url = urlparse(url)
-            url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+        parsed_url = urlparse(url)
+        url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
-            product = Product.query.filter_by(url=url)
-            if product.count():
-                flash("Product already in database", category='info')
-                product = product.first()
-                return redirect(f'/admin/product/{product.id}')
+        product = Product.query.filter_by(url=url)
+        if product.count():
+            flash("Product already in database", category="info")
+            product = product.first()
+            return redirect(f"/admin/product/{product.id}")
 
-            p = Process(target=run_spider, args=(url, "url"))
-            p.start()
-            p.join()
+        p = Process(target=run_spider, args=(url, "url"))
+        p.start()
+        p.join()
 
-            product = Product.query.filter_by(url=url)
-            if product.count():
-                flash("Product added to database successfully", category='success')
-                product = product.first()
-                return redirect(f'/admin/product/{product.id}')
-            else:
-                flash("Product could not be added to database", category='danger')
-                flash("Check if the URL is correct and supported by our program", category='danger')
-                return redirect('/admin/product/add')
+        product = Product.query.filter_by(url=url)
+        if product.count():
+            flash("Product added to database successfully", category="success")
+            product = product.first()
+            return redirect(f"/admin/product/{product.id}")
+        else:
+            flash("Product could not be added to database", category="danger")
+            flash(
+                "Check if the URL is correct and supported by our program",
+                category="danger",
+            )
+            return redirect("/admin/product/add")
 
-        elif method == 'google':
-            url = request.form.get('query')
-            pages = request.form.get('pages')
-            results_per_page = request.form.get('results_per_page')
+    elif method == "google":
+        url = request.form.get("query")
+        pages = request.form.get("pages")
+        results_per_page = request.form.get("results_per_page")
 
-            if not url:
-                flash("Enter query", category='danger')
-                return redirect('/admin/product/add')
+        if not url:
+            flash("Enter query", category="danger")
+            return redirect("/admin/product/add")
 
-            p = Process(target=run_spider, args=(url, "google", int(pages), int(results_per_page)))
-            p.start()
-            p.join()
+        p = Process(
+            target=run_spider, args=(url, "google", int(pages), int(results_per_page))
+        )
+        p.start()
+        p.join()
 
-            flash("Function run successfully", category='success')
-            return redirect('/admin/Products/products')
-
-    return render_template('Admin/Scraping/add.html')
+        flash("Function run successfully", category="success")
+        return redirect("/admin/Products/products")
 
 
 ########## Automatic scraping ##########
 """
 This section contains the code for running the spider automatically at regular intervals.
 """
+
 
 def update_records():
     """
@@ -484,6 +592,7 @@ def update_records():
             spider.run()
         except Exception:
             continue
+
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=update_records, trigger="interval", hours=24)

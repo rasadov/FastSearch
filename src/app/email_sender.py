@@ -18,11 +18,12 @@ Example usage:
 send_email('example@example.com', 'Hello, this is a test email.', 'Test Email', 'My App')
 """
 
+import os
 import smtplib
 from email.message import EmailMessage
-from string import Template
 from pathlib import Path
-import os
+from string import Template
+
 import dotenv
 
 dotenv.load_dotenv()
@@ -42,22 +43,26 @@ def send_email(reciever, message, subject, title):
     None
     """
     email = EmailMessage()
-    email['from'] = 'Abyssara'
-    email['to'] = reciever
-    email['subject'] = subject
+    email["from"] = "Abyssara"
+    email["to"] = reciever
+    email["subject"] = subject
 
-    gmail_username = os.environ.get('MAIL_USERNAME')
-    gmail_password = os.environ.get('MAIL_PASSWORD')
+    gmail_username = os.environ.get("MAIL_USERNAME")
+    gmail_password = os.environ.get("MAIL_PASSWORD")
 
     # Load the HTML template
-    html_template = Template(Path(os.path.join(os.path.dirname(__file__), 'templates', 'email.html')).read_text())
-    
-    # Substitute the title in the template
-    html_content = html_template.substitute({'title': title, 'message': message})
-    
-    email.set_content(html_content, 'html')
+    html_template = Template(
+        Path(
+            os.path.join(os.path.dirname(__file__), "templates", "email.html")
+        ).read_text()
+    )
 
-    with smtplib.SMTP(host='smtp.gmail.com', port=587) as smtp:
+    # Substitute the title in the template
+    html_content = html_template.substitute({"title": title, "message": message})
+
+    email.set_content(html_content, "html")
+
+    with smtplib.SMTP(host="smtp.gmail.com", port=587) as smtp:
         smtp.ehlo()
         smtp.starttls()
         smtp.login(gmail_username, gmail_password)

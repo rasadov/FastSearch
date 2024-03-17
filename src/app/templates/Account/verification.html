@@ -8,7 +8,7 @@
 {% block content %}
 <div style="margin: 100px auto; width: 1000px; border-radius: 25px;">
     <h1 style="padding: 20px;">You will recieve a link to confirm your email address</h1>
-    <form action="{{ url_for('ask_of_verification') }}" method="POST">
+    <form action="{{ url_for('send_verification_email') }}" method="POST">
         <input type="submit" class="submit-btn" value="Send" name="submit" id="submit">
     </form>
 </div>

@@ -51,34 +51,22 @@ Overall, this file serves as the central configuration file for the web applicat
 """
 
 import json
-from flask import (
-    Flask,
-    flash,
-    redirect,
-    render_template,
-    request,
-    url_for,
-    send_from_directory,
-    session
-)
+import os
+import sys
+from datetime import datetime, timedelta
+from functools import wraps
+from random import randint
 
+import dotenv
+from authlib.integrations.flask_client import OAuth
+from email_sender import send_email
+from flask import (Flask, flash, redirect, render_template, request,
+                   send_from_directory, session, url_for)
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
-from authlib.integrations.flask_client import OAuth
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-
 from forms import *
-from email_sender import send_email
-
-import dotenv
-import os
-
-from datetime import datetime, timedelta
-from random import randint
-import sys
-
-from functools import wraps
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
 dotenv.load_dotenv()
 
@@ -96,9 +84,9 @@ app = Flask(__name__)
 SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY
 
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
 db = SQLAlchemy(app)
 
 
@@ -150,13 +138,13 @@ login_manager.login_view = "login"
 s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 
-from google.analytics.data_v1beta import BetaAnalyticsDataClient
-from google.analytics.data_v1beta.types import (
-    DateRange,
-    Dimension,
-    Metric,
-    RunReportRequest,
-)
+# from google.analytics.data_v1beta import BetaAnalyticsDataClient
+# from google.analytics.data_v1beta.types import (
+#     DateRange,
+#     Dimension,
+#     Metric,
+#     RunReportRequest,
+# )
 
 
 # def sample_run_report():
@@ -188,7 +176,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous:
             flash("You are not authenticated.", "info")
-            return redirect(url_for("login_page"))
+            return redirect(url_for("login_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -199,7 +187,7 @@ def logout_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_authenticated:
             flash("You are already authenticated.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -212,7 +200,7 @@ def admin_required(f):
             current_user.role != "admin" and current_user.role != "owner"
         ):
             flash("You are not authorized to view this page.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -223,7 +211,7 @@ def owner_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous or current_user.role != "owner":
             flash("You are not authorized to view this page.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -234,7 +222,7 @@ def confirmed_required(f):
     def decorated_function(*args, **kwargs):
         if not current_user.is_confirmed():
             flash("You need to confirm your email address.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -245,7 +233,7 @@ def unconfirmed_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_confirmed():
             flash("You are already confirmed.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -256,7 +244,7 @@ def subscribed_required(f):
     def decorated_function(*args, **kwargs):
         if not current_user.is_subscribed():
             flash("You need to subscribe to access this page.", "info")
-            return redirect(url_for("home_page"))
+            return redirect(url_for("home_get"))
         return f(*args, **kwargs)
 
     return decorated_function

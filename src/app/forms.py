@@ -18,9 +18,10 @@ Classes:
 """
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, EmailField
-from wtforms.validators import Length, DataRequired, EqualTo, Email
-from wtforms.validators import Regexp
+from wtforms import (EmailField, IntegerField, PasswordField, StringField,
+                     SubmitField)
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
+
 
 class LoginForm(FlaskForm):
     """
@@ -31,9 +32,13 @@ class LoginForm(FlaskForm):
     - password: PasswordField for entering the user's password.
     - submit: SubmitField for submitting the form.
     """
-    email_address = EmailField(label='Email Address', validators=[DataRequired(), Email()])
-    password = PasswordField(label='Password', validators=[Length(6), DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    email_address = EmailField(
+        label="Email Address", validators=[DataRequired(), Email()]
+    )
+    password = PasswordField(label="Password", validators=[Length(6), DataRequired()])
+    submit = SubmitField(label="Submit")
+
 
 class RegisterForm(FlaskForm):
     """
@@ -45,10 +50,16 @@ class RegisterForm(FlaskForm):
     - confirm_password: PasswordField for confirming the user's password.
     - submit: SubmitField for submitting the form.
     """
-    email_address = EmailField(label='Email Address', validators=[DataRequired(), Email()])
-    password = PasswordField(label='Password', validators=[Length(8), DataRequired()])
-    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    email_address = EmailField(
+        label="Email Address", validators=[DataRequired(), Email()]
+    )
+    password = PasswordField(label="Password", validators=[Length(8), DataRequired()])
+    confirm_password = PasswordField(
+        label="Confirm Password", validators=[EqualTo("password"), DataRequired()]
+    )
+    submit = SubmitField(label="Submit")
+
 
 class ChangePasswordForm(FlaskForm):
     """
@@ -60,10 +71,18 @@ class ChangePasswordForm(FlaskForm):
     - confirm_password: PasswordField for confirming the user's new password.
     - submit: SubmitField for submitting the form.
     """
-    old_password = PasswordField(label='Old Password', validators=[Length(8), DataRequired()])
-    password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
-    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    old_password = PasswordField(
+        label="Old Password", validators=[Length(8), DataRequired()]
+    )
+    password = PasswordField(
+        label="New Password", validators=[Length(8), DataRequired()]
+    )
+    confirm_password = PasswordField(
+        label="Confirm Password", validators=[EqualTo("password"), DataRequired()]
+    )
+    submit = SubmitField(label="Submit")
+
 
 class SetPasswordForm(FlaskForm):
     """
@@ -74,9 +93,15 @@ class SetPasswordForm(FlaskForm):
     - confirm_password: PasswordField for confirming the user's new password.
     - submit: SubmitField for submitting the form.
     """
-    password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
-    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    password = PasswordField(
+        label="New Password", validators=[Length(8), DataRequired()]
+    )
+    confirm_password = PasswordField(
+        label="Confirm Password", validators=[EqualTo("password"), DataRequired()]
+    )
+    submit = SubmitField(label="Submit")
+
 
 class ChangeUsernameForm(FlaskForm):
     """
@@ -87,9 +112,20 @@ class ChangeUsernameForm(FlaskForm):
     - name: StringField for entering the user's name.
     - submit: SubmitField for submitting the form.
     """
-    username = StringField(label='Username', validators=[Length(3), Regexp(r'^[a-zA-Z0-9_]*$', message='Username must not contain special characters')])
-    name = StringField(label='Name', validators=[Length(3)])
-    submit = SubmitField(label='Submit')
+
+    username = StringField(
+        label="Username",
+        validators=[
+            Length(3),
+            Regexp(
+                r"^[a-zA-Z0-9_]*$",
+                message="Username must not contain special characters",
+            ),
+        ],
+    )
+    name = StringField(label="Name", validators=[Length(3)])
+    submit = SubmitField(label="Submit")
+
 
 class DeleteAccountForm(FlaskForm):
     """
@@ -99,8 +135,10 @@ class DeleteAccountForm(FlaskForm):
     - password: PasswordField for entering the user's password.
     - submit: SubmitField for submitting the form.
     """
-    password = PasswordField(label='Password', validators=[Length(8), DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    password = PasswordField(label="Password", validators=[Length(8), DataRequired()])
+    submit = SubmitField(label="Submit")
+
 
 class VerificationForm(FlaskForm):
     """
@@ -110,8 +148,10 @@ class VerificationForm(FlaskForm):
     - code: IntegerField for entering the verification code.
     - submit: SubmitField for submitting the form.
     """
-    code = IntegerField(label='Verification Code', validators=[DataRequired()])
-    submit = SubmitField(label='Submit')
+
+    code = IntegerField(label="Verification Code", validators=[DataRequired()])
+    submit = SubmitField(label="Submit")
+
 
 class ForgotPasswordForm(FlaskForm):
     """
@@ -121,8 +161,12 @@ class ForgotPasswordForm(FlaskForm):
     - email_address: EmailField for entering the user's email address.
     - submit: SubmitField for submitting the form.
     """
-    email_address = EmailField(label='Email Address', validators=[DataRequired(), Email()])
-    submit = SubmitField(label='Submit')
+
+    email_address = EmailField(
+        label="Email Address", validators=[DataRequired(), Email()]
+    )
+    submit = SubmitField(label="Submit")
+
 
 class ResetPasswordForm(FlaskForm):
     """
@@ -132,6 +176,11 @@ class ResetPasswordForm(FlaskForm):
     - email_address: EmailField for entering the user's email address.
     - submit: SubmitField for submitting the form.
     """
-    password = PasswordField(label='New Password', validators=[Length(8), DataRequired()])
-    confirm_password = PasswordField(label='Confirm Password', validators=[EqualTo('password'), DataRequired()]) 
-    submit = SubmitField(label='Submit')
+
+    password = PasswordField(
+        label="New Password", validators=[Length(8), DataRequired()]
+    )
+    confirm_password = PasswordField(
+        label="Confirm Password", validators=[EqualTo("password"), DataRequired()]
+    )
+    submit = SubmitField(label="Submit")

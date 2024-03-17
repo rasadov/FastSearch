@@ -35,30 +35,32 @@ Usage:
 For more details on each function, refer to their respective docstrings.
 """
 
-import psycopg2
-import dotenv
+import json
 import os
 import re
-import requests
-import json
 from urllib.parse import urlparse
+
+import dotenv
+import psycopg2
+import requests
 from flask import flash
 
 dotenv.load_dotenv()
 
-GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API") 
+GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API")
 GOOGLE_CX = os.environ.get("GOOGLE_CX")
 
-DB_USER = os.environ.get('DB_USER')
-DB_NAME = os.environ.get('DB_NAME')
-DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_HOST = os.environ.get('DB_HOST')
-DB_PORT = os.environ.get('DB_PORT')
+DB_USER = os.environ.get("DB_USER")
+DB_NAME = os.environ.get("DB_NAME")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
 
 
 ################### Search functions
 
 import requests
+
 
 def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
     """
@@ -81,10 +83,10 @@ def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
     """
     base_url = "https://www.googleapis.com/customsearch/v1"
     params = {
-        'key': GOOGLE_SEARCH_API,
-        'cx': GOOGLE_CX,
-        'q': query,
-        'start': start_index,
+        "key": GOOGLE_SEARCH_API,
+        "cx": GOOGLE_CX,
+        "q": query,
+        "start": start_index,
     }
 
     try:
@@ -95,6 +97,7 @@ def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
     except requests.exceptions.RequestException as e:
         return None
 
+
 def search(query: str, method: str, total_pages: int | None = None):
     """
     Returns links for the given query and method.
@@ -102,7 +105,7 @@ def search(query: str, method: str, total_pages: int | None = None):
     Parameters:
         query (str): The URL or query you want to search for.
         method (str): The website you are going to use for searching.
-        total_pages (int, optional): The number of pages to retrieve links from. 
+        total_pages (int, optional): The number of pages to retrieve links from.
             If it is a one-page website, there is no need to set this parameter.
 
     Yields:
@@ -118,18 +121,20 @@ def search(query: str, method: str, total_pages: int | None = None):
         https://www.google.com/search?q=python&page=2
         https://www.google.com/search?q=python&page=3
     """
-    if method == 'google':
+    if method == "google":
         for page in range(1, total_pages + 1):
             start_index = (page - 1) * 10
-            results = google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)
+            results = google_custom_search(
+                query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX
+            )
             if results:
-                for item in results.get('items', []):
-                    link = item.get('link')
+                for item in results.get("items", []):
+                    link = item.get("link")
                     parsed_url = urlparse(link)
                     link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
                     yield link
 
-    elif method == 'url':
+    elif method == "url":
         parsed_url = urlparse(query)
         query = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
         yield query
@@ -137,9 +142,19 @@ def search(query: str, method: str, total_pages: int | None = None):
     else:
         raise ValueError(f"Invalid method: {method}")
 
+
 ################### Database functions
 
-def save_product_to_database(url, title, price, rating=None, amount_of_ratings=None, item_class=None, producer=None):
+
+def save_product_to_database(
+    url,
+    title,
+    price,
+    rating=None,
+    amount_of_ratings=None,
+    item_class=None,
+    producer=None,
+):
     """
     Saves a product to the database or updates an existing product if it already exists.
 
@@ -158,14 +173,17 @@ def save_product_to_database(url, title, price, rating=None, amount_of_ratings=N
     If the product does not exist in the database, it adds a new record to the `product` table and starts tracking the price in the `price_history` table.
     """
 
-    conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
+    conn = psycopg2.connect(
+        database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
+    )
     curr = conn.cursor()
- 
-    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""") 
+
+    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
 
     result = curr.fetchone()
 
-    curr.execute("""
+    curr.execute(
+        """
                     CREATE TABLE IF NOT EXISTS price_history (
                     price_history_id SERIAL PRIMARY KEY,
                     product_id INT,
@@ -173,61 +191,78 @@ def save_product_to_database(url, title, price, rating=None, amount_of_ratings=N
                     change_date DATE NOT NULL,
 
                     FOREIGN KEY (product_id) REFERENCES product(id)
-                    );""")
+                    );"""
+    )
 
     # Checking if this record already exists in database
     if result:
-        price_in_db = result[3]  
+        price_in_db = result[3]
         amount_of_rating_in_db = result[6]
         rating_in_db = result[7]
 
-        if price_in_db != price or rating_in_db != rating or amount_of_rating_in_db != amount_of_ratings:
+        if (
+            price_in_db != price
+            or rating_in_db != rating
+            or amount_of_rating_in_db != amount_of_ratings
+        ):
 
             # Checking if price of product has changed
             if price_in_db != price:
                 product_id = result[0]
 
                 # Saving price change to keep track of price
-                curr.execute("""
+                curr.execute(
+                    """
                     INSERT INTO price_history (product_id, price, change_date)
                     VALUES (%s, %s, CURRENT_DATE);
-                """, (product_id, price))
+                """,
+                    (product_id, price),
+                )
 
-
-            curr.execute(f"""
+            curr.execute(
+                f"""
                 UPDATE product
                 SET price = %s, title = %s, item_class = %s, producer = %s,
                     amount_of_ratings = %s, rating = %s
                 WHERE url = %s;
-            """, (price, title, item_class, producer, amount_of_ratings, rating, url))
+            """,
+                (price, title, item_class, producer, amount_of_ratings, rating, url),
+            )
     else:
         # This product does not exist, insert a new record into the database
-        curr.execute("""
+        curr.execute(
+            """
             INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
-        """, (url, title, price, item_class, producer, amount_of_ratings, rating))
-        
+        """,
+            (url, title, price, item_class, producer, amount_of_ratings, rating),
+        )
 
-        curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""") 
-        
+        curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
+
         result = curr.fetchone()
 
         product_id = result[0]
-        
-        curr.execute("""
+
+        curr.execute(
+            """
             INSERT INTO price_history (product_id, price, change_date)
             VALUES (%s, %s, CURRENT_DATE);
-        """, (product_id, price))
-        
+        """,
+            (product_id, price),
+        )
+
     conn.commit()
     curr.close()
     conn.close()
 
-################### Web Scraping functions
+
+# Web Scraping functions
 """
 Note: All functions that start with `scrape` are parsing functions for different websites.
 """
-    
+
+
 def scrape_amazon_item(response, url: None | str = None):
     """
     Extracts data from the item page in amazon.com
@@ -246,30 +281,47 @@ def scrape_amazon_item(response, url: None | str = None):
         >>> scrape_amazon_item(response, 'https://www.amazon.com/product')
     """
     try:
-        title = response.css('#productTitle::text').get().strip()
+        title = response.css("#productTitle::text").get().strip()
         price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'.strip()
         try:
-            rating = float(re.findall(r'\d+\.\d+', response.css("span.a-icon-alt::text").get())[0])
-            amount_of_ratings = int(response.css("a#acrCustomerReviewLink span#acrCustomerReviewText::text").get().strip().replace(',', '').split(' ')[0])
+            rating = float(
+                re.findall(r"\d+\.\d+", response.css("span.a-icon-alt::text").get())[0]
+            )
+            amount_of_ratings = int(
+                response.css("a#acrCustomerReviewLink span#acrCustomerReviewText::text")
+                .get()
+                .strip()
+                .replace(",", "")
+                .split(" ")[0]
+            )
         except Exception:
             rating = None
             amount_of_ratings = 0
         try:
-            producer = response.css('tr.po-brand span.po-break-word::text').get().strip()
+            producer = (
+                response.css("tr.po-brand span.po-break-word::text").get().strip()
+            )
         except Exception:
             producer = None
         try:
-            item_class = response.css("div#wayfinding-breadcrumbs_feature_div ul li")[-1].css("a::text").get().strip()
+            item_class = (
+                response.css("div#wayfinding-breadcrumbs_feature_div ul li")[-1]
+                .css("a::text")
+                .get()
+                .strip()
+            )
         except Exception:
             item_class = None
 
-        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
-    
+        save_product_to_database(
+            url, title, price, rating, amount_of_ratings, item_class, producer
+        )
+
     except Exception as e:
         flash(f"Error: {e}", "danger")
-    
 
-def scrape_ebay_item(response, url: str, method : str = "add"):
+
+def scrape_ebay_item(response, url: str, method: str = "add"):
     """
     Extracts data from the item page on `ebay.com`
 
@@ -287,33 +339,46 @@ def scrape_ebay_item(response, url: str, method : str = "add"):
     """
     try:
         # ------------------------- Taking data from response -------------------------
-        script_content = response.css('script[type="application/ld+json"]::text').getall()[1]
+        script_content = response.css(
+            'script[type="application/ld+json"]::text'
+        ).getall()[1]
         parsed_data = json.loads(script_content)
-        title = parsed_data.get('name')
-        price = parsed_data.get('offers').get('price')
-        price_currency = parsed_data.get('offers').get('priceCurrency')
+        title = parsed_data.get("name")
+        price = parsed_data.get("offers").get("price")
+        price_currency = parsed_data.get("offers").get("priceCurrency")
         price = price + price_currency if price_currency == "USD" else price
         try:
-            producer = parsed_data.get('brand').get('name')
+            producer = parsed_data.get("brand").get("name")
         except Exception:
             producer = None
         try:
-            item_class = parsed_data.get('category')
+            item_class = parsed_data.get("category")
         except Exception:
             item_class = None
 
         try:
-            rating = response.css('div.x-rating-details span[data-testid="review--start--rating"] span.ux-textspans::text').get()
-            amount_of_ratings = response.css('div.x-rating-details span.ux-summary__count::text').get()
-            amount_of_ratings = int(amount_of_ratings.split(' ')[0].replace(',', '').strip()) if amount_of_ratings else 0
+            rating = response.css(
+                'div.x-rating-details span[data-testid="review--start--rating"] span.ux-textspans::text'
+            ).get()
+            amount_of_ratings = response.css(
+                "div.x-rating-details span.ux-summary__count::text"
+            ).get()
+            amount_of_ratings = (
+                int(amount_of_ratings.split(" ")[0].replace(",", "").strip())
+                if amount_of_ratings
+                else 0
+            )
         except Exception:
             rating = None
             amount_of_ratings = 0
 
         # ------------------------- Processing and saving data from response -------------------------
-        save_product_to_database(url, title, price,rating,amount_of_ratings, item_class, producer)        
+        save_product_to_database(
+            url, title, price, rating, amount_of_ratings, item_class, producer
+        )
     except Exception as e:
         print(f"Error: {e}", "danger")
+
 
 def scrape_newegg_item(response, url: None | str = None):
     """
@@ -336,38 +401,42 @@ def scrape_newegg_item(response, url: None | str = None):
     try:
         # ------------------------- Taking data from response -------------------------
         try:
-            item_elements = response.css('ol.breadcrumb li a::text').getall()
+            item_elements = response.css("ol.breadcrumb li a::text").getall()
             item_class = item_elements[-2] if len(item_elements) >= 2 else None
         except Exception:
             item_class = None
-        script_content = response.css('script[type="application/ld+json"]::text').getall()[2]
+        script_content = response.css(
+            'script[type="application/ld+json"]::text'
+        ).getall()[2]
         parsed_data = json.loads(script_content)
 
-        price = parsed_data.get('offers').get('price')
-        title = parsed_data.get('name')
-        price_currency = parsed_data.get('offers').get('priceCurrency')
-        price += '$' if price_currency == "USD" else ''
+        price = parsed_data.get("offers").get("price")
+        title = parsed_data.get("name")
+        price_currency = parsed_data.get("offers").get("priceCurrency")
+        price += "$" if price_currency == "USD" else ""
 
         try:
-            producer = parsed_data.get('brand')
+            producer = parsed_data.get("brand")
         except Exception:
             producer = None
-        try: 
-            rating = parsed_data.get('aggregateRating').get('ratingValue')
-            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+        try:
+            rating = parsed_data.get("aggregateRating").get("ratingValue")
+            amount_of_ratings = parsed_data.get("aggregateRating").get("reviewCount")
         except Exception:
             rating = None
             amount_of_ratings = 0
 
         # ------------------------- Processing and saving data from response -------------------------
-        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        save_product_to_database(
+            url, title, price, rating, amount_of_ratings, item_class, producer
+        )
     except Exception as e:
         flash(f"Error: {e}", "danger")
 
 
 def scrape_gamestop_item(response, url: None | str = None):
     """
-Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
+    Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
     """
 
     try:
@@ -376,27 +445,30 @@ Takes title, price, rating, amount of ratings, producer, and class of the item.\
 
         parsed_data = json.loads(script_content)
 
-        title = parsed_data.get('name')
-        price = parsed_data.get('offers')[0].get('price')
-        if parsed_data.get('offers')[0].get('priceCurrency') == "USD":
-            price += '$' 
-        producer = parsed_data.get('brand')
-        item_class = parsed_data.get('category')
+        title = parsed_data.get("name")
+        price = parsed_data.get("offers")[0].get("price")
+        if parsed_data.get("offers")[0].get("priceCurrency") == "USD":
+            price += "$"
+        producer = parsed_data.get("brand")
+        item_class = parsed_data.get("category")
 
         try:
-            rating = parsed_data.get('aggregateRating').get('ratingValue')
+            rating = parsed_data.get("aggregateRating").get("ratingValue")
         except Exception:
             rating = None
 
         try:
-            amount_of_ratings = parsed_data.get('aggregateRating').get('reviewCount')
+            amount_of_ratings = parsed_data.get("aggregateRating").get("reviewCount")
         except Exception:
             amount_of_ratings = 0
 
         # ------------------------- Processing and saving data from response -------------------------
-        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        save_product_to_database(
+            url, title, price, rating, amount_of_ratings, item_class, producer
+        )
     except Exception as e:
         flash(f"Error: {e}", "danger")
+
 
 def scrape_excaliberpc_item(response, url: None | str = None):
     """
@@ -417,7 +489,7 @@ def scrape_excaliberpc_item(response, url: None | str = None):
         if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
             price += "$"
 
-        title = response.css('h1.product-head_name::text').get().strip()
+        title = response.css("h1.product-head_name::text").get().strip()
 
         try:
             producer = response.css('meta[property="brand"]::attr(content)').get()
@@ -425,21 +497,27 @@ def scrape_excaliberpc_item(response, url: None | str = None):
             producer = None
 
         try:
-            item_class = response.css('ul.breadcrumbs li span::text').getall()[2]
+            item_class = response.css("ul.breadcrumbs li span::text").getall()[2]
         except Exception:
             item_class = None
         try:
             rating = response.css('meta[property="ratingValue"]::attr(content)').get()
-            amount_of_ratings = response.css('meta[property="reviewCount"]::attr(content)').get()
+            amount_of_ratings = response.css(
+                'meta[property="reviewCount"]::attr(content)'
+            ).get()
         except Exception:
             rating = None
             amount_of_ratings = 0
 
-        save_product_to_database(url, title, price, rating, amount_of_ratings, item_class, producer)
+        save_product_to_database(
+            url, title, price, rating, amount_of_ratings, item_class, producer
+        )
     except Exception as e:
         flash(f"Error: {e}", "danger")
 
+
 ################### Parsing functions
+
 
 def parsing_method(response):
     """
@@ -451,32 +529,32 @@ def parsing_method(response):
     Returns:
         None
     """
-    url = response.meta.get('url', '')
+    url = response.meta.get("url", "")
 
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
-    
+
     html_content = response.body.decode(response.encoding)
-    with open('.html', 'w', encoding=response.encoding) as f:
+    with open(".html", "w", encoding=response.encoding) as f:
         f.write(html_content)
 
-    print (domain)
-    print (url)
+    print(domain)
+    print(url)
 
-    if domain == 'www.ebay.com':
+    if domain == "www.ebay.com":
         scrape_ebay_item(response, url)
-    
-    elif domain == 'www.amazon.com':
+
+    elif domain == "www.amazon.com":
         scrape_amazon_item(response, url)
 
-    elif domain == 'www.amazon.co.uk':
+    elif domain == "www.amazon.co.uk":
         scrape_amazon_item(response, url)
 
-    elif 'newegg' in url:
+    elif "newegg" in url:
         scrape_newegg_item(response, url)
 
-    elif 'gamestop' in url:
+    elif "gamestop" in url:
         scrape_gamestop_item(response, url)
 
-    elif 'excaliberpc' in url:
+    elif "excaliberpc" in url:
         scrape_excaliberpc_item(response, url)

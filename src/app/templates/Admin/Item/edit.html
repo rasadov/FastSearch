@@ -10,7 +10,7 @@
 {% if data_type == 'Product' %}
 <div style="padding: 50px;">
     <h1>Edit Product</h1>
-    <form method="POST" action="{{ url_for('admin_product_edit_page', id=product.id) }}">
+    <form method="POST" action="{{ url_for('admin_product_edit_post', id=product.id) }}">
         <div>
             <label for="title">Title:</label><br>
             <input class="input-field" type="text" id="title" name="title" value="{{ product.title }}">
@@ -58,14 +58,14 @@
 
 <div>
     <h1>Edit User</h1>
-    <form method="POST" action="{{ url_for('admin_user_edit_page', id=user.id) }}">
+    <form method="POST" action="{{ url_for('admin_user_edit_post', id=user.id) }}">
         <div>
             <label for="username">Username:</label><br>
-            <input class="input-field" type="text" id="username" name="username" value="{{ user.username }}">
+            <input class="input-field" type="text" id="username" name="username" {% if user.username and user.username !="None" %} value="{{ user.username }}" {% else %} value="None" {% endif %}>
         </div>
         <div>
             <label for="name">Name:</label><br>
-            <input class="input-field" type="text" id="name" name="name" value="{{ user.name }}">
+            <input class="input-field" type="text" id="name" name="name" {% if user.name and user.name !="None" %} value="{{ user.name }}" {% endif %}>
         </div>
         <div>
             <label for="email">Email:</label><br>

@@ -8,7 +8,7 @@
 {% block content %}
 <div style="padding: 50px;">
     <h1>Scrape Product</h1>
-    <form method="POST" action="{{ url_for('admin_scrape_page') }}">
+    <form method="POST" action="{{ url_for('admin_scrape_post') }}">
         <div>
             <select class="input-field" id="source" name="source" onchange="showFields(this.value)">
                 <option value="custom">Custom</option>

@@ -3,10 +3,10 @@ This file is the entry point of the application. It contains the main function t
 It initializes the routes and configures the application.
 ~~~~~~~~~~~~~~~~~~~~~
 
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 60% 
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 65%
 Roadmap:
 
-- DONE: Test the scraping functionality with the `google` method in the web application side. 
+- DONE: Test the scraping functionality with the `google` method in the web application side.
 - DONE: Add the functionality `Forgot Password` in the `app/routes/account.py` file.
 - DONE: Update the Email verification functionality in the `app/routes/account.py` file.
 - DONE: Add the functionality to the `app/routes/other.py` file to handle the contact and donate pages.
@@ -16,15 +16,15 @@ Roadmap:
 - DONE: Finish functions to the `spiders/myproject/myproject/spiders/utils.py` file. Functions: `scrape_ebay`, `scrape_amazon_uk`.
 - DONE: Work on the `app/routes/product.py` file to implement the price history.
 - DONE: Implement OAuth2.0 with Microsoft in the `app/routes/account.py` file.
+- DONE: Use Google Analytics to track user interactions.
 
-- Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
-- Use Google Analytics to track user interactions.
 - Improve search functionality in the `app/routes/product.py` file.
+- Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
-Extra: 
+Extra:
 - DONE: After implementation of filters in `/search` route, implement the same functionality in the admin panel.
 
 - Try to get API for scraping Amazon products. If not possible, in `scrape_amazon` function we access data from html side. In other amazon websites (amazon.co.uk, amazon.de, etc.) check if we can access data from json side. If yes, implement the functionality to scrape products from other amazon websites.
@@ -43,40 +43,41 @@ Notes:
 
 """
 
-from web import *
 from models import *
+from web import *
 
 
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        return db.session.get(User,int(user_id))
+        return db.session.get(User, int(user_id))  # noqa: F405
     except (ValueError, TypeError):
-        return None 
+        return None
+
 
 ######## Product pages ########
 
+from routes.account import *
+from routes.admin import *
+from routes.errors import *
+from routes.other import *
 from routes.product import *
+from routes.subscription import *
 
 ######## User pages ########
-    
-from routes.account import *
+
 
 ######## Subscription pages ########
 
-from routes.subscription import *
 
 ######## Admin pages ########
 
-from routes.admin import *
 
 ######## Other pages ########
 
-from routes.other import *
 
 ######## Error pages ########
 
-from routes.errors import * 
- 
+
 if __name__ == "__main__":
     app.run(debug=True)

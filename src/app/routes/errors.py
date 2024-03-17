@@ -12,6 +12,7 @@ The following error handling routes are defined:
 
 from web import *
 
+
 @app.errorhandler(400)
 def page_not_found(e):
     """
@@ -23,7 +24,8 @@ def page_not_found(e):
     Returns:
     - A string representing the error message "Bad Request".
     """
-    return "Bad Request", 400 
+    return "Bad Request", 400
+
 
 @app.errorhandler(403)
 def page_not_found(e):
@@ -36,7 +38,8 @@ def page_not_found(e):
     Returns:
     - The rendered template for the 403.html error page.
     """
-    return render_template('Error/403.html'), 403
+    return render_template("Error/403.html"), 403
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -49,7 +52,4 @@ def page_not_found(e):
     Returns:
     - The rendered template for the 404.html error page.
     """
-    return render_template('Error/404.html'), 404
-
-
-
+    return render_template("Error/404.html"), 404

@@ -89,7 +89,7 @@
 {% endfor %}
 
 <div>
-    <form method="GET" action="{{ url_for('search_page') }}">
+    <form method="GET" action="{{ url_for('search_get') }}">
         <div class="search-container">
             <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{search}}">
             <button type="submit" class="search-btn">Search</button>
@@ -120,7 +120,7 @@
         filter
     </button>
     <button>
-        <a href="{{ url_for('search_page') }}">Clear</a>
+        <a href="{{ url_for('search_get') }}">Clear</a>
     </button>
 </div>
 
@@ -182,15 +182,15 @@
 <div style="text-align: center;">
     <div class="pagination">
         {% if products.has_prev %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.prev_num, **params ) }}">Previous</a>
+            <a class="page-link" href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
         {% endif %}
         
         {% for num in products.iter_pages() %}
             {% if num %}
                 {% if products.page == num %}
-                    <a class="page-link current-page" href="{{ url_for('search_page', page=num, **params) }}">{{ num }}</a>
+                    <a class="page-link current-page" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
                 {% else %}
-                    <a class="page-link" href="{{ url_for('search_page', page=num, **params) }}">{{ num }}</a>
+                    <a class="page-link" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
                 {% endif %}
             {% else %}
                 <span class="page-link">...</span>
@@ -198,7 +198,7 @@
         {% endfor %}
         
         {% if products.has_next %}
-            <a class="page-link" href="{{ url_for('search_page', page=products.next_num, **params) }}">Next</a>
+            <a class="page-link" href="{{ url_for('search_get', page=products.next_num, **params) }}">Next</a>
         {% endif %}
     </div>
 </div>

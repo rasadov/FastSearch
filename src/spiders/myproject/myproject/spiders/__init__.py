@@ -25,11 +25,12 @@ Methods:
 
 """
 
-from scrapy.crawler import CrawlerProcess
-import scrapy
-from .utils import *
 import warnings
 
+import scrapy
+from scrapy.crawler import CrawlerProcess
+
+from .utils import *
 
 warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
 
@@ -52,10 +53,12 @@ class MySpider(scrapy.Spider):
 
     """
 
-    name = 'myspider'
+    name = "myspider"
     start_urls = []
 
-    def __init__(self, query: str = '', method: str = 'url', pages=None, results_per_page=None) -> None:
+    def __init__(
+        self, query: str = "", method: str = "url", pages=None, results_per_page=None
+    ) -> None:
         self.query = query
         self.method = method
         self.pages = pages
@@ -70,9 +73,9 @@ class MySpider(scrapy.Spider):
 
         """
         self.start_urls = [link for link in search(self.query, self.method, self.pages)]
-        
+
         for url in self.start_urls:
-            yield scrapy.Request(url=url, callback=self.parse, meta={'url': url})
+            yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
 
     def parse(self, response):
         """
@@ -99,5 +102,7 @@ class MySpider(scrapy.Spider):
                 "FEEDS": {},
             }
         )
-        process.crawl(MySpider, self.query, self.method, self.pages, self.results_per_page)
+        process.crawl(
+            MySpider, self.query, self.method, self.pages, self.results_per_page
+        )
         process.start()

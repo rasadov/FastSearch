@@ -126,7 +126,7 @@
                 filter
             </button>
             <button>
-                <a href="{{ url_for('admin_products_search_page') }}">Clear</a>
+                <a href="{{ url_for('admin_products_search_get') }}">Clear</a>
             </button>
             {% endif %}
             {% if items.total == 0 %}
@@ -148,13 +148,13 @@
                         </h4>
                         <p>{{ item.price }}</p>
                         <div style="width: 40%; margin: auto; display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_product_info_page', id=item.id )}}" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_product_info_get', id=item.id )}}" style="text-decoration: none; color: white;">
                                 <h4>Info</h4>
                             </a>
-                            <a href="{{ url_for('admin_product_edit_page', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
+                            <a href="{{ url_for('admin_product_edit_get', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
                                 <h4>Edit</h4>
                             </a>
-                            <a href="{{ url_for('admin_product_delete_page', id=item.id) }}" style="text-decoration: none; color: red;">
+                            <a href="{{ url_for('admin_product_delete_get', id=item.id) }}" style="text-decoration: none; color: red;">
                                 <h4>Delete</h4>
                             </a>
                         </div>
@@ -170,13 +170,13 @@
                             <p>{{ item.role }}</p>
                         </div>
                         <div style="width: 50%; margin: auto; display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_user_edit_page', id=item.id) }}" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_user_edit_get', id=item.id) }}" style="text-decoration: none; color: white;">
                                 <h4>Edit</h4>
                             </a>
-                            <a href="{{ url_for('admin_user_info_page', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
+                            <a href="{{ url_for('admin_user_info_get', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
                                 <h4>Info</h4>
                             </a>
-                            <a href="{{ url_for('admin_user_delete_page', id=item.id) }}" style="text-decoration: none; color: red;">
+                            <a href="{{ url_for('admin_user_delete_get', id=item.id) }}" style="text-decoration: none; color: red;">
                                 <h4>Delete</h4>
                             </a>
                         </div>
