@@ -125,9 +125,13 @@ def search(query: str, method: str, total_pages: int | None = None):
             if results:
                 for item in results.get('items', []):
                     link = item.get('link')
+                    parsed_url = urlparse(link)
+                    link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
                     yield link
 
     elif method == 'url':
+        parsed_url = urlparse(query)
+        query = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
         yield query
 
     else:
@@ -153,8 +157,6 @@ def save_product_to_database(url, title, price, rating=None, amount_of_ratings=N
     If the rating has changed, it updates the record in the `product` table.
     If the product does not exist in the database, it adds a new record to the `product` table and starts tracking the price in the `price_history` table.
     """
-    parsed_url = urlparse(url)
-    url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
     conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
     curr = conn.cursor()

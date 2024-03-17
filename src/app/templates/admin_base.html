@@ -142,11 +142,9 @@ div.form-text {
     <nav>
         <div class="half-width" style="display: block;">
             <div style="display: inline-block;">
-                <a href="{{url_for('home_page')}}">
-                    <div style="width: 160px; height: auto;">
-                        <h1 style="width: 160px;">Abyssara</h1>
-                    </div>
-                </a>
+                <div style="width: 160px; height: auto;">
+                    <h1 style="width: 160px;">ADMIN</h1>
+                </div>
             </div>
         </div>
         <div style="text-align: right;" class="half-width">
@@ -172,31 +170,16 @@ div.form-text {
                         <p>Contact</p>
                     </a>
                 </div>
-                {% if current_user.is_authenticated %}
                 <div class="nav-links">
                     <a href="{{ url_for('profile_page') }}" style="width: 40px;">
                         <p>Profile</p>
                     </a>
                 </div>
-                {% if current_user.is_admin() %}
                 <div class="nav-links">
                     <a href="{{ url_for('admin_page') }}" style="width: 40px;">
                         <p>Admin</p>
                     </a>
                 </div>
-                {% endif %}
-                {% else %}
-                <div class="nav-links">
-                    <a href="{{ url_for('register_page') }}" style="width: 40px;">
-                        <p>Register</p>
-                    </a>
-                </div>
-                <div class="nav-links">
-                    <a href="{{ url_for('login_page') }}" style="width: 40px;">
-                        <p>Login</p>
-                    </a>
-                </div>
-                {% endif %}
             </div>
         </div>
     </nav>
@@ -231,15 +214,6 @@ div.form-text {
             close.parentElement.style.display = 'none';
         });
     });
-</script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B0ELJBKQN0"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-B0ELJBKQN0');
 </script>
 {% block scripts %}
 {% endblock %}

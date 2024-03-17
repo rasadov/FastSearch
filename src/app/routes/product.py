@@ -21,6 +21,7 @@ def home_page():
     Returns:
     - Rendered template for the home page.
     """
+    # sample_run_report()
     # if current_user.is_anonymous:
     #     user = User.query.filter_by(id=1).first()
     #     login_user(user)

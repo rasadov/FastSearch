@@ -59,6 +59,8 @@ class User(UserMixin, db.Model):
         is_confirmed(): Checks if the user is confirmed.
         is_subscribed(): Checks if the user is subscribed.
         items(): Returns a dictionary of the user's attributes.
+        get_verification_token(expires_sec): Generates a verification token for the user.
+        verify_verification_token(token): Verifies a verification token for the user.
         get_reset_token(expires_sec): Generates a reset token for the user.
         verify_reset_token(token): Verifies a reset token for the user.
         __repr__(): Returns a string representation of the user.
@@ -196,6 +198,35 @@ class User(UserMixin, db.Model):
             return True
         return self.subscribed_till and self.subscribed_till > datetime.now()
     
+    def get_verification_token(self, expires_sec=1800):
+        """
+        Generates a verification token for the user.
+
+        Args:
+            expires_sec (int, optional): The expiration time of the token in seconds. Defaults to 1800.
+
+        Returns:
+            str: The verification token.
+        """
+        return s.dumps({'user_id': self.id}, salt='email-confirmation')
+    
+    @staticmethod
+    def verify_verification_token(token):
+        """
+        Verify the validity of a verification token.
+
+        Args:
+            token (str): The verification token to be verified.
+
+        Returns:
+            User or None: The User object associated with the token if it is valid, otherwise None.
+        """
+        try:
+            user_id = s.loads(token, salt='email-confirmation', max_age=1800)['user_id']
+        except SignatureExpired:
+            return None
+        return User.query.get(user_id)
+
     def get_reset_token(self):
             """
             Generates a reset token for the user.

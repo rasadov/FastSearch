@@ -97,7 +97,7 @@ def login_with_google():
     redirect_uri = url_for('authorize_google', _external=True)
     return google.authorize_redirect(redirect_uri)
 
-@app.route('/authorize_google')
+@app.route('/authorize-google')
 @logout_required
 def authorize_google():
     """
@@ -138,9 +138,9 @@ def authorize_google():
 def login_with_microsoft():
     microsoft = oauth.create_client('microsoft')
     redirect_uri = url_for('authorize_microsoft', _external=True)
-    return microsoft.authorize_redirect(redirect_uri)
+    return microsoft.authorize_redirect("http://localhost:5000/authorize-microsoft")
 
-@app.route('/authorize_microsoft')
+@app.route('/authorize-microsoft')
 @logout_required
 def authorize_microsoft():
     microsoft = oauth.create_client('microsoft')
@@ -230,14 +230,14 @@ def ask_of_verification():
         Otherwise, the ask-of-verification page is rendered with the verification form.
 
     """
-    form = VerificationForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST':
         user = User.query.filter_by(email_address=current_user.email_address).first()
         token = user.get_verification_token()
-        send_email(user.email_address, f'Verify your email 127.0.0.1:5000{ url_for("verify_email", token=token) }', 'Email Verification', 'Verification Code')
-        flash('Check your email for the verification code', 'info')
-        return redirect(url_for('verify_email'))
-    return render_template('form_base.html', form=form)
+        send_email(user.email_address, f'Verify your email http://localhost:5000{ url_for("verify_email", token=token) }', 'Email Verification', 'Verification Code')
+        flash('Check your email for the verification link', 'info')
+        return redirect(url_for('profile_page'))
+    return render_template('Account/verification.html')
+
 
 @app.route('/verify_email/<token>', methods=['GET'])
 def verify_email(token):
@@ -256,16 +256,18 @@ def verify_email(token):
 
     """
     try:
-        email = s.loads(token, salt='email-confirm', max_age=1800)
+        user = User.verify_verification_token(token)
+        if not user:
+            flash('The confirmation link is invalid or has expired.', 'danger')
+            return redirect(url_for('unconfirmed'))
+        user.confirmed_on = str(datetime.now())[:19]
+        db.session.commit()
+        login_user(user)
+        flash('Thank you for confirming your email address!', 'success')
+        return redirect('/')
     except SignatureExpired:
         flash('The confirmation link is invalid or has expired.', 'danger')
-        return redirect(url_for('unconfirmed'))
-    user = User.query.filter_by(email_address=email).first()
-    user.confirmed_on = str(datetime.now())[:19]
-    db.session.add(user)
-    db.session.commit()
-    flash('Thank you for confirming your email address!', 'success')
-    return redirect('/')
+        return redirect(url_for('profile_page'))
 
 # Logout page
 

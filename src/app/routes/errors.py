@@ -23,7 +23,7 @@ def page_not_found(e):
     Returns:
     - A string representing the error message "Bad Request".
     """
-    return "Bad Request", 400
+    return "Bad Request", 400 
 
 @app.errorhandler(403)
 def page_not_found(e):

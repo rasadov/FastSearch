@@ -56,6 +56,7 @@ def admin_page():
     Returns:
         A rendered template of the admin page with the count of products and users.
     """
+    # sample_run_report()
     count_of_users = User.query.count()
     count_of_products = Product.query.count()
     return render_template('Admin/admin.html', count_of_products=count_of_products, count_of_users=count_of_users,)
