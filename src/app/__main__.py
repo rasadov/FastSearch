@@ -17,9 +17,8 @@ Roadmap:
 - DONE: Work on the `app/routes/product.py` file to implement the price history.
 - DONE: Implement OAuth2.0 with Microsoft in the `app/routes/account.py` file.
 - DONE: Use Google Analytics to track user interactions.
+- DONE: Improve search functionality in the `app/routes/product.py` file.
 
-- Refactor to the `app.get` and `app.post` decorators in the `app/routes/account.py` and `app/routes/other.py` files.
-- Improve search functionality in the `app/routes/product.py` file.
 - Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
 - Use Docker to containerize the application.

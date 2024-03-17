@@ -484,6 +484,7 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
     """
     spider = MySpider(url, method, pages, results_per_page)
     spider.run()
+    spider.close()
 
 
 @app.get("/admin/product/scrape")

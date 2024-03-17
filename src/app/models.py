@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 
 from flask_login import UserMixin
 from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Index,
-                        Integer, String, desc)
+                        Integer, String, desc, Computed, func)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -331,6 +331,8 @@ class Product(db.Model):
         price_change_7_days(): Returns the price change of the product in the last 7 days.
         price_change_1_day(): Returns the price change of the product in the last 1 day.
     """
+    __tablename__ = "product"
+
     def __init__(
         self,
         url,
@@ -351,6 +353,7 @@ class Product(db.Model):
         self.rating = rating
         self.availability = availability
 
+
     id = Column(Integer(), primary_key=True)
     url = Column(String(), nullable=False)
     title = Column(String(), nullable=False)
@@ -363,16 +366,14 @@ class Product(db.Model):
 
     price_history = relationship("PriceHistory", backref="product")
 
-    __ts_vector__ = Column(
+    tsvector_title = Column(
         TSVector(),
-        db.Computed(
-            "to_tsvector('english', title || ' ' || description)", persisted=True
-        ),
-        name="__ts_vector__",
+        Computed("to_tsvector('english', title)", persisted=True),
+        name="tsvector_title",
     )
 
     __table_args__ = (
-        Index("ix_video___ts_vector__", __ts_vector__, postgresql_using="gin"),
+        Index("ix_video___ts_vector__", tsvector_title, postgresql_using="gin"),
     )
 
     def is_available(self):
@@ -405,11 +406,16 @@ class Product(db.Model):
     
     @staticmethod
     def get_filters():
+        # print(func.similarity(Product.title, "rtx").type)
+        # print(func.similarity(Product.title, "rtx"))
+        print((func.similarity(Product.title, 'rtx') > 0.3))
         return {
             "search": [
                 request.args.get("search", ""),
                 lambda search, query: query.filter(
-                    Product.__ts_vector__.match(f"{search}")
+                    (func.similarity(Product.title, search) > 0.1)
+                    | (func.similarity(Product.producer, search) > 0.1)
+                    | (func.similarity(Product.item_class, search) > 0.1)
                     | Product.title.ilike(f"%{search}%")
                 ),
             ],
@@ -424,7 +430,7 @@ class Product(db.Model):
             "brand": [
                 request.args.get("brand", None),
                 lambda brand, query: query.filter(
-                    Product.__ts_vector__.match(f"{brand}")
+                    Product.producer.ilike(f"{brand}")
                     | Product.producer.ilike(f"%{brand}%")
                 ),
             ],
@@ -535,9 +541,12 @@ class PriceHistory(db.Model):
         records = PriceHistory.query.filter_by(product_id=product_id).order_by(
             desc(PriceHistory.change_date))
         
+        if records.count() < 2:
+            return 0
+
         if days == "last":
             last_price = float(re.sub(r"[^\d.]", "", records.first().price))
-            prev_price = float(re.sub(r"[^\d.]", "", records[1].price)) - 1, 2
+            prev_price = float(re.sub(r"[^\d.]", "", records[1].price))
 
             return round(last_price / prev_price - 1, 2) * 100
 
@@ -557,6 +566,31 @@ class PriceHistory(db.Model):
     price = Column(String(), nullable=False)
     change_date = Column(DateTime(), nullable=False, default=datetime.now().date())
 
+# from sqlalchemy import text
 
-with app.app_context():
-    db.create_all()
+# def add_column(engine, table_name, column):
+#     column_name = column.compile(dialect=engine.dialect)
+#     column_type = column.type.compile(engine.dialect)
+        
+
+#     #     engine.execute(text("ALTER TABLE product ADD COLUMN tsvector_title tsvector;"))
+#     #     engine.execute(text("UPDATE product SET tsvector_title = to_tsvector('english', title);"))
+
+
+# __ts_vector__ = Column(
+#         TSVector(),
+#         Computed(
+#             "to_tsvector('english', title)", persisted=True
+#         ),
+#         name="__ts_vector__"
+#     )
+
+
+# with app.app_context():
+#     engine = db.get_engine()
+#     connection = engine.connect()
+#     add_column(connection, 'product', __ts_vector__)
+#     connection.commit()
+#     connection.close()
+    
+#     db.session.commit()

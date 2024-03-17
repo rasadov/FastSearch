@@ -54,6 +54,8 @@ def search_get():
 
     filters = Product.get_filters()
 
+    from sqlalchemy import text
+
     variables = {}
     for key, value in filters.items():
         val = value[0]
@@ -61,7 +63,7 @@ def search_get():
             products = value[1](val, products)
             variables[key] = val
 
-    Product.__ts_vector__.match(f"{request.args.get('search', '')}")
+    page = request.args.get("page", 1, type=int)
 
     total_pages = products.pages
     return render_template(

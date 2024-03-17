@@ -534,9 +534,9 @@ def parsing_method(response):
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
 
-    html_content = response.body.decode(response.encoding)
-    with open(".html", "w", encoding=response.encoding) as f:
-        f.write(html_content)
+    # html_content = response.body.decode(response.encoding)
+    # with open(".html", "w", encoding=response.encoding) as f:
+    #     f.write(html_content)
 
     print(domain)
     print(url)

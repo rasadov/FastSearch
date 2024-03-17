@@ -161,7 +161,7 @@
             {% else %}
                 {% if product.price_change_last() %}
                 <div>
-                    <p style="padding: 10px;">Price change last time:</p><p {% if product.product.price_change_last() < 0 %} style="color: green;">{% else %} style="color: red;">+{% endif %}{{product.price_change_last()}}%</p>
+                    <p style="padding: 10px;">Price change last time:</p><p {% if product.price_change_last() < 0 %} style="color: green;">{% else %} style="color: red;">+{% endif %}{{product.price_change_last()}}%</p>
                 </div>
                 {% else %}
                 <div>
