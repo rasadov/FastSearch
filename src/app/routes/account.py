@@ -320,7 +320,7 @@ def send_verification_email():
         "Verification Code",
     )
     flash("Check your email for the verification link", "info")
-    return redirect(url_for("profile_page"))
+    return redirect(url_for("profile_get"))
 
 
 @app.get("/email/verify/<token>")
@@ -357,7 +357,7 @@ def verify_email_post(token):
         return redirect("/profile")
     except SignatureExpired:
         flash("The confirmation link is invalid or has expired.", "danger")
-        return redirect(url_for("profile_page"))
+        return redirect(url_for("profile_get"))
 
 
 # Logout page
@@ -373,99 +373,106 @@ def logout():
 # Profile management page
 
 
-@app.route("/profile", methods=["GET", "POST"])
+@app.get("/profile")
 @login_required
-def profile_page():
+def profile_get():
     return render_template("Account/profile.html")
 
 
 @app.route("/profile/password/change", methods=["GET", "POST"])
 @login_required
-def change_password():
+def change_password_get():
     """
-    This route allows the user to change their password.
+    Renders the change password form for the user.
 
-    If the user hasn't set a password yet, a flash message will be displayed
-    indicating that the password cannot be changed. Otherwise, a form will be
-    rendered for the user to enter their old password and new password.
-
-    If the form is submitted via POST request, the user's old password will be
-    checked for correctness. If it is correct, the new password will be updated
-    in the database and a success flash message will be displayed. If the old
-    password is incorrect, an error flash message will be displayed.
-
+    If the user's password hash is None, redirects to the password set page.
+    
     Returns:
-        If the user is not logged in, they will be redirected to the home page.
-        If the user hasn't set a password yet, they will be redirected to the home page.
-        If the form is submitted and the old password is correct, the user will be
-        redirected to their profile page.
-        Otherwise, the change password form will be rendered.
+        A rendered template of the change password form.
     """
-    if current_user.password_hash == None:
-        flash(
-            "You can't change your password because you haven't set it yet",
-            category="danger",
-        )
-        return redirect("/")
+    if not current_user.password_hash:
+        return redirect("/profile/password/set")
     form = ChangePasswordForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            if current_user.chech_password_correction(
-                attempted_password=form.old_password.data
-            ):
-                if form.password.data == form.old_password.data:
-                    flash(
-                        "New password can't be the same as old password",
-                        category="danger",
-                    )
-                    return redirect("/change-password")
-                current_user.password = form.password.data
-                db.session.commit()
-                flash("Password changed successfully", category="success")
-                return redirect("/profile")
-            else:
-                flash("Old password is not correct", category="danger")
+    
     return render_template("form_base.html", form=form)
 
-
-@app.route("/profile/password/set", methods=["GET", "POST"])
+@app.post("/profile/password/change")
 @login_required
-def set_password():
+def change_password_post():
     """
-    Route for setting a new password for the user.
+    Handles the POST request for changing the user's password.
 
-    If the current user already has a password set, they will be redirected to their profile page.
-    Otherwise, a form is displayed for the user to enter their new password.
-
-    If the form is submitted via POST request and the entered password is valid, the user's password is updated
-    in the database and a success message is flashed. The user is then redirected to their profile page.
-
-    If the form is submitted via POST request but the entered password is not valid, an error message is flashed.
-
-    If the request method is GET, the form is rendered for the user to enter their new password.
+    This function is triggered when the user submits the change password form.
+    It validates the form data, checks if the old password is correct, and updates
+    the user's password in the database if all conditions are met.
 
     Returns:
-        A rendered template for the password form.
-
+        A redirect response to the user's profile page if the password is changed
+        successfully, or a redirect response to the change password page with an
+        appropriate flash message if there are any errors.
     """
-    if current_user.password_hash:
-        flash("You already have set password", category="danger")
-        return redirect("/profile")
-    form = SetPasswordForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password_correction(
+            attempted_password=form.old_password.data
+        ):
+            if form.password.data == form.old_password.data:
+                flash(
+                    "New password can't be the same as old password",
+                    category="danger",
+                )
+                return redirect("/change-password")
             current_user.password = form.password.data
             db.session.commit()
             flash("Password changed successfully", category="success")
             return redirect("/profile")
         else:
             flash("Old password is not correct", category="danger")
+
+@app.get("/profile/password/set")
+@login_required
+def set_password_get():
+    """
+    Renders the set password form for the user.
+
+    If the user's password hash is not None, redirects to the change password page.
+
+    Returns:
+        A rendered template of the set password form.
+    """
+    if current_user.password_hash:
+        return redirect("/profile/password/change")
+    form = SetPasswordForm()
+    
     return render_template("form_base.html", form=form)
 
+@app.post("/profile/password/set")
+def set_password_post():
+    """
+    Handles the POST request for setting a new password for the user.
 
-@app.route("/profile/username/change", methods=["GET", "POST"])
+    This function is triggered when the user submits the set password form.
+    It validates the form data and updates the user's password in the database
+    if all conditions are met.
+
+    Returns:
+        A redirect response to the user's profile page if the password is set
+        successfully, or a redirect response to the set password page with an
+        appropriate flash message if there are any errors.
+
+    """
+    form = SetPasswordForm()
+    if form.validate_on_submit():
+        current_user.password = form.password.data
+        db.session.commit()
+        flash("Password changed successfully", category="success")
+        return redirect("/profile")
+    else:
+        flash("Old password is not correct", category="danger")
+
+@app.get("/profile/username/change")
 @login_required
-def change_username():
+def change_username_get():
     """
     This route handles the functionality to change the username and name of the current user.
 
@@ -479,7 +486,28 @@ def change_username():
 
     """
     form = ChangeUsernameForm()
+    form.username.data = current_user.username
+    form.name.data = current_user.name
 
+    return render_template("form_base.html", form=form)
+
+@app.post("/profile/username/change")
+@login_required
+def change_username_post():
+    """
+    Handles the POST request for changing the username and name of the user.
+
+    This function is triggered when the user submits the change username form.
+    It validates the form data and updates the user's username and name in the database
+    if all conditions are met.
+
+    Returns:
+        A redirect response to the user's profile page if the username and name are changed
+        successfully, or a redirect response to the change username page with an
+        appropriate flash message if there are any errors.
+
+    """
+    form = ChangeUsernameForm()
     if request.method == "POST":
         if not form.username.data:
             form.username.validators = []
@@ -513,39 +541,46 @@ def change_username():
             db.session.commit()
             return redirect("/profile")
 
-    if request.method == "GET":
-        form.username.data = current_user.username
-        form.name.data = current_user.name
-
-    return render_template("form_base.html", form=form)
-
-
-@app.route("/profile/delete", methods=["GET", "POST"])
+@app.get("/profile/delete")
 @login_required
-def delete_account():
+def delete_account_get():
     """
     This route handles the deletion of a user account.
-
+    
     Methods:
-    - GET: Renders the delete account form.
-    - POST: Deletes the user account if the password is correct.
+        Renders the delete account form.
 
     Returns:
-    - GET: Renders the delete account form.
-    - POST: Redirects to the home page after successful deletion.
+        - Renders the delete account form.
+    """
+    form = DeleteAccountForm()
+    h1 = "Are you sure you want to delete your account?"
+    return render_template("form_base.html", form=form, h1=h1)
+
+@app.post("/profile/delete")
+@login_required
+def delete_account_post():
+    """
+    Handles the POST request for deleting the user's account.
+
+    This function is triggered when the user submits the delete account form.
+    It validates the form data and deletes the user's account from the database
+    if all conditions are met.
+
+    Returns:
+        A redirect response to the home page if the account is deleted
+        successfully, or a redirect response to the delete account page with an
+        appropriate flash message if there are any errors.
 
     """
     form = DeleteAccountForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            if current_user.check_password_correction(
-                attempted_password=form.password.data
-            ):
-                db.session.delete(current_user)
-                db.session.commit()
-                flash("Account deleted successfully", category="success")
-                return redirect("/")
-            else:
-                flash("Password is not correct", category="danger")
-    h1 = "Are you sure you want to delete your account?"
-    return render_template("form_base.html", form=form, h1=h1)
+    if form.validate_on_submit():
+        if current_user.check_password_correction(
+            attempted_password=form.password.data
+        ):
+            db.session.delete(current_user)
+            db.session.commit()
+            flash("Account deleted successfully", category="success")
+            return redirect("/")
+        else:
+            flash("Password is not correct", category="danger")

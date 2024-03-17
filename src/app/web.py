@@ -4,7 +4,8 @@ This file contains the main web application and its configuration.
 
 All commonly imported libraries in routes and main file are defined in this file.
 
-The web application is built using Flask, a micro web framework for Python. It provides the necessary functionality for handling HTTP requests, rendering templates, and managing user authentication.
+The web application is built using Flask, a micro web framework for Python. 
+It provides the necessary functionality for handling HTTP requests, rendering templates, and managing user authentication.
 
 The following libraries are imported in this file:
 - Flask: The main Flask module for creating the web application.
@@ -32,9 +33,11 @@ The following libraries are imported in this file:
 - randint: A function for generating random integers.
 - sys: A module for interacting with the Python interpreter.
 
-The web application uses a PostgreSQL database for storing user data. The database connection details are read from environment variables using the dotenv module.
+The web application uses a PostgreSQL database for storing user data. 
+The database connection details are read from environment variables using the dotenv module.
 
-The web application also integrates with Google OAuth for user authentication. The client ID and client secret are read from environment variables.
+The web application also integrates with Google OAuth for user authentication. 
+The client ID and client secret are read from environment variables.
 
 The web application defines several decorators for handling user authentication and authorization:
 - login_required: A decorator that requires the user to be authenticated.

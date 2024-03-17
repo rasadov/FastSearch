@@ -18,6 +18,7 @@ Roadmap:
 - DONE: Implement OAuth2.0 with Microsoft in the `app/routes/account.py` file.
 - DONE: Use Google Analytics to track user interactions.
 
+- Refactor to the `app.get` and `app.post` decorators in the `app/routes/account.py` and `app/routes/other.py` files.
 - Improve search functionality in the `app/routes/product.py` file.
 - Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
@@ -55,28 +56,19 @@ def load_user(user_id):
         return None
 
 
-######## Product pages ########
+# Routes
 
-from routes.account import *
-from routes.admin import *
-from routes.errors import *
-from routes.other import *
 from routes.product import *
+
 from routes.subscription import *
 
-######## User pages ########
+from routes.account import *
 
+from routes.admin import *
 
-######## Subscription pages ########
+from routes.other import *
 
-
-######## Admin pages ########
-
-
-######## Other pages ########
-
-
-######## Error pages ########
+from routes.errors import *
 
 
 if __name__ == "__main__":
