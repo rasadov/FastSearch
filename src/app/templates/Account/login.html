@@ -1,73 +1,70 @@
-{% extends 'base.html' %}
-
+{% extends 'Account/authentication_base.html' %}
 {% block title %}
-<link rel="stylesheet" href="../static/auth.css">
-<title>Login</title>
-<style>
-    .forgot-password {
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 14px;
-        margin: 10px;
-    }
-</style>
+<title>Log in</title>
 {% endblock %}
-
-
-
 {% block content %}
+<section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+              <form method="POST">
+              {{ form.hidden_tag() }}
+              <div>
+                  <h3 class="mb-5">Log in</h3>
 
-<div class="container" style="width: 25%; text-align: center; margin: 40px auto">
-    <div style="margin: 30px;">
-        <h1 class="text-center">Log in</h1>
-    </div>
-    <form method="POST">
-    {{ form.hidden_tag() }}
-    <!-- Email input -->
-    <div class="form-outline mb-4">
-      {{ form.email_address(class='form-control', placeholder='Email Address') }}
-    </div>
-  
-    <!-- Password input -->
-    <div class="form-outline mb-4">
-      {{ form.password(class='form-control', placeholder='Password') }}
-    </div>
-  
-    <!-- 2 column grid layout for inline styling -->
-    <div class="row mb-4">
-      <div class="col d-flex justify-content-center">
-        <!-- Checkbox -->
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-          <label class="form-check-label" for="form2Example31"> Remember me </label>
+
+                <div class="form-outline mb-4">
+                    {{ form.email_address(class='form-control', placeholder='Email Address') }}
+                  </div>
+                  
+                  <div class="form-outline mb-4">
+                      {{ form.password(class='form-control', placeholder='Password') }}
+                  </div>
+              </div>
+
+            <div class="row mb-4">
+              <div class="col d-flex justify-content-center">
+                <!-- Checkbox -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
+                  <label class="form-check-label" for="form2Example31"> Remember me </label>
+                </div>
+            </div>
+          
+              <div class="col">
+                <!-- Simple link -->
+                <a href="{{ url_for('forgot_password_get') }}">Forgot password?</a>
+              </div>
+            </div>
+          
+            {{ form.submit(class='btn btn-primary', value='Sign in', style="width: 100%; font-size: 20px;")}}
+            <div style="margin: 15px;">
+                <p>Don't have account? <a href="{{ url_for('register_get') }}">Register</a></p>
+            </div>
+    
+          </form>
+
+            <hr class="my-4">
+              <div style="margin: 20px auto;">
+
+                  <a href="{{ url_for('login_with_google') }}">
+                      <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39; width: 100%; border: #dd4b39;"
+                      type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
+                  </a>
+              </div>
+              <div style="margin: 20px auto;">
+                  <a href="{{ url_for('login_with_microsoft') }}">
+                      <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #202020; width: 100%; border: #202020;"
+                      type="submit"><i class="fab fa-microsoft me-2"></i>Sign in with Microsoft</button>
+                  </a>
+              </div>
+
+          </div>
         </div>
       </div>
-  
-      <div class="col">
-        <!-- Simple link -->
-        <a href="{{ url_for('forgot_password_get') }}">Forgot password?</a>
-      </div>
     </div>
-  
-    <!-- Submit button -->
-    {{ form.submit(class='btn btn-primary btn-block mb-4', value='Log in')}}
-  
-    <!-- Register buttons -->
-    <div class="text-center">
-      <p>Not a member? <a href="{{ url_for('register_get') }}">Register</a></p>
-      <p>or sign up with:</p>
-    <button type="button" class="btn btn-link btn-floating mx-1" >
-        <a href="{{ url_for('login_with_google') }}">
-            <i class="fab fa-google"></i>
-        </a>
-    </button>
-    <button type="button" class="btn btn-link btn-floating mx-1">
-        <a href="{{ url_for('login_with_microsoft') }}">
-            <i class="fab fa-microsoft"></i>
-        </a>
-    </button>
-    </div>
-  </form>
-</div>
-
+  </div>
+</section>   
 {% endblock %}

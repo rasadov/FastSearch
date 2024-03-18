@@ -145,7 +145,7 @@
     <div class="row">
         <div class="col section">
             <div class="section-content">
-                <div style="text-align: center;">
+                <div style="text-align: center; color: black;">
                     <h2>Premium Price Tracking</h2>
                     <p>Analyze the entire market in minutes</p>
                     <p>Find the best prices for products</p>
@@ -156,46 +156,47 @@
     </div>
 </div>
 
-
-<div style="margin: 100px; text-align: center;">
-    <h1 class="display-4">Subscription plans</h1>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title">30 days</h2>
-                    <h3 class="card-subtitle mb-2 text-muted">4.99$</h3>
-                    <h4 class="card-subtitle mb-2 text-muted"><del>14.99$</del></h4>
-                    <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+<div>
+    <div style="margin: 100px; text-align: center; color: black;">
+        <h1 class="mt-4">Subscription plans</h1>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm border-frame" >
+                    <div class="card-body">
+                        <h2 class="card-title">30 days</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">4.99$</h3>
+                        <h4 class="card-subtitle mb-2 text-muted"><del>14.99$</del></h4>
+                        <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title">90 days</h2>
-                    <h3 class="card-subtitle mb-2 text-muted">11.99$</h3>
-                    <h4 class="card-subtitle mb-2 text-muted"><del>35.99$</del></h4>
-                    <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm border-frame" >
+                    <div class="card-body">
+                        <h2 class="card-title">90 days</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">11.99$</h3>
+                        <h4 class="card-subtitle mb-2 text-muted"><del>35.99$</del></h4>
+                        <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title">365 days</h2>
-                    <h3 class="card-subtitle mb-2 text-muted">44.99$</h3>
-                    <h4 class="card-subtitle mb-2 text-muted"><del>134.99$</del></h4>
-                    <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm border-frame" >
+                    <div class="card-body">
+                        <h2 class="card-title">365 days</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">44.99$</h3>
+                        <h4 class="card-subtitle mb-2 text-muted"><del>134.99$</del></h4>
+                        <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+    
 {% endblock %}
 
 {% block scripts %}

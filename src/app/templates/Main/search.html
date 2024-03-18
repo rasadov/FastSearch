@@ -73,6 +73,41 @@
     .hidden {
         display: none;
     }
+    @media (max-width: 767px) {
+            .flex-container {
+                display: block !important;
+            }
+
+            .card {
+                width: 90% !important;
+            }
+
+            .search-div {
+                width: 90% !important;
+            }
+            .filters {
+                width: 90% !important;
+                display: block !important;
+                justify-content: space-around;
+                margin: 20px auto 40px !important;
+            }
+            
+            .filters-container .form-control {
+                display: block;
+                width: 90% !important;
+                margin: 10px auto !important;
+
+            
+            }
+            .filters-container{
+                margin-bottom: 20px;
+            }
+
+            #args {
+                width: 100% !important;
+                justify-content: center;
+            }
+        }
     </style>
 
 {% endblock %}
@@ -91,51 +126,53 @@
 <div>
     <form method="GET" action="{{ url_for('search_get') }}">
         <div class="search-container">
-            <div style="width: 50%; margin: 40px auto 20px;">
+            <div class="search-div" style="width: 50%; margin: 40px auto 20px;">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <input type="text" name="search" class="form-control border-frame" id="search" placeholder="Search..." value="{{search}}">
+                    <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
+                        <i class="fa fa-search"></i>
+                    </button>
                 </div>
             </div>
         </div>
-        <div>
+        <div class="filters-container">
             <div class="hidden" id="args" style="justify-content: space-between; width: 50%; margin: auto;">
                 <div class="row" style="margin: 10px auto;">
-                    <div class="row">
-                        <input class="form-control" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 45%; margin: 9px;">
-                        <input class="form-control" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 45%; margin: 9px;">
-                    </div>
+                    <input class="form-control" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 45%; margin: 9px;">
+                    <input class="form-control" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 45%; margin: 9px;">
                 </div>
                 <div class="row" style="margin: 10px auto;">
-                    <div class="row" style="width: 100%;">
-                        <input class="form-control" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 30%;margin: 5px;">
-                        <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
-                        <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
-                    </div>
+                    <input class="form-control" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 30%;margin: 5px;">
+                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
+                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
                 </div>
             </div>
         </div>
 
     </form>
 </div>
-<div style="width: 10%; margin: 10px auto;">
-    <button id="filters" type="menu" class="btn btn-primary">
-        Filters
-    </button>
-    <a href="{{ url_for('search_get') }}">
-        <button type="menu" class="btn btn-primary">
-            Clear
+<div class="filters" style="width: 10%; margin: 10px auto;">
+    <div>
+        <button id="filters" type="menu" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+            Filters
         </button>
-    </a>
+    </div>
+    <div>
+        <a href="{{ url_for('search_get') }}">
+            <button type="menu" class="btn btn-primary" style="width: 100%;">
+                Clear
+            </button>
+        </a>
+    </div>
 </div>
 
-<div style="display: flex">    
+<div class="flex-container" style="display: flex">    
 {% for product in products %}
-    <div class="card" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+    <div class="card shadow border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
         <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
             <div class="card-body">
                 <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
-                <p class="card-text" style="padding: 10px;">Price: {{product.price}}</p>
+                <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
                 <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
                 <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
                 {% if product.price_change_90_days() %}
@@ -178,17 +215,17 @@
             </div>
         </a>
     </div>
-    {% if (loop.index) % 3 == 0 %}
-    </div>
-    <div style="display: flex">
-    {% endif %}
+        {% if (loop.index) % 3 == 0 %}
+        </div>
+        <div class="flex-container" style="display: flex">
+        {% endif %}
 {% endfor %}
 </div>
 
 <div style="text-align: center; margin: 20px auto 40px;">
     <div class="pagination">
         {% if products.has_prev %}
-            <a class="page-link" href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
+            <a class="page-link" style="background: #ffffff;"  href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
         {% endif %}
         
         {% for num in products.iter_pages() %}
@@ -196,15 +233,15 @@
                 {% if products.page == num %}
                     <a class="page-link current-page" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
                 {% else %}
-                    <a class="page-link" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
+                    <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
                 {% endif %}
             {% else %}
-                <span class="page-link">...</span>
+                <span class="page-link" style="background: #ffffff;">...</span>
             {% endif %}
         {% endfor %}
         
         {% if products.has_next %}
-            <a class="page-link" href="{{ url_for('search_get', page=products.next_num, **params) }}">Next</a>
+            <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=products.next_num, **params) }}">Next</a>
         {% endif %}
     </div>
 </div>
@@ -219,4 +256,6 @@
         document.getElementById('args').classList.toggle('hidden');
     });
 </script>
+
+
 {% endblock %}

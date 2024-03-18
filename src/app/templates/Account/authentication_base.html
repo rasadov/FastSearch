@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
-        /* body {
-            background-color: #508bfc; 
-        } */
+        body {
+            overflow: hidden; /* Hide scrollbars */
+        }
         .flash-close {
             border: none;
             background: none;
@@ -20,8 +20,6 @@
         .top-nav-collapse {
             background-color: #78909c !important;
         }
-
-
 
         .gradient-custom-2 {
             /* fallback for old browsers */
@@ -55,17 +53,29 @@
         .highlight {
             background-color: yellow;
         }
-
-        .border-frame {
-            border: 2px solid #333;
+        .hidden {
+            display: none;
         }
         
     </style>
+    <link rel="stylesheet" href="../static/auth.css">
     {% block title %}
     {% endblock %}
+    <style>
+        body {
+          /* fallback for old browsers */
+                background: #fccb90;
+    
+                /* Chrome 10-25, Safari 5.1-6 */
+                background: -webkit-linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+    
+                /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+                background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+              }
+    </style>
 </head>
 <body class="mb-3">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg mb-3" >  
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-lg mb-3" >  
         <div class="container">
             <a class="navbar-brand" href="{{url_for('home_get')}}">
                 <h1>Abyssara</h1>
@@ -77,41 +87,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('home_get') %}active{% endif %}" href="{{ url_for('home_get') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if request.path == url_for('search_get') %}active{% endif %}" href="{{ url_for('search_get') }}">Search</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('donation_get') %}active{% endif %}" href="{{ url_for('donation_get') }}">Donate</a>
+                        <a class="nav-link {% if request.path == url_for('register_get') %}hidden{% endif %}" href="{{ url_for('register_get') }}">Register</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('contact_get') %}active{% endif %}" href="{{ url_for('contact_get') }}">Contact</a>
+                        <a class="nav-link {% if request.path == url_for('login_get') %}hidden{% endif %}" href="{{ url_for('login_get') }}">Login</a>
                     </li>
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('profile_get') %}active{% endif %}" href="{{ url_for('profile_get') }}">Profile</a>
-                    </li>
-                    {% if current_user.is_admin() %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('admin_get') %}active{% endif %}" href="{{ url_for('admin_get') }}">Admin</a>
-                    </li>
-                    {% endif %}
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('register_get') %}active{% endif %}" href="{{ url_for('register_get') }}">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('login_get') %}active{% endif %}" href="{{ url_for('login_get') }}">Login</a>
-                    </li>
-                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
     {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}
-    <div class="container " style="margin: 10px auto;">
+    <div class="container" style="margin: 10px auto;">
         {% for category, message in messages %}
         <div class="alert alert-{{ category }}">
             <div style="display: flex;">
@@ -128,9 +118,7 @@
     <div class="content">
         
         {% block content %}
-    
         {% endblock %}
-    
     </div>
 </body>
 <!-- Google tag (gtag.js) -->
@@ -143,10 +131,9 @@ gtag('js', new Date());
 gtag('config', 'G-B0ELJBKQN0');
 
 let flashClose = document.querySelectorAll('.flash-close');
-let message = document.querySelector('.alert');
 flashClose.forEach((close) => {
     close.addEventListener('click', () => {
-        message.parentElement.style.display = 'none';
+        close.parentElement.style.display = 'none';
     });
 });
 

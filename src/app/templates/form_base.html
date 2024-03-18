@@ -4,21 +4,26 @@
 <title>
 Change Password
 </title>
-<link rel="stylesheet" href="../static/auth.css">
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {{ h1 }}
-    </h1> 
+<div>
+    <div style="text-align: center;">
+        <h1>
+            {{ h1 }}
+        </h1> 
+    </div>
     <form method="POST">
-        {% for field in form if field.widget.input_type != 'hidden' %}
+        {{ form.hidden_tag() }}
+        {% for field in form %}
             <div class="form-group">
-                {{ form.hidden_tag() }}
                 {% if field.label.text == 'Submit' %}
-                    {{ field(class='submit-btn', value='Submit') }}
+                </div>
+                <div style="width: 30%; margin: 15px auto;">
+                    {{ field(class='btn btn-primary', value='Submit', style='width: 100%;') }}
+                </div>
                 {% else %}
-                    {{ field(class='input-field', placeholder=field.label.text) }}
+                {{ field(class='form-control', placeholder=field.label.text, style='width:30%; max-width:50%; margin: 15px auto;') }}
                 {% endif %}
                 
                 {% for error in field.errors %}
@@ -27,4 +32,5 @@ Change Password
             </div>
         {% endfor %}
     </form>
+</div>
 {% endblock %}

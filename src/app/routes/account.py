@@ -262,7 +262,7 @@ def reset_password_get(token):
         flash("Token is invalid or has expired", "warning")
         return redirect(url_for("forgot_password_get"))
 
-    return render_template("form_base.html", form=form)
+    return render_template("form_base.html", h1='Reset Password' ,form=form)
 
 
 @app.post("/password/reset/<token>")
@@ -278,6 +278,7 @@ def reset_password_post(token):
         If the form is submitted successfully, redirects to the login page.
         If there are form validation errors, renders the reset password page with the error messages.
     """
+    print("reset_password_post")
     form = ResetPasswordForm()
     user = User.verify_reset_token(token)
     if form.validate_on_submit():
@@ -379,7 +380,7 @@ def profile_get():
     return render_template("Account/profile.html")
 
 
-@app.route("/profile/password/change", methods=["GET", "POST"])
+@app.get("/profile/password/change")
 @login_required
 def change_password_get():
     """
@@ -394,7 +395,7 @@ def change_password_get():
         return redirect("/profile/password/set")
     form = ChangePasswordForm()
     
-    return render_template("form_base.html", form=form)
+    return render_template("form_base.html",h1="Change passwrod", form=form)
 
 @app.post("/profile/password/change")
 @login_required
@@ -413,21 +414,22 @@ def change_password_post():
     """
     form = ChangePasswordForm()
     if form.validate_on_submit():
+        if form.password.data == form.old_password.data:
+            flash(
+                "New password can't be the same as old password",
+                category="danger",
+            )
+            return redirect("/profile/password/change")
         if current_user.check_password_correction(
             attempted_password=form.old_password.data
         ):
-            if form.password.data == form.old_password.data:
-                flash(
-                    "New password can't be the same as old password",
-                    category="danger",
-                )
-                return redirect("/change-password")
             current_user.password = form.password.data
             db.session.commit()
             flash("Password changed successfully", category="success")
             return redirect("/profile")
         else:
             flash("Old password is not correct", category="danger")
+    return redirect("/profile/password/change")
 
 @app.get("/profile/password/set")
 @login_required
@@ -489,7 +491,7 @@ def change_username_get():
     form.username.data = current_user.username
     form.name.data = current_user.name
 
-    return render_template("form_base.html", form=form)
+    return render_template("form_base.html", h1="Change Username", form=form)
 
 @app.post("/profile/username/change")
 @login_required
@@ -519,13 +521,13 @@ def change_username_post():
                 and form.username.data != current_user.username
             ):
                 flash("This username is already taken", category="danger")
-                return redirect("/change-username")
+                return redirect("/profile/username/change")
             if (
                 form.username.data == current_user.username
                 and form.name.data == current_user.name
             ):
                 flash("You didn't change anything", category="danger")
-                return redirect("/change-username")
+                return redirect("/profile/username/change")
             if (
                 form.username.data != current_user.username
                 and form.name.data != current_user.name

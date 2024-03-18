@@ -719,6 +719,5 @@ def admin_analytics_get():
         "user_devices": user_devices,
         "active_users": active_users,
     }
-    
 
     return render_template("Admin/analytics.html", report=report)
