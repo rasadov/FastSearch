@@ -323,7 +323,6 @@ def admin_products_search_get():
             variables[key] = value[0]
 
     products = products.paginate(page=page, per_page=9)
-
     total_pages = products.pages
 
     return render_template(
