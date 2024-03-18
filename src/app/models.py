@@ -406,9 +406,6 @@ class Product(db.Model):
     
     @staticmethod
     def get_filters():
-        # print(func.similarity(Product.title, "rtx").type)
-        # print(func.similarity(Product.title, "rtx"))
-        print((func.similarity(Product.title, 'rtx') > 0.3))
         return {
             "search": [
                 request.args.get("search", ""),
@@ -441,10 +438,6 @@ class Product(db.Model):
             "max_rating": [
                 request.args.get("max_rating", None, type=float),
                 lambda rating, query: query.filter(Product.rating <= rating),
-            ],
-            "page": [
-                request.args.get("page", 1, type=int),
-                lambda page, query: query.paginate(page=page, per_page=9),
             ],
         }
 

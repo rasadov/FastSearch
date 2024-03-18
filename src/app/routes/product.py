@@ -23,10 +23,9 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    # sample_run_report()
-    # if current_user.is_anonymous:
-    #     user = User.query.filter_by(id=1).first()
-    #     login_user(user)
+    if current_user.is_anonymous:
+        user = User.query.filter_by(id=1).first()
+        login_user(user)
     return render_template("Main/index.html")
 
 
@@ -54,8 +53,6 @@ def search_get():
 
     filters = Product.get_filters()
 
-    from sqlalchemy import text
-
     variables = {}
     for key, value in filters.items():
         val = value[0]
@@ -64,6 +61,7 @@ def search_get():
             variables[key] = val
 
     page = request.args.get("page", 1, type=int)
+    products = products.paginate(page, per_page=10)
 
     total_pages = products.pages
     return render_template(

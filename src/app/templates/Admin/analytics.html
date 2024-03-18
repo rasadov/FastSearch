@@ -1,0 +1,67 @@
+{% extends 'Admin/base.html' %}
+
+{% block title %}
+<title>Admin</title>
+<style>
+    #regions_div {
+    /* Add your styles here */
+    background-color: #2e2e2e;
+    border-radius: 15px;
+    padding: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <h1>Dashboard</h1>
+    <h3>Country Sessions</h3>
+    <p>You can view amount of users we have from each country</p>
+    <div style="margin: 20px; display: flex;">
+        <div id="regions_div"></div>
+        <div id="table_div_countries" style="color: black; width: 40%;"></div>
+    </div>
+    <div style="margin: 20px; display: flex;">
+        <div>
+            <h3>Devices used mostly in sessions</h3>
+            <div id="piechart" style="width: 500px ; height: 500px;"></div>
+        </div>
+        <div style="margin: auto;">
+            <h3>Most viewed routes</h3>
+            <div id="table_div_routes" style="color: black;"></div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+    var country_sessions = '{{ report["country_sessions"]|tojson }}';
+    country_sessions = JSON.parse(country_sessions);
+    country_sessions.unshift(['Country', 'Popularity']);
+    
+    var user_devices = '{{ report["user_devices"]|tojson }}';
+    user_devices = JSON.parse(user_devices);
+    user_devices.unshift(['Device', 'Popularity']);
+
+    var routes = '{{ report["page_views"]|tojson }}';
+    routes = JSON.parse(routes);
+    for (var i = 0; i < routes.length; i++) {
+        routes[i][1] = parseInt(routes[i][1]);
+    }
+
+    var countries = '{{ report["country_sessions"]|tojson }}';
+    countries = JSON.parse(countries);
+    for (var i = 0; i < countries.length; i++) {
+        countries[i][1] = parseInt(countries[i][1]);
+    }
+</script>
+<script type="text/javascript" src="../../static/charts.js"></script>
+
+{% endblock %}
+

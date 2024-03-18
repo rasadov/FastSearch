@@ -3,7 +3,22 @@ This file is the entry point of the application. It contains the main function t
 It initializes the routes and configures the application.
 ~~~~~~~~~~~~~~~~~~~~~
 
-Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 65%
+Routes are defined in the folder `routes`. The routes are divided into different files based on their functionality.:
+    Main.py: The main routes of the application. It contains the home page and the search page.
+    Account.py: The routes related to the user account. It contains the login, register, logout and account management routes.
+    Admin.py: The routes related to the admin panel. It contains the admin panel and the admin login routes.
+    Other.py: The routes related to other pages. It contains the contact and donate pages.
+    Errors.py: The routes related to error handling. It contains the error handling routes.
+
+Database Models are defined in the `models.py` file.
+
+The web application is initialized in the `web.py` file.
+
+The main function runs the application in debug mode. 
+THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
+USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
+
+Roadmap of remaining work (in order). Estimated time: 2-3 weeks. Start Date: 2024-03-14. Progress: 70%
 Roadmap:
 
 - DONE: Test the scraping functionality with the `google` method in the web application side.
@@ -19,21 +34,21 @@ Roadmap:
 - DONE: Use Google Analytics to track user interactions.
 - DONE: Improve search functionality in the `app/routes/product.py` file.
 
-- Implement OAuth2.0 with Facebook in the `app/routes/account.py` file.
+- Finish the implementation of the `admin/analysis` route in the `app/routes/admin.py` file.
+- Check if google analytics ignores the admin panel and token routes.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:
 - DONE: After implementation of filters in `/search` route, implement the same functionality in the admin panel.
+- DONE: Also improve search functionality in the admin panel.
 
-- Try to get API for scraping Amazon products. If not possible, in `scrape_amazon` function we access data from html side. In other amazon websites (amazon.co.uk, amazon.de, etc.) check if we can access data from json side. If yes, implement the functionality to scrape products from other amazon websites.
-- Also improve search functionality in the admin panel.
-- Add new functions in the `spiders/myproject/myproject/spiders/utils.py` file to scrape products from other websites.
 - Implement recommendation system in the web application side.
 - Add the chatbot functionality to the web application.
 
 Future Work (After the Roadmap):
+- Add new functions in the `spiders/myproject/myproject/spiders/utils.py` file to scrape products from other websites.
 - Implement the subscription functionality in the `app/routes/subscription.py` file.
 
 Notes:

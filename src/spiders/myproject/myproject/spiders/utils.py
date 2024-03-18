@@ -377,7 +377,7 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
             url, title, price, rating, amount_of_ratings, item_class, producer
         )
     except Exception as e:
-        print(f"Error: {e}", "danger")
+        flash(f"Error: {e}", "danger")
 
 
 def scrape_newegg_item(response, url: None | str = None):
@@ -537,9 +537,6 @@ def parsing_method(response):
     # html_content = response.body.decode(response.encoding)
     # with open(".html", "w", encoding=response.encoding) as f:
     #     f.write(html_content)
-
-    print(domain)
-    print(url)
 
     if domain == "www.ebay.com":
         scrape_ebay_item(response, url)
