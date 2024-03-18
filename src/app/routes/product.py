@@ -61,7 +61,7 @@ def search_get():
             variables[key] = val
 
     page = request.args.get("page", 1, type=int)
-    products = products.paginate(page, per_page=10)
+    products = products.paginate(page=page, per_page=9)
 
     total_pages = products.pages
     return render_template(

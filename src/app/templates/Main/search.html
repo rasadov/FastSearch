@@ -91,95 +91,101 @@
 <div>
     <form method="GET" action="{{ url_for('search_get') }}">
         <div class="search-container">
-            <input type="text" name="search" class="search-field" id="search" placeholder="Search..." value="{{search}}">
-            <button type="submit" class="search-btn">Search</button>
+            <div style="width: 50%; margin: 10px auto;">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
         </div>
         <div>
-            <div class="hidden" id="args" style="justify-content: space-between;">
-                <div style="display: flex;">
-                    <div style="width: 30%; display: flex; margin: auto;">
-                        <input class="input-field" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 50%; margin: 10px;">
-                        <input class="input-field" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 50%; margin: 10px;">
+            <div class="hidden" id="args" style="justify-content: space-between; width: 50%; margin: auto;">
+                <div class="row" style="margin: 10px auto;">
+                    <div class="row">
+                        <input class="form-control" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 45%; margin: 9px;">
+                        <input class="form-control" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 45%; margin: 9px;">
                     </div>
                 </div>
-                <div style="display: flex;">
-                    <div style="width: 30%; display: flex; margin: auto;">
-                        <input class="input-field" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 50%; margin: 10px;">    
-                        <input class="input-field" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 20%; margin: 10px;">
-                        <input class="input-field" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 20%; margin: 10px;">
+                <div class="row" style="margin: 10px auto;">
+                    <div class="row" style="width: 100%;">
+                        <input class="form-control" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 30%;margin: 5px;">
+                        <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
+                        <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
                     </div>
-                </div>
-                <div>
-                    <button type="submit" class="submit-btn">Filter</button>
                 </div>
             </div>
         </div>
 
     </form>
-    <button id="filters" type="menu">
-        filter
+</div>
+<div style="width: 10%; margin: 10px auto;">
+    <button id="filters" type="menu" class="btn btn-primary">
+        Filters
     </button>
-    <button>
-        <a href="{{ url_for('search_get') }}">Clear</a>
-    </button>
+    <a href="{{ url_for('search_get') }}">
+        <button type="menu" class="btn btn-primary">
+            Clear
+        </button>
+    </a>
 </div>
 
 <div style="display: flex">    
 {% for product in products %}
-    <div style="background: #2f2f2f; width: 30%; margin: 10px auto; border-radius: 25px;">
-        <a href="{{ product.url }}" style="text-decoration: none; color: white; ">
-
-            <h1 style="font-size: large; max-width: 180px; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
-            <p style="padding: 10px;">Price: {{product.price}}<p>
-            <p style="padding: 10px;">Rating: {{product.rating}}</h1>
-            <p style="padding: 10px;">Category: {{product.item_class}}</p>
-            {% if product.price_change_90_days() %}
-                {% if product.price_change_90_days() != product.price_change_30_days() %}
-                <div>
-                    <p style="padding: 10px;">Price change last 90 days: </p>
-                    <p {% if product.price_change_90_days() < 0 %} style="color: green;">{% else %} style="color: red;" >+{% endif %}{{product.price_change_90_days()}}%</p>
-                </div>    
-                {% endif %}
-                {% if product.price_change_30_days() and product.price_change_30_days() != product.price_change_7_days() %}
-                <div>
-                    <p style="padding: 10px;">Price change last 30 days:</p>
-                    <p {% if product.price_change_30_days() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_30_days()}}%</p>
-                </div>
-                {% endif %}
-                {% if product.price_change_7_days() and product.price_change_7_days() != product.price_change_1_day() %}
-                <div>
-                    <p>Price change last 7 days:</p>
-                    <p {% if product.price_change_7_days() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_7_days()}}%</p>
-                </div>
-                {% endif %}
-                {% if product.price_change_1_day() %}
-                <div>
-                    <p style="padding: 10px;">Price change last 1 day:</p>
-                    <p {% if product.price_change_1_day() < 0 %} style="color: green;"> {% else %} style="color: red;">+{% endif %}{{product.price_change_1_day()}}%</p>
-                </div>
-                {% endif %}
-            {% else %}
-                {% if product.price_change_last() %}
-                <div>
-                    <p style="padding: 10px;">Price change last time:</p><p {% if product.price_change_last() < 0 %} style="color: green;">{% else %} style="color: red;">+{% endif %}{{product.price_change_last()}}%</p>
-                </div>
+    <div class="card" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+        <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
+            <div class="card-body">
+                <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
+                <p class="card-text" style="padding: 10px;">Price: {{product.price}}</p>
+                <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
+                <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
+                {% if product.price_change_90_days() %}
+                    {% if product.price_change_90_days() != product.price_change_30_days() %}
+                    <div style="display: flex; padding-left: 20%;"> 
+                        <p class="card-text" style="margin: auto 5px;">Price change last time:</p>
+                        <p class="card-text" {% if product.price_change_90_days() < 0 %} style="color: green; margin: auto 5px;"> {% else %} style="color: red; margin: auto 5px;">+{% endif %}{{product.price_change_90_days()}}%</p>
+                    </div>
+                    {% endif %}
+                    {% if product.price_change_30_days() and product.price_change_30_days() != product.price_change_7_days() %}
+                    <div style="display: flex; padding-left: 20%;"> 
+                        <p class="card-text" style="margin: auto 5px;">Price change last time:</p>
+                        <p class="card-text" {% if product.price_change_30_days() < 0 %} style="color: green; margin: auto 5px;"> {% else %} style="color: red; margin: auto 5px;">+{% endif %}{{product.price_change_30_days()}}%</p>
+                    </div>
+                    {% endif %}
+                    {% if product.price_change_7_days() and product.price_change_7_days() != product.price_change_1_day() %}
+                    <div style="display: flex; padding-left: 20%;"> 
+                        <p class="card-text" style="margin: auto 5px;">Price change last time:</p>
+                        <p class="card-text" {% if product.price_change_7_days() < 0 %} style="color: green; margin: auto 5px;"> {% else %} style="color: red; margin: auto 5px;">+{% endif %}{{product.price_change_7_days()}}%</p>
+                    </div>
+                    {% endif %}
+                    {% if product.price_change_1_day() %}
+                    <div style="display: flex; padding-left: 20%;"> 
+                        <p class="card-text" style="margin: auto 5px;">Price change last time:</p>
+                        <p class="card-text" {% if product.price_change_1_day() < 0 %} style="color: green; margin: auto 5px;"> {% else %} style="color: red; margin: auto 5px;">+{% endif %}{{product.price_change_1_day()}}%</p>
+                    </div>
+                    {% endif %}
                 {% else %}
-                <div>
-                    <p style="padding: 10px;">No price change detected yet</p>
-                </div>
+                    {% if product.price_change_last() %}
+                    <div style="display: flex; padding-left: 20%;"> 
+                        <p class="card-text" style="margin: auto 5px;">Price change last time:</p>
+                        <p class="card-text" {% if product.price_change_last() < 0 %} style="color: green; margin: auto 5px;"> {% else %} style="color: red; margin: auto 5px;">+{% endif %}{{product.price_change_last()}}%</p>
+                    </div>
+                    {% else %}
+                    <div>
+                        <p class="card-text" style="padding: 10px;">No price change detected yet</p>
+                    </div>
+                    {% endif %}
                 {% endif %}
-            
-            {% endif %}
+            </div>
         </a>
     </div>
     {% if (loop.index) % 3 == 0 %}
-        </div>
-        <div style="display: flex;">
+    </div>
+    <div style="display: flex">
     {% endif %}
 {% endfor %}
 </div>
 
-<div style="text-align: center;">
+<div style="text-align: center; margin: 20px auto 40px;">
     <div class="pagination">
         {% if products.has_prev %}
             <a class="page-link" href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
