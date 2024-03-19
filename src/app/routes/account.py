@@ -22,7 +22,7 @@ Profile pages:
 
 """
 
-from models import *
+from models import User, db
 from web import *
 
 ######## Profile pages ########
@@ -66,7 +66,7 @@ def register_post():
             )
             db.session.add(user)
             db.session.commit()
-            login_user(user)
+            login_user(user, remember=form.remember.data)
             return redirect("/verification")
         else:
             flash("This Email is already used", category="danger")
@@ -117,7 +117,7 @@ def login_post():
         if attempted_user and attempted_user.chech_password_correction(
             attempted_password=form.password.data
         ):
-            login_user(attempted_user)
+            login_user(attempted_user, remember=form.remember.data)
             return redirect("/")
         else:
             flash("Username or password is not correct", category="danger")
@@ -134,7 +134,7 @@ def login_with_google():
     return google.authorize_redirect(redirect_uri)
 
 
-@app.post("/authorize/google")
+@app.get("/authorize/google")
 @logout_required
 def authorize_google():
     """
@@ -185,7 +185,7 @@ def login_with_microsoft():
     return microsoft.authorize_redirect(redirect_uri)
 
 
-@app.post("/authorize/microsoft")
+@app.get("/authorize/microsoft")
 @logout_required
 def authorize_microsoft():
     microsoft = oauth.create_client("microsoft")

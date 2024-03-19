@@ -32,6 +32,38 @@
             background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
         } 
 
+        .gradient-custom-3 {
+            /* fallback for old browsers */
+            background: #fccb90;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, #007bff, #00a5e0, #00c3b9, #00e0a5);
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, #007bff, #00a5e0, #00c3b9, #00e0a5);
+        } 
+
+        .gradient-custom-4 {
+            /* fallback for old browsers */
+            background: #fccb90;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, #243bee, #36a2d8, #45b47c, #ddd836);
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, black, rgb(99, 99, 99), #ddd836);
+        }
+        .gradient-custom-5 {
+            /* fallback for old browsers */
+            background: #fccb90;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, #243bee, #36a2d8, #45b47c, #ddd836);
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to top, black,  rgb(31, 31, 31), rgb(47, 47, 47));
+        }
+
         @media (min-width: 768px) {
         .gradient-form {
         height: 100vh !important;
@@ -61,20 +93,8 @@
     <link rel="stylesheet" href="../static/auth.css">
     {% block title %}
     {% endblock %}
-    <style>
-        body {
-          /* fallback for old browsers */
-                background: #fccb90;
-    
-                /* Chrome 10-25, Safari 5.1-6 */
-                background: -webkit-linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
-    
-                /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-                background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
-              }
-    </style>
 </head>
-<body class="mb-3">
+<body class="mb-3 gradient-custom-5">
     <nav class="navbar navbar-expand-lg navbar-dark shadow-lg mb-3" >  
         <div class="container">
             <a class="navbar-brand" href="{{url_for('home_get')}}">

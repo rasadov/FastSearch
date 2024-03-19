@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 
 from flask_login import UserMixin
 from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Index,
-                        Integer, String, desc, Computed, func)
+                        Integer, String, desc, asc, Computed, func)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -384,6 +384,15 @@ class Product(db.Model):
             bool: True if the product is available, False otherwise.
         """
         return self.availability == "In stock"
+    
+    def get_domain(self):
+        """
+        Returns the domain of the product's URL.
+
+        Returns:
+            str: The domain of the product's URL.
+        """
+        return re.search(r"(https?://)?(www\.)?([^/]+)", self.url).group(3)
 
     def items(self):
         """
@@ -405,17 +414,39 @@ class Product(db.Model):
         }.items()
     
     @staticmethod
+    def search(search, query):
+        """
+        Perform a search operation on the given query based on the provided search string.
+
+        This function applies filtering to the given query based on the search string. It checks if the length of the search
+        string is less than 10 characters or the number of words in the search string is less than 4. If either of these
+        conditions is true, it applies a filter to the query using similarity functions and the ilike operator to match
+        the search string against the title, producer, and item_class attributes of the Product model.
+
+        If the search string meets the length and word count requirements, it applies a full-text search filter to the query
+        using the tsvector_title column of the Product model.
+
+        Args:
+            search (str): The search string to be used for filtering the query.
+            query (Query): The query object to be filtered.
+
+        Returns:
+            Query: The filtered query object based on the search string.
+
+        """
+        if len(search) < 10 or len(search.split()) < 4:
+            return query.filter((func.similarity(Product.title, search) > 0.1)
+                        | (func.similarity(Product.producer, search) > 0.1)
+                        | (func.similarity(Product.item_class, search) > 0.1)
+                        | Product.title.ilike(f"%{search}%"))
+        return query.filter(Product.tsvector_title.match(search))
+    
+    @staticmethod
     def get_filters():
         return {
             "search": [
                 request.args.get("search", ""),
-                lambda search, query: query.filter(
-                    (func.similarity(Product.title, search) > 0.1)
-                    | (func.similarity(Product.producer, search) > 0.1)
-                    | (func.similarity(Product.item_class, search) > 0.1)
-                    | Product.title.ilike(f"%{search}%")
-                ),
-            ],
+                Product.search],
             "min_price": [
                 request.args.get("min_price", None, type=int),
                 lambda min_price, query: query.filter(Product.price >= min_price),
@@ -520,7 +551,58 @@ class PriceHistory(db.Model):
         self.price = price
         self.date = date
 
-    def price_change(product_id, days):
+    price_history_id = Column(Integer(), primary_key=True)
+    product_id = Column(Integer(), ForeignKey("product.id"), nullable=False)
+    price = Column(String(), nullable=False)
+    change_date = Column(DateTime(), nullable=False, default=datetime.now().date())
+
+    @staticmethod
+    def if_price_change(product_id) -> bool:
+        
+        records = PriceHistory.query.filter_by(product_id=product_id).count()
+        return records > 1
+        
+    @staticmethod
+    def if_price_change(product_id, days) -> bool:
+        records = PriceHistory.query.filter_by(product_id=product_id).order_by(
+            desc(PriceHistory.change_date))
+
+        if records.count() < 2:
+            return False
+        
+        cur = records.first().price
+        
+        records = records.filter(
+            PriceHistory.change_date < 
+            datetime.now().date() - timedelta(days=days))
+        
+        return records.first().price != cur.first().price
+
+    @staticmethod
+    def price_change(product_id) -> float:
+        """
+        Returns the price change of the product the last time.
+
+        Args:
+            product_id (int): The ID of the product to get the price change for.
+        Returns:
+            float: The price change percentage.
+
+        """
+        records = PriceHistory.query.filter_by(product_id=product_id).order_by(
+            desc(PriceHistory.change_date))
+        
+
+        if records.count() < 2:
+            return 0.0
+        
+        cur = records.first().price
+        last = records.offset(1).first().price
+
+        return round(last / cur - 1, 2) * 100
+
+    @staticmethod
+    def price_change(product_id, days) -> float:
         """
         Returns the price change of the product in the last n days.
 
@@ -530,34 +612,19 @@ class PriceHistory(db.Model):
 
         Returns:
             float: The price change percentage.
+
         """
         records = PriceHistory.query.filter_by(product_id=product_id).order_by(
             desc(PriceHistory.change_date))
         
+
         if records.count() < 2:
-            return 0
+            return 0.0
+        
+        cur = records.first().price
+        last = records.offset(1).first().price
 
-        if days == "last":
-            last_price = float(re.sub(r"[^\d.]", "", records.first().price))
-            prev_price = float(re.sub(r"[^\d.]", "", records[1].price))
-
-            return round(last_price / prev_price - 1, 2) * 100
-
-        last = records.first()
-        prev = records.filter(PriceHistory.change_date < datetime.now().date() - timedelta(days=days)).first()
-
-        if not prev:
-            return 0
-
-        last_price = float(re.sub(r"[^\d.]", "", last.price))
-        prev_price = float(re.sub(r"[^\d.]", "", prev.price))
-
-        return round(last_price / prev_price - 1, 2) * 100
-
-    price_history_id = Column(Integer(), primary_key=True)
-    product_id = Column(Integer(), ForeignKey("product.id"), nullable=False)
-    price = Column(String(), nullable=False)
-    change_date = Column(DateTime(), nullable=False, default=datetime.now().date())
+        return round(last / cur - 1, 2) * 100
 
 # from sqlalchemy import text
 

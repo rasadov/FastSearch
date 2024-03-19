@@ -35,7 +35,9 @@ def subscribe(days: int = 0, user: User = current_user):
     db.session.commit()
 
 
-@app.route("/subcribe", methods=["POST"])
+    return redirect(url_for("search_get", query="", page=1))
+
+@app.route("/subcribe", methods=["GET", "POST"])
 def subscribe_page():
     """
     Not Finished

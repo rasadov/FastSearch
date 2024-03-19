@@ -19,7 +19,7 @@ Classes:
 
 from flask_wtf import FlaskForm
 from wtforms import (EmailField, IntegerField, PasswordField, StringField,
-                     SubmitField)
+                     SubmitField, BooleanField)
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
 
 
@@ -37,6 +37,7 @@ class LoginForm(FlaskForm):
         label="Email Address", validators=[DataRequired(), Email()]
     )
     password = PasswordField(label="Password", validators=[Length(6), DataRequired()])
+    remember = BooleanField(label="Remember Me", default=True)
     submit = SubmitField(label="Submit")
 
 
@@ -58,6 +59,7 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField(
         label="Confirm Password", validators=[EqualTo("password"), DataRequired()]
     )
+    remember = BooleanField(label="Remember Me", default=True)
     submit = SubmitField(label="Submit")
 
 

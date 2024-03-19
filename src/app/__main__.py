@@ -34,6 +34,7 @@ Roadmap:
 - DONE: Use Google Analytics to track user interactions.
 - DONE: Improve search functionality in the `app/routes/product.py` file.
 
+- Create Card for user model in the `models.py` file. 
 - Finish the implementation of the `admin/analysis` route in the `app/routes/admin.py` file.
 - Check if google analytics ignores the admin panel and token routes.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
@@ -86,4 +87,4 @@ from routes.errors import *
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, port=5000)

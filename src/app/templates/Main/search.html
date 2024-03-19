@@ -173,8 +173,10 @@
             <div class="card-body">
                 <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
                 <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
+                <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
                 <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
                 <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
+                {{ product.price_change_90_days() }}
                 {% if product.price_change_90_days() %}
                     {% if product.price_change_90_days() != product.price_change_30_days() %}
                     <div style="display: flex; padding-left: 20%;"> 
