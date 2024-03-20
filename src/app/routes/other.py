@@ -6,7 +6,9 @@ Routes:
 - `robots.txt` : Serves the robots.txt file for web crawlers
 """
 
-from web import *
+from web import (app, render_template, send_from_directory,
+                request, flash, redirect, url_for,
+                current_user, send_email, os)
 
 
 @app.get("/favicon.ico")
@@ -38,15 +40,15 @@ def contact_post():
         flash("You need to be logged in to send a message", "danger")
         return redirect(url_for("login"))
     name = request.form["name"]
-    title = request.form["title"]
+    number = request.form["number"] 
     subject = request.form["subject"]
     message = request.form["message"]
-    if name and title and message:
+    if name and message:
         send_email(
             "rasadov20309@ada.edu.az",
-            f"{name} ({current_user.email_address}) has sent you message: \n\n {message}",
+            f"{name} ({current_user.email_address} | {number if number else 'No number'}) has sent you message: \n\n {message}",
             subject=subject,
-            title=f"Abyssara user: {title}",
+            title=f"Abyssara user sent you a message",
         )
         flash("Your message has been sent. Thank you!", "success")
     else:

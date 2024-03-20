@@ -7,43 +7,43 @@
 
 {% block content %}
 
-{% if data_type == 'Product' %}
+{% if item.__tablename__ == 'product' %}
 <div style="padding: 50px;">
     <h1>Edit Product</h1>
-    <form method="POST" action="{{ url_for('admin_product_edit_post', id=product.id) }}">
+    <form method="POST" action="{{ url_for('admin_product_edit_post', id=item.id) }}">
         <div>
             <label for="title">Title:</label><br>
-            <input class="input-field" type="text" id="title" name="title" value="{{ product.title }}">
+            <input class="input-field" type="text" id="title" name="title" value="{{ item.title }}">
         </div>
         <div>
             <label for="price">Price:</label><br>
-            <input class="input-field" type="text" id="price" name="price" value="{{ product.price }}">
+            <input class="input-field" type="text" id="price" name="price" value="{{ item.price }}">
         </div>
         <div>
             <label for="rating">Rating:</label><br>
-            <input class="input-field" type="text" id="rating" name="rating" value="{{ product.rating }}">
+            <input class="input-field" type="text" id="rating" name="rating" value="{{ item.rating }}">
         </div>
         <div>
             <label for="amount_of_ratings">Amount of ratings:</label><br>
-            <input class="input-field" type="text" id="amount_of_ratings" name="amount_of_ratings" value="{{ product.amount_of_ratings }}">
+            <input class="input-field" type="text" id="amount_of_ratings" name="amount_of_ratings" value="{{ item.amount_of_ratings }}">
         </div>
         <div>
             <label for="url">URL:</label><br>
-            <input class="input-field" type="text" id="url" name="url" value="{{ product.url }}">
+            <input class="input-field" type="text" id="url" name="url" value="{{ item.url }}">
         </div>
         <div>
             <label for="producer">Brand:</label><br>
-            <input class="input-field" type="text" id="producer" name="producer" value="{{ product.producer }}">
+            <input class="input-field" type="text" id="producer" name="producer" value="{{ item.producer }}">
         </div>
         <div>
             <label for="item_class">Item class:</label><br>
-            <input class="input-field" type="text" id="item_class" name="item_class" value="{{ product.item_class }}">
+            <input class="input-field" type="text" id="item_class" name="item_class" value="{{ item.item_class }}">
         </div>
         <div>
             <label for="availability">Availability:</label><br>
             <select class="input-field" name="availability" id="availability">
-                <option value="True" {% if product.availability %} selected {% endif %}>True</option>
-                <option value="False" {% if not product.availability %} selected {% endif %}>False</option>
+                <option value="True" {% if item.availability %} selected {% endif %}>True</option>
+                <option value="False" {% if not item.availability %} selected {% endif %}>False</option>
             </select>
         </div>
         <div style="justify-content: space-between; display: flex; margin: 60px auto;">
@@ -54,34 +54,34 @@
 
 {% endif %}
 
-{% if data_type == 'User' %}
+{% if item.__tablename__ == 'user' %}
 
 <div>
     <h1>Edit User</h1>
-    <form method="POST" action="{{ url_for('admin_user_edit_post', id=user.id) }}">
+    <form method="POST" action="{{ url_for('admin_user_edit_post', id=item.id) }}">
         <div>
             <label for="username">Username:</label><br>
-            <input class="input-field" type="text" id="username" name="username" {% if user.username and user.username !="None" %} value="{{ user.username }}" {% else %} value="None" {% endif %}>
+            <input class="input-field" type="text" id="username" name="username" {% if item.username and item.username !="None" %} value="{{ item.username }}" {% else %} value="None" {% endif %}>
         </div>
         <div>
             <label for="name">Name:</label><br>
-            <input class="input-field" type="text" id="name" name="name" {% if user.name and user.name !="None" %} value="{{ user.name }}" {% endif %}>
+            <input class="input-field" type="text" id="name" name="name" {% if item.name and item.name !="None" %} value="{{ item.name }}" {% endif %}>
         </div>
         <div>
             <label for="email">Email:</label><br>
-            <input class="input-field" type="email" id="email_address" name="email_address" value="{{ user.email_address }}">
+            <input class="input-field" type="email" id="email_address" name="email_address" value="{{ item.email_address }}">
         </div>
         <div>
             <label for="role">Role:</label><br>
             <select class="input-field" id="role" name="role">
-                {% if user.role == 'user' %}
+                {% if item.role == 'item' %}
                 <option value="user" selected>User</option>
                 <option value="admin">Admin</option>
                 {% if current_user.role == 'owner' %}
                     <option value="owner">Owner</option>
                 {% endif %}
                     
-                {% elif user.role == 'admin' %}
+                {% elif item.role == 'admin' %}
                 <option value="admin" selected>Admin</option>
                 <option value="user">User</option>
                 {% if current_user.role == 'owner' %}
@@ -89,7 +89,7 @@
                 {% endif %}
 
 
-                {% elif user.role == 'owner' %}
+                {% elif item.role == 'owner' %}
                 <option value="owner" selected>Owner</option>
                 <option value="admin">Admin</option>
                 <option value="user">User</option>
@@ -102,8 +102,8 @@
         <div>
             <label for="confirmed">Confirmed:</label><br>
             <select class="input-field" id="confirmed" name="confirmed">
-                <option value="True" {% if user.is_confirmed() %} selected {% endif %}>True</option>
-                <option value="False" {% if not user.is_confirmed() %} selected {% endif %}>False</option>
+                <option value="True" {% if item.is_confirmed() %} selected {% endif %}>True</option>
+                <option value="False" {% if not item.is_confirmed() %} selected {% endif %}>False</option>
             </select>
         </div>
         <button class="submit-btn" type="submit">Submit</button>

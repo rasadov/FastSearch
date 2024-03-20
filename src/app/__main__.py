@@ -33,8 +33,8 @@ Roadmap:
 - DONE: Implement OAuth2.0 with Microsoft in the `app/routes/account.py` file.
 - DONE: Use Google Analytics to track user interactions.
 - DONE: Improve search functionality in the `app/routes/product.py` file.
+- DONE: Create Card for user model in the `models.py` file. 
 
-- Create Card for user model in the `models.py` file. 
 - Finish the implementation of the `admin/analysis` route in the `app/routes/admin.py` file.
 - Check if google analytics ignores the admin panel and token routes.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.
@@ -59,9 +59,8 @@ Notes:
 
 """
 
-from models import *
-from web import *
-
+from models import User
+from web import app, db, login_manager
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -73,18 +72,9 @@ def load_user(user_id):
 
 # Routes
 
-from routes.main import *
+from routes import *
 
-from routes.subscription import *
-
-from routes.account import *
-
-from routes.admin import *
-
-from routes.other import *
-
-from routes.errors import *
-
+# Main function
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)

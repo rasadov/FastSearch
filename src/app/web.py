@@ -68,7 +68,6 @@ from flask import (Flask, flash, redirect, render_template, request,
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
-from forms import *
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
 dotenv.load_dotenv()

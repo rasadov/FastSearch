@@ -11,8 +11,8 @@ Functions:
 - `search_get()`: Renders the search page with filtered products based on the query parameters.
 """
 
-from models import *
-from web import *
+from models import Product
+from web import app, render_template, request
 
 
 @app.get("/")
@@ -23,8 +23,6 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    product = Product.query.get(154)
-    print(product.price_change())
     return render_template("Main/index.html")
 
 

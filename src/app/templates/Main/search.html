@@ -73,6 +73,21 @@
     .hidden {
         display: none;
     }
+
+    .clear-filters {
+        width: 22.5%; 
+        margin: 20px auto;
+    }
+
+    .clear-filters button {
+        width: 100%;
+    }
+
+    .pag-loop {
+                display: none;
+            
+            }
+
     @media (max-width: 767px) {
             .flex-container {
                 display: block !important;
@@ -107,6 +122,24 @@
                 width: 100% !important;
                 justify-content: center;
             }
+            
+            .clear-filters {
+                width: 95% !important;
+                margin: 20px auto !important;
+            }
+
+            .pagination {
+                display: block !important;
+            }
+
+            .pagination a {
+                margin: 5px !important;
+            }
+        }
+
+
+        footer {
+            margin-top: 60px !important; 
         }
     </style>
 
@@ -146,6 +179,14 @@
                     <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
                     <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
                 </div>
+                <div class="row" style="margin: 10px auto;">
+                    <a href="{{ url_for('search_get') }}" class="clear-filters">
+                        <button type="menu" class="btn btn-primary">
+                            Clear filters
+                        </button>
+                    </a>
+                </div>
+                
             </div>
         </div>
 
@@ -156,13 +197,6 @@
         <button id="filters" type="menu" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
             Filters
         </button>
-    </div>
-    <div>
-        <a href="{{ url_for('search_get') }}">
-            <button type="menu" class="btn btn-primary" style="width: 100%;">
-                Clear 
-            </button>
-        </a>
     </div>
 </div>
 
@@ -191,7 +225,6 @@
         {% if products.has_prev %}
             <a class="page-link" style="background: #ffffff;"  href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
         {% endif %}
-        
         {% for num in products.iter_pages() %}
             {% if num %}
                 {% if products.page == num %}

@@ -21,4 +21,17 @@
     <p>{{ key }}: {{ value }}</p>
 {% endfor %}
 
+
+{% if item.__tablename__ == "user" %}
+    <div>
+        {% if cart %}
+            {% for i in cart %}
+                <p>{{ i.title }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No items in cart</p>
+        {% endif %}
+    </div>
+{% endif %}
+
 {% endblock %}

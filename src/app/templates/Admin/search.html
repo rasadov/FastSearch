@@ -92,13 +92,12 @@
 <div style="text-align: center;">
     <div>
         <div>    
-            <h2>View {{ data_type }}s in database</h2>
             <form method="GET" action="{{ url_for(function, **variables) }}">
                 <div class="search-container">
                     <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
                     <button type="submit" class="search-btn">Search</button>
                 </div>
-                {% if data_type == 'Product' %}
+                {% if 'product' in function %}
                 <div>
                     <div class="hidden" id="args" style="justify-content: space-between;">
                         <div style="display: flex;">
@@ -121,12 +120,12 @@
                 </div>
                 {% endif %}
             </form>
-            {% if data_type == 'Product' %}
+            {% if 'product' in function %}
             <button id="filters" type="menu">
                 filter
             </button>
             <button>
-                <a href="{{ url_for('admin_products_search_get') }}">Clear</a>
+                <a href="{{ url_for(function) }}">Clear</a>
             </button>
             {% endif %}
             {% if items.total == 0 %}
@@ -136,7 +135,7 @@
             {% endif %}
             <div style="display: flex;">
             {% for item in items %}
-                {% if data_type == 'Product' %}
+                {% if item.__tablename__ == 'product' %}
                 <a href="{{item.url}}" style="text-decoration: none; color: white;">
                     <div class="section" style="max-width: 30%; max-height: 50%; padding: 20px; ">
                         <h4>
@@ -161,7 +160,7 @@
                     </div>
                 </a>
                 {% endif %}
-                {% if data_type == 'User' %}
+                {% if item.__tablename__ == 'user' %}
                     <div class="user" style="display: inline-block; width: 30%;">
                         <div>
                             <p>{{ item.username }}</p>
