@@ -22,9 +22,6 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('home_get') %}active{% endif %}" href="{{ url_for('home_get') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if request.path == url_for('search_get') %}active{% endif %}" href="{{ url_for('search_get') }}">Search</a>
                     </li>
                     <li class="nav-item">

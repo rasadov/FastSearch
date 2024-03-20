@@ -73,7 +73,7 @@ def load_user(user_id):
 
 # Routes
 
-from routes.product import *
+from routes.main import *
 
 from routes.subscription import *
 
@@ -87,4 +87,4 @@ from routes.errors import *
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

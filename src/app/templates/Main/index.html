@@ -171,9 +171,6 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('home_get') %}active{% endif %}" href="{{ url_for('home_get') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {% if request.path == url_for('search_get') %}active{% endif %}" href="{{ url_for('search_get') }}">Search</a>
                         </li>
                         <li class="nav-item">
@@ -221,13 +218,13 @@
         {% endwith %}
         <div class="content">
             <div class="container" style="margin: 30px auto; padding-bottom: 50px;">
-                <div class="row">
+                <div class="row" style="margin: 60px auto;">
                     <div class="col section">
                         <div class="section-content" style="text-align: center;">
-                            <div style="margin: 100px auto;">
+                            <div style="padding: 30px;">
                                 <h1 class="display-5 fw-bolder text-white mb-2">Premium Price Tracking Service</h2>
                             </div>
-                            <div>
+                            <div style="padding: 30px;">
                                 <p class="mb-2">Track prices for desirable products and get notifications about price drops with the best tracker Abyssara</p>
                             </div>
                         </div>
@@ -279,7 +276,7 @@
         
         <div>
             <div style="margin: 100px; text-align: center; color: black;">
-                <h1 class="mt-4">Subscription plans</h1>
+                <h1 class="mb-2">Subscription plans</h1>
             </div>
             
             <div class="container">

@@ -22,7 +22,7 @@ Profile pages:
 
 """
 
-from models import User, db
+from models import User
 from web import *
 
 ######## Profile pages ########
