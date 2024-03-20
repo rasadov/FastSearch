@@ -23,6 +23,8 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
+    product = Product.query.get(154)
+    print(product.price_change())
     return render_template("Main/index.html")
 
 

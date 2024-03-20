@@ -63,7 +63,7 @@ class Product(db.Model):
         name="tsvector_title",
     )
 
-    __table_args__: Mapped[Index] = (
+    __table_args__: Mapped[tuple] = (
         Index("ix_video___ts_vector__", tsvector_title, postgresql_using="gin"),
     )
 
@@ -161,7 +161,8 @@ class Product(db.Model):
         return {
             "search": [
                 request.args.get("search", ""),
-                Product.search],
+                Product.search
+            ],
             "min_price": [
                 request.args.get("min_price", None, type=int),
                 lambda min_price, query: query.filter(Product.price >= min_price),
@@ -187,56 +188,23 @@ class Product(db.Model):
             ],
         }
 
-    def price_change_last(self):
+    def price_change(self, days=None):
         """
         Returns the price change of the product in the last price history entry.
 
-        Returns:
-            float: The price change percentage.
-        """
-
-        return PriceHistory.price_change(self.id, "last")
-
-    def price_change_90_days(self):
-        """
-        Returns the price change of the product in the last 90 days.
-
-        Returns:
-            float: The price change percentage.
-        """
-
-        return PriceHistory.price_change(self.id, 90)
-
-    def price_change_30_days(self):
-        """
-        Returns the price change of the product in the last 30 days.
-
-        Returns:
-            float: The price change percentage.
-        """
-
-        return PriceHistory.price_change(self.id, 30)
-
-    def price_change_7_days(self):
-        """
-        Returns the price change of the product in the last 7 days.
-
-        Returns:
-            float: The price change percentage.
-        """
-
-        return PriceHistory.price_change(self.id, 7)
-
-    def price_change_1_day(self):
-        """
-        Returns the price change of the product in the last 1 day.
+        Args:
+            days (int, optional): The number of days to check for price change. Defaults to None.
 
         Returns:
             float: The price change percentage.
 
         """
-
-        return PriceHistory.price_change(self.id, 1)
+        if PriceHistory.if_price_change(self.id):
+            if days:
+                return PriceHistory.price_change(self.id, days)
+            else:
+                return PriceHistory.price_change(self.id)
+        return "No price change recorded."
 
     def __repr__(self):
         return f"<Product {self.id}>"

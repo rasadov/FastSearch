@@ -25,7 +25,7 @@ Profile pages:
 from models import User
 from web import *
 
-######## Profile pages ########
+# Profile pages 
 
 
 @app.get("/register")
@@ -123,12 +123,18 @@ def login_post():
             flash("Username or password is not correct", category="danger")
 
 
-######## OAuth2.0 with Google ########
+# OAuth2.0 with Google 
 
 
 @app.get("/login/google")
 @logout_required
 def login_with_google():
+    """
+    Redirects the user to the Google login page for authentication.
+
+    Returns:
+        The redirect response to the Google login page.
+    """
     google = oauth.create_client("google")  # create the google oauth client
     redirect_uri = url_for("authorize_google", _external=True)
     return google.authorize_redirect(redirect_uri)
@@ -174,12 +180,18 @@ def authorize_google():
     return redirect("/search")
 
 
-######## OAuth2.0 with Microsoft ########
+# OAuth2.0 with Microsoft
 
 
 @app.get("/login/microsoft")
 @logout_required
 def login_with_microsoft():
+    """
+    Redirects the user to the Microsoft login page for authentication.
+
+    Returns:
+        The redirect response to the Microsoft login page.
+    """
     microsoft = oauth.create_client("microsoft")
     redirect_uri = url_for("authorize_microsoft", _external=True)
     return microsoft.authorize_redirect(redirect_uri)
@@ -188,6 +200,12 @@ def login_with_microsoft():
 @app.get("/authorize/microsoft")
 @logout_required
 def authorize_microsoft():
+    """
+    Authorizes the user using Microsoft OAuth and performs necessary actions based on the user's information.
+
+    Returns:
+        A redirect response to the "/search" page.
+    """
     microsoft = oauth.create_client("microsoft")
     token = microsoft.authorize_access_token()
     resp = microsoft.get("userinfo")
@@ -367,6 +385,12 @@ def verify_email_post(token):
 @app.get("/logout")
 @login_required
 def logout():
+    """
+    Logs out the user and redirects to the home page.
+
+    Returns:
+        A redirect response to the home page.
+    """
     logout_user()
     return redirect("/")
 

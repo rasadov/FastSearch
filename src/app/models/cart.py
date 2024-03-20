@@ -6,6 +6,23 @@ from .user import User
 from .product import Product
 
 class Cart(db.Model):
+    """
+    Represents a cart in the application.
+
+    Attributes:
+        id (int): The unique identifier for the cart.
+        user_id (int): The ID of the user associated with the cart.
+        product_id (int): The ID of the product in the cart.
+        user (User): The user associated with the cart.
+        product (Product): The product in the cart.
+
+    Methods:
+        __init__(user_id, product_id): Initializes a new instance of the Cart class.
+        get_cart(user_id): Retrieves all the items in the cart for the specified user.
+        add_to_cart(user_id, product_id): Adds a new item to the cart for the specified user.
+        remove_from_cart(user_id, product_id): Removes an item from the cart for the specified user.
+    """
+
     __tablename__ = "cart"
 
     id : Mapped[int] = mapped_column(Integer(), primary_key=True)
@@ -14,3 +31,53 @@ class Cart(db.Model):
     
     user: Mapped["User"] = relationship(backref="cart")
     product: Mapped["Product"] = relationship(backref="cart")
+
+    def __init__(self, user_id, product_id):
+        """
+        Initializes a new instance of the Cart class.
+
+        Args:
+            user_id (int): The ID of the user associated with the cart.
+            product_id (int): The ID of the product in the cart.
+        """
+        self.user_id = user_id
+        self.product_id = product_id
+
+    @staticmethod
+    def get_cart(user_id):
+        """
+        Retrieves all the items in the cart for the specified user.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            list: A list of Cart objects representing the items in the cart.
+        """
+        return Cart.query.filter_by(user_id=user_id).all()
+    
+    @staticmethod
+    def add_to_cart(user_id, product_id):
+        """
+        Adds a new item to the cart for the specified user.
+
+        Args:
+            user_id (int): The ID of the user.
+            product_id (int): The ID of the product to add to the cart.
+        """
+        cart = Cart(user_id, product_id)
+        db.session.add(cart)
+        db.session.commit()
+    
+    @staticmethod
+    def remove_from_cart(user_id, product_id):
+        """
+        Removes an item from the cart for the specified user.
+
+        Args:
+            user_id (int): The ID of the user.
+            product_id (int): The ID of the product to remove from the cart.
+        """
+        cart = Cart.query.filter_by(user_id=user_id, product_id=product_id).first()
+        db.session.delete(cart)
+        db.session.commit()

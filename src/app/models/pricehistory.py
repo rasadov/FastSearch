@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 from sqlalchemy import ForeignKey, desc 
 from sqlalchemy.orm import mapped_column, Mapped
+
 from web import db
-
-
 
 class PriceHistory(db.Model):
     """
@@ -36,16 +35,11 @@ class PriceHistory(db.Model):
         self.product_id = product_id
         self.price = price
         self.date = date
-
-
-    @staticmethod
-    def if_price_change(product_id) -> bool:
-        
-        records = PriceHistory.query.filter_by(product_id=product_id).count()
-        return records > 1
         
     @staticmethod
-    def if_price_change(product_id, days) -> bool:
+    def if_price_change(product_id, days = None) -> bool:
+        if not days:
+            return PriceHistory.query.filter_by(product_id=product_id).count() > 1
         records = PriceHistory.query.filter_by(product_id=product_id).order_by(
             desc(PriceHistory.change_date))
 
@@ -61,33 +55,7 @@ class PriceHistory(db.Model):
         return records.first().price != cur.first().price
 
     @staticmethod
-    def price_change(product_id) -> float:
-        """
-        Returns the price change of the product the last time.
-
-        Args:
-            product_id (int): The ID of the product to get the price change for.
-        Returns:
-            float: The price change percentage.
-
-        """
-        records = PriceHistory.query.filter_by(product_id=product_id).order_by(
-            desc(PriceHistory.change_date))
-        
-
-        if records.count() < 2:
-            return 0.0
-        
-        cur = records.first().price
-        last = records.offset(1).first().price
-
-        cur = float(cur.replace("$", "").replace(",", ""))
-        last = float(last.replace("$", "").replace(",", ""))
-
-        return round(last / cur - 1, 2) * 100
-
-    @staticmethod
-    def price_change(product_id, days) -> float:
+    def price_change(product_id, days = None) -> float:
         """
         Returns the price change of the product in the last n days.
 
@@ -99,15 +67,34 @@ class PriceHistory(db.Model):
             float: The price change percentage.
 
         """
+        
         records = PriceHistory.query.filter_by(product_id=product_id).order_by(
             desc(PriceHistory.change_date))
         
+        if not days:
+            cur = records.first().price
+            last = records.offset(1).first().price
+
+            cur = float(cur.replace("$", "").replace(",", ""))
+            last = float(last.replace("$", "").replace(",", ""))
+
+            return round(last / cur - 1, 2) * 100        
 
         if records.count() < 2:
             return 0.0
         
         cur = records.first().price
-        last = records.offset(1).first().price
+        
+        records = records.filter(
+            PriceHistory.change_date < 
+            datetime.now().date() - timedelta(days=days))
+        
+        if not records.count():
+            return 0.0
+        else:
+            records = records.order_by(desc(PriceHistory.change_date))
+
+        last = records.first()
 
         cur = float(cur.replace("$", "").replace(",", ""))
         last = float(last.replace("$", "").replace(",", ""))

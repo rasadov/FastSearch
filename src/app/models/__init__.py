@@ -9,6 +9,7 @@ Classes:
 - User: Represents a user in the application.
 - Product: Represents a product in the application.
 - PriceHistory: Represents the price history of a product.
+- Cart: Represents a cart in the application.
 
 The User class represents a user in the application. It contains attributes such as username, email address, and password.
 The class also provides methods for checking user privileges, managing passwords, and checking user existence.
@@ -19,10 +20,12 @@ The class provides methods for checking product availability and retrieving prod
 The PriceHistory class represents the price history of a product. 
 It is associated with a specific product and contains information about the price changes over time.
 
+The Cart class represents a cart in the application. It contains attributes such as user ID and product ID.
+The class provides methods for managing items in the cart, such as adding and removing items.
+
 Note: This module uses SQLAlchemy for database operations and Flask-Login for user authentication.
 
 """
-
 
 from sqlalchemy.ext.declarative import declarative_base
 

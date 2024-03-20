@@ -37,17 +37,6 @@
             cursor: pointer;
             text-decoration: none;
         }
-        .buy-button a:hover {
-            color: #ffffff;
-            transition: 0.5s;
-        }
-        .subscription-price {
-            color: #fff;
-            font-size: 30px;
-        }
-        .crossed-out-price {
-            color: #6c6c6c;
-        }
     
         /* Specific for each buy section */
     
@@ -145,179 +134,191 @@
             color: white;
         }
 
-        .gradient-custom-5 {
-            /* fallback for old browsers */
-            background: #fccb90;
+     
+    .gradient-custom-1 {
+        /* fallback for old browsers */
+        background: #fccb90;
 
-            /* Chrome 10-25, Safari 5.1-6 */
-            background: -webkit-linear-gradient(to right, #243bee, #36a2d8, #45b47c, #ddd836);
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(to right, #243bee, #36a2d8, #45b47c, #ddd836);
 
-            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-            background: linear-gradient(to top, black,  rgb(31, 31, 31), rgb(47, 47, 47));
-        }
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(to top, black,  rgb(31, 31, 31), rgb(47, 47, 47));
+    }
     </style>
 </head>
 <body class="mb-3">
-    <div class="body-head gradient-custom-5">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg mb-3" style="background: transparent !important;" >  
-            <div class="container">
-                <a class="navbar-brand" href="{{url_for('home_get')}}">
-                    <h1>Abyssara</h1>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('search_get') %}active{% endif %}" href="{{ url_for('search_get') }}">Search</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('donation_get') %}active{% endif %}" href="{{ url_for('donation_get') }}">Donate</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('contact_get') %}active{% endif %}" href="{{ url_for('contact_get') }}">Contact</a>
-                        </li>
-                        {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('profile_get') %}active{% endif %}" href="{{ url_for('profile_get') }}">Profile</a>
-                        </li>
-                        {% if current_user.is_admin() %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('admin_get') %}active{% endif %}" href="{{ url_for('admin_get') }}">Admin</a>
-                        </li>
-                        {% endif %}
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('register_get') %}active{% endif %}" href="{{ url_for('register_get') }}">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == url_for('login_get') %}active{% endif %}" href="{{ url_for('login_get') }}">Login</a>
-                        </li>
-                        {% endif %}
-                    </ul>
+    <div class="body-head gradient-custom-1">
+       <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg mb-3" style="background: transparent !important;" >
+          <div class="container">
+             <a class="navbar-brand" href="{{url_for('home_get')}}">
+                <h1>Abyssara</h1>
+             </a>
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+             </button>
+             <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('search_get') %}active{% endif %}" href="{{ url_for('search_get') }}">Search</a>
+                   </li>
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('donation_get') %}active{% endif %}" href="{{ url_for('donation_get') }}">Donate</a>
+                   </li>
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('contact_get') %}active{% endif %}" href="{{ url_for('contact_get') }}">Contact</a>
+                   </li>
+                   {% if current_user.is_authenticated %}
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('profile_get') %}active{% endif %}" href="{{ url_for('profile_get') }}">Profile</a>
+                   </li>
+                   {% if current_user.is_admin() %}
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('admin_get') %}active{% endif %}" href="{{ url_for('admin_get') }}">Admin</a>
+                   </li>
+                   {% endif %}
+                   {% else %}
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('register_get') %}active{% endif %}" href="{{ url_for('register_get') }}">Register</a>
+                   </li>
+                   <li class="nav-item">
+                      <a class="nav-link {% if request.path == url_for('login_get') %}active{% endif %}" href="{{ url_for('login_get') }}">Login</a>
+                   </li>
+                   {% endif %}
+                </ul>
+             </div>
+          </div>
+       </nav>
+       {% with messages = get_flashed_messages(with_categories=True) %}
+       {% if messages %}
+       <div class="container " style="margin: 10px auto;">
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+             <div style="display: flex;">
+                <p style="margin: auto auto auto 0;">
+                   {{ message }}
+                </p>
+                <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;">&times;</button>
+             </div>
+          </div>
+          {% endfor %}
+       </div>
+       {% endif %}
+       {% endwith %}
+       <div class="content">
+          <div class="container" style="margin: 30px auto; padding-bottom: 50px;">
+             <div class="row" style="margin: 60px auto;">
+                <div class="col section">
+                   <div class="section-content" style="text-align: center;">
+                      <div style="padding: 30px;">
+                         <h1 class="display-5 fw-bolder text-white mb-2">
+                         Premium Price Tracking Service</h2>
+                      </div>
+                      <div style="padding: 30px;">
+                         <p class="mb-2">Track prices for desirable products and get notifications about price drops with the best tracker Abyssara</p>
+                      </div>
+                   </div>
+                   <div style="text-align: center; margin: 30px auto;">
+                      <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                         <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{ url_for('search_get') }}">Get Started</a>
+                         <a class="btn btn-outline-light btn-lg px-4" href="#about">Learn More</a>
+                      </div>
+                   </div>
                 </div>
-            </div>
-        </nav>
-        {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-        <div class="container " style="margin: 10px auto;">
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                <div style="display: flex;">
-                    <p style="margin: auto auto auto 0;">
-                        {{ message }}
-                    </p>
-                    <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;">&times;</button>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% endwith %}
-        <div class="content">
-            <div class="container" style="margin: 30px auto; padding-bottom: 50px;">
-                <div class="row" style="margin: 60px auto;">
-                    <div class="col section">
-                        <div class="section-content" style="text-align: center;">
-                            <div style="padding: 30px;">
-                                <h1 class="display-5 fw-bolder text-white mb-2">Premium Price Tracking Service</h2>
-                            </div>
-                            <div style="padding: 30px;">
-                                <p class="mb-2">Track prices for desirable products and get notifications about price drops with the best tracker Abyssara</p>
-                            </div>
-                        </div>
-                        <div style="text-align: center; margin: 30px auto;">
-                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{ url_for('search_get') }}">Get Started</a>
-                                <a class="btn btn-outline-light btn-lg px-4" href="#about">Learn More</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
+             </div>
+          </div>
+       </div>
     </div>
     <div style="margin: 200px auto 300px !important;">
-        <div style="text-align: center; margin: 100px auto;">
-            <h1 class="display-5 fw-bolder text-black mb-2">Why us?</h1>
-        </div>
-        <div class="container" id="about">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-lg" >
-                        <div class="card-body">
-                            <h2 class="card-title">Reason</h2>
-                            <p class="card-text">Description</p>
-                        </div>
-                    </div>
+       <div style="text-align: center; margin: 100px auto;">
+          <h1 class="display-5 fw-bolder text-black mb-2">Why us?</h1>
+       </div>
+       <div class="container" id="about">
+          <div class="row">
+             <div class="col-md-4">
+                <div class="card mb-4 shadow-lg" >
+                   <div class="card-body">
+                      <h2 class="card-title">Reason</h2>
+                      <p class="card-text">Description</p>
+                   </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-lg" >
-                        <div class="card-body">
-                            <h2 class="card-title">Reason</h2>
-                            <p class="card-text">Description</p>
-                        </div>
-                    </div>
+             </div>
+             <div class="col-md-4">
+                <div class="card mb-4 shadow-lg" >
+                   <div class="card-body">
+                      <h2 class="card-title">Reason</h2>
+                      <p class="card-text">Description</p>
+                   </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-lg" >
-                        <div class="card-body">
-                            <h2 class="card-title">Reason</h2>
-                            <p class="card-text">Description</p>
-                        </div>
-                    </div>
+             </div>
+             <div class="col-md-4">
+                <div class="card mb-4 shadow-lg" >
+                   <div class="card-body">
+                      <h2 class="card-title">Reason</h2>
+                      <p class="card-text">Description</p>
+                   </div>
                 </div>
-            </div>
-        </div>
+             </div>
+          </div>
+       </div>
+    </div>
 
-    </div>
-        
-        <div>
-            <div style="margin: 100px; text-align: center; color: black;">
-                <h1 class="mb-2">Subscription plans</h1>
-            </div>
-            
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-lg border-frame" >
-                            <div class="card-body">
-                                <h2 class="card-title">30 days</h2>
-                                <h3 class="card-subtitle mb-2 text-muted">4.99$</h3>
-                                <h4 class="card-subtitle mb-2 text-muted"><del>14.99$</del></h4>
-                                <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-lg border-frame" >
-                            <div class="card-body">
-                                <h2 class="card-title">90 days</h2>
-                                <h3 class="card-subtitle mb-2 text-muted">11.99$</h3>
-                                <h4 class="card-subtitle mb-2 text-muted"><del>35.99$</del></h4>
-                                <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card mb-4 shadow-lg border-frame" >
-                            <div class="card-body">
-                                <h2 class="card-title">365 days</h2>
-                                <h3 class="card-subtitle mb-2 text-muted">44.99$</h3>
-                                <h4 class="card-subtitle mb-2 text-muted"><del>134.99$</del></h4>
-                                <a href="{{ url_for('subscribe_page') }}" class="btn btn-primary">Get started</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+    <div class="container">
+        <div style="margin: 80px auto;">
+            <h1 class="display-5 fw-bolder text-black mb-2" style="text-align: center;">Pricing</h1>
         </div>
-        
-    
+        <div class="card-deck mb-3 text-center" style="display: flex; justify-content: space-around;">
+            <div class="card mb-4 box-shadow col-md-3">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Monthly</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$4.99 <small class="text-muted">/ mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
+              </div>
+            </div>
+            <div class="card mb-4 box-shadow col-md-3">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Quarter year</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$3.99 <small class="text-muted">/ mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block btn-primary">Get started</button>
+              </div>
+            </div>
+            <div class="card mb-4 box-shadow col-md-3">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Yearly</h4>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$3.49 <small class="text-muted">/ mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                  <li>text</li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
+              </div>
+            </div>
+          </div>
     </div>
-</body>
+    
+ </body>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B0ELJBKQN0"></script>
 <script>
