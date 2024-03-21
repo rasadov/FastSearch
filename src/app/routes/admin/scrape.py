@@ -5,15 +5,15 @@ This section contains routes for running the scrapy spider.
 """
 from models import Product
 from web import app, admin_required, render_template, request, redirect, flash
-from scrapy import MySpider
 from urllib.parse import urlparse
 from multiprocessing import Process
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import sys
 
-sys.path.append(r"C:\Users\RAUF\Desktop\Github_works\FastSearch\src")
+sys.path.append(r"C:\\Users\\RAUF\\Desktop\\Github_works\\FastSearch\\src")
 
+from spiders import MySpider
 
 # Manual scraping
 

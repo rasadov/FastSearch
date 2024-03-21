@@ -36,6 +36,11 @@ Note:
 from models import User, Product
 from web import app, admin_required, render_template
 
+from .analytics import *
+from .scrape import *
+from .user import *
+from .product import *
+
 @app.get("/admin")
 @admin_required
 def admin_get():

@@ -35,6 +35,8 @@ Roadmap:
 - DONE: Improve search functionality in the `app/routes/product.py` file.
 - DONE: Create Card for user model in the `models.py` file. 
 
+- Work on admin/analytics page to show the data of the web application.
+- Implement Card functionality in the application.
 - Finish the implementation of the `admin/analysis` route in the `app/routes/admin.py` file.
 - Check if google analytics ignores the admin panel and token routes.
 - Work on the design and front-end of the routes in the `app/routes/product.py`, `app/routes/account.py` files.

@@ -1,5 +1,5 @@
 """
-This file contains all the routes related to the user's account management.
+This file contains all the routes related to the user's authentication.
 ~~~~~~~~~~~~~~~~~~~~~
 
 Profile pages:
@@ -9,16 +9,7 @@ Profile pages:
 - `/authorize/google`: Handles the authorization process for the user using Google OAuth.
 - `/login/microsoft`: Handles the login with Microsoft functionality.
 - `/authorize/microsoft`: Handles the authorization process for the user using Microsoft OAuth.
-- `/password/forgot`: Handles the forgot password functionality.
-- `/password/reset/<token>`: Handles the reset password functionality using a reset token.
-- `/verification`: Handles the ask-of-verification route.
-- `/email/verify/<token>`: Handles the email verification functionality using the provided token.
 - `/logout`: Handles the logout functionality.
-- `/profile`: Renders the profile management page.
-- `/profile/password/change`: Allows the user to change their password.
-- `/profile/password/set`: Allows the user to set a new password.
-- `/profile/username/change`: Handles the functionality to change the username and name of the current user.
-- `/profile/delete`: Handles the deletion of a user account.
 
 """
 

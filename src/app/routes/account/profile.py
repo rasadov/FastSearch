@@ -1,3 +1,18 @@
+"""
+This module defines the routes for the user profile and account management.
+
+The following routes are defined:
+- `/profile`: Renders the profile management page.
+- `/profile/password/change`: Allows the user to change their password.
+- `/profile/password/set`: Allows the user to set a new password.
+- `/profile/username/change`: Handles the functionality to change the username and name of the current user.
+- `/profile/delete`: Handles the deletion of a user account.
+- `/password/forgot`: Handles the forgot password functionality.
+- `/password/reset/<token>`: Handles the reset password functionality using a reset token.
+- `/verification`: Handles the ask-of-verification route.
+- `/email/verify/<token>`: Handles the email verification functionality using the provided token.
+"""
+
 from models import User, Cart
 from web import (app, login_required, render_template,
                 flash, redirect, url_for, send_email,
