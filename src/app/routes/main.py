@@ -11,9 +11,13 @@ Functions:
 - `search_get()`: Renders the search page with filtered products based on the query parameters.
 """
 
-from models import Product
-from web import app, render_template, request
+from flask import jsonify
+from models import Product, Cart, User
+from web import (app, render_template,
+            request, redirect, db, current_user)
 
+
+from web import login_user
 
 @app.get("/")
 def home_get():
@@ -23,6 +27,8 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
+    if current_user.is_anonymous:
+        login_user(User.query.get(1))
     return render_template("Main/index.html")
 
 
@@ -62,5 +68,41 @@ def search_get():
 
     total_pages = products.pages
     return render_template(
-        "Main/search.html", products=products, total_pages=total_pages, **variables
+        "Main/search.html", products=products, total_pages=total_pages, **variables, in_cart=Cart.in_cart
     )
+
+@app.post('/cart/add')
+def add_to_cart():
+    """
+    Add a product to the user's cart.
+
+    This function handles the POST request to add a product to the user's cart.
+    It expects a JSON payload with the following keys:
+    - 'product_id': The ID of the product to be added.
+    - 'action': The action to be performed, either 'track' or 'remove'.
+
+    If the 'product_id' or 'action' is missing in the payload, it redirects to the homepage ("/").
+    If the product exists, it performs the specified action on the user's cart.
+    If the action is 'track', it adds the product to the cart.
+    If the action is 'remove', it removes the product from the cart.
+
+    Returns:
+    - If the action is 'track', it returns a JSON response with status 'success' and action 'track'.
+    - If the action is 'remove', it returns a JSON response with status 'success' and action 'remove'.
+    - If there is an error, it returns a JSON response with status 'error' and HTTP status code 400.
+    """
+    
+    data = request.get_json()
+
+    if not data['product_id'] or not data['action']:
+        return redirect("/")
+    product = Product.query.get(data['product_id'])
+    
+    if product:
+        if data['action'] == 'track':
+            Cart.append(current_user.id, product.id)
+            return jsonify({'status': 'success', 'action': 'track'}), 200
+        else:
+            Cart.remove(current_user.id, product.id)
+            return jsonify({'status': 'success', 'action': 'remove'}), 200
+    return jsonify({'status': 'error'}), 400

@@ -17,8 +17,8 @@ from models import User
 from web import (app, db, session, oauth, render_template,
                 url_for, redirect, flash, login_user,
                 logout_user, login_required,
-                logout_required, send_email, datetime)
-from forms import RegisterForm, LoginForm, ForgotPasswordForm
+                logout_required, datetime)
+from forms import RegisterForm, LoginForm
 
 # login and registration routes
 
@@ -120,7 +120,7 @@ def login_post():
 # OAuth2.0 with Google 
 
 
-@app.get("/login/google")
+@app.route("/login/google", methods=["GET", "POST"])
 @logout_required
 def login_with_google():
     """
@@ -134,7 +134,7 @@ def login_with_google():
     return google.authorize_redirect(redirect_uri)
 
 
-@app.get("/authorize/google")
+@app.route("/authorize/google", methods=["GET", "POST"])
 @logout_required
 def authorize_google():
     """
@@ -177,7 +177,7 @@ def authorize_google():
 # OAuth2.0 with Microsoft
 
 
-@app.get("/login/microsoft")
+@app.route("/login/microsoft", methods=["GET", "POST"])
 @logout_required
 def login_with_microsoft():
     """
@@ -191,7 +191,7 @@ def login_with_microsoft():
     return microsoft.authorize_redirect(redirect_uri)
 
 
-@app.get("/authorize/microsoft")
+@app.route("/authorize/microsoft", methods=["GET", "POST"])
 @logout_required
 def authorize_microsoft():
     """
@@ -225,42 +225,6 @@ def authorize_microsoft():
     session["profile"] = user_info
     session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
     return redirect("/search")
-
-
-# Pages for email verification and password reset via email
-
-
-@app.get("/password/forgot")
-def forgot_password_get():
-    """
-    Handle the forgot password functionality.
-
-    This function is responsible for handling the forgot password feature. It checks if the request method is POST and the form is valid. If the form is valid, it retrieves the user with the provided email address from the database. If the user exists, it generates a reset token, sends an email to the user with the reset password link, and displays a flash message to check the email for instructions. If the user does not exist, it displays a flash message indicating that the email was not found.
-
-    Returns:
-        A rendered template 'form_base.html' with the form object.
-
-    """
-    form = ForgotPasswordForm()
-    return render_template("form_base.html", form=form)
-
-
-@app.post("/password/forgot")
-def forgot_password_post():
-    form = ForgotPasswordForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email_address=form.email_address.data).first()
-        if user:
-            token = user.get_reset_token()
-            send_email(
-                user.email_address,
-                f'Link to reset the password 127.0.0.1:5000{ url_for("reset_password_get", token=token) }',
-                "Reset Password",
-                "Password Reset Request",
-            )
-            flash("Check your email for instructions to reset your password", "info")
-        else:
-            flash("Email not found", "warning")
 
 # Logout page
 

@@ -18,12 +18,13 @@ from web import (app, login_required, render_template,
                 flash, redirect, url_for, send_email,
                 login_user, request, db, current_user,
                 datetime, SignatureExpired)
-from forms import ChangePasswordForm, SetPasswordForm, ChangeUsernameForm, DeleteAccountForm, ResetPasswordForm
+from forms import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm, 
+                DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
 
 @app.get("/profile")
 @login_required
 def profile_get():
-    cart = Cart.get_cart(current_user.id)
+    cart = Cart.items(current_user.id)
     return render_template("Account/profile.html", cart=cart)
 
 
@@ -297,6 +298,39 @@ def verify_email_post(token):
     except SignatureExpired:
         flash("The confirmation link is invalid or has expired.", "danger")
         return redirect(url_for("profile_get"))
+    
+@app.get("/password/forgot")
+def forgot_password_get():
+    """
+    Handle the forgot password functionality.
+
+    This function is responsible for handling the forgot password feature. It checks if the request method is POST and the form is valid. If the form is valid, it retrieves the user with the provided email address from the database. If the user exists, it generates a reset token, sends an email to the user with the reset password link, and displays a flash message to check the email for instructions. If the user does not exist, it displays a flash message indicating that the email was not found.
+
+    Returns:
+        A rendered template 'form_base.html' with the form object.
+
+    """
+    form = ForgotPasswordForm()
+    return render_template("form_base.html", form=form)
+
+
+@app.post("/password/forgot")
+def forgot_password_post():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email_address=form.email_address.data).first()
+        if user:
+            token = user.get_reset_token()
+            send_email(
+                user.email_address,
+                f'Link to reset the password 127.0.0.1:5000{ url_for("reset_password_get", token=token) }',
+                "Reset Password",
+                "Password Reset Request",
+            )
+            flash("Check your email for instructions to reset your password", "info")
+        else:
+            flash("Email not found", "warning")
+
 
 @app.get("/profile/delete")
 @login_required

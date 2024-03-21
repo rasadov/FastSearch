@@ -84,9 +84,24 @@
     }
 
     .pag-loop {
-                display: none;
-            
-            }
+        display: none;        
+    }
+
+    .track {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .track:hover {
+        background-color: #0d7dfd;
+        color: white;
+    }
+
+    .tracked {
+        background-color: #6c757d;
+        color: white;
+    }
+
 
     @media (max-width: 767px) {
             .flex-container {
@@ -210,8 +225,19 @@
                 <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
                 <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
                 <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
+            </a>
+            {% if current_user.is_authenticated %}
+            <div style="margin-top: 10px;">
+                <form>
+                    <button type="button" class="btn track-button" id="{{product.id}}" data-tracked="{{in_cart(current_user.id, product.id)}}" onclick="track('{{ product.id }}')">Tracked</button>
+                </form>
             </div>
-        </a>
+            {% else %}
+            <div style="margin-top: 10px;">
+                <a href="{{ url_for('login_get') }}" class="btn btn-light btn-sm">Login to track</a>
+            </div>
+            {% endif %}
+        </div>
     </div>
         {% if (loop.index) % 3 == 0 %}
         </div>
@@ -247,12 +273,6 @@
 
 
 {% block scripts %}
-<script>
-    let div = document.getElementById('args');
-    document.getElementById('filters').addEventListener('click', function(event) {
-        document.getElementById('args').classList.toggle('hidden');
-    });
-</script>
-
+<script type="text/javascript" src="../../static/track.js"></script>
 
 {% endblock %}

@@ -71,6 +71,9 @@ class PriceHistory(db.Model):
         records = PriceHistory.query.filter_by(product_id=product_id).order_by(
             desc(PriceHistory.change_date))
         
+        if records.count() < 2:
+            return 0.0
+        
         if not days:
             cur = records.first().price
             last = records.offset(1).first().price
@@ -80,8 +83,6 @@ class PriceHistory(db.Model):
 
             return round(last / cur - 1, 2) * 100        
 
-        if records.count() < 2:
-            return 0.0
         
         cur = records.first().price
         

@@ -230,6 +230,12 @@
                          <a class="btn btn-outline-light btn-lg px-4" href="#about">Learn More</a>
                       </div>
                    </div>
+                   <!-- <div class="input-group" style="width: 60%; margin: 25px auto 15px;">
+                     <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
+                     <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
+                         <i class="fa fa-search"></i>
+                     </button>
+                   </div> -->
                 </div>
              </div>
           </div>
@@ -242,26 +248,39 @@
        <div class="container" id="about">
           <div class="row">
              <div class="col-md-4">
-                <div class="card mb-4 shadow-lg" >
-                   <div class="card-body">
-                      <h2 class="card-title">Reason</h2>
-                      <p class="card-text">Description</p>
+                <div class="card mb-4 shadow-lg" style="height: 295px;">
+                   <div class="card-body" style="text-align: center;">
+                       <div class="feature-icon bg-primary bg-gradient bg-square" style="width: 64px; height: 64px; border-radius: 15px; margin: 15px auto;">
+                        <i class="fas fa-tachometer-alt" style="scale: 2.0; padding: 20px; color: white;"></i> 
+                      </div> 
+                     <h2 class="card-title" style="margin-bottom: 30px;">Speed</h2> 
+                      <p class="card-text">Our software uses multiprocessing, allowing to scrape data at big scale for small amount of time. 
+                        This also allows to track prices of many products at the same time.</p>
                    </div>
                 </div>
              </div>
              <div class="col-md-4">
-                <div class="card mb-4 shadow-lg" >
-                   <div class="card-body">
-                      <h2 class="card-title">Reason</h2>
-                      <p class="card-text">Description</p>
-                   </div>
+                <div class="card mb-4 shadow-lg" style="height: 295px;">
+                   <div class="card-body" style="text-align: center;">
+                     <div class="feature-icon bg-primary bg-gradient bg-square" style="width: 64px; height: 64px; border-radius: 15px; margin: 15px auto;">
+                        <i class="fas  fa-list" style="scale: 2.0; padding: 25px; color: white;"></i>
+                      </div> 
+                      <h2 class="card-title" style="margin-bottom: 30px;">Variety of choice</h2>
+                      <p class="card-text">We track multiple websites and thousands of products in tech industry. 
+                        You can find best deal among thousands just in a few minutes.</p>
+                      </div>
                 </div>
              </div>
              <div class="col-md-4">
-                <div class="card mb-4 shadow-lg" >
-                   <div class="card-body">
-                      <h2 class="card-title">Reason</h2>
-                      <p class="card-text">Description</p>
+                <div class="card mb-4 shadow-lg" style="height: 295px;">
+                   <div class="card-body" style="text-align: center;">
+                     <div class="feature-icon bg-primary bg-gradient bg-square" style="width: 64px; height: 64px; border-radius: 15px; margin: 15px auto;">
+                        <i class="fas fa-plus" style="scale: 2.0; padding: 25px; color: white;"></i>
+                     </div> 
+                     
+                      <h2 class="card-title" style="margin-bottom: 30px;">Track any product</h2>
+                      <p class="card-text">Besides all the products in our database which is constantly expanding. You can track any product you want.
+                        Just send us link to the product and we will keep track of it.</p>
                    </div>
                 </div>
              </div>
@@ -352,6 +371,7 @@ let navbarCollapse = document.querySelector('.navbar-collapse');
 navbarToggle.addEventListener('click', () => {
     navbarCollapse.classList.toggle('show');
 });
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 {% block scripts %}
