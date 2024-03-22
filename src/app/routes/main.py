@@ -13,8 +13,8 @@ Functions:
 
 from flask import jsonify
 from models import Product, Cart, User
-from web import (app, render_template,
-            request, redirect, db, current_user)
+from web import (app, render_template, flash,
+            request, redirect, current_user)
 
 
 from web import login_user
@@ -30,7 +30,6 @@ def home_get():
     if current_user.is_anonymous:
         login_user(User.query.get(1))
     return render_template("Main/index.html")
-
 
 @app.get("/search")
 def search_get():

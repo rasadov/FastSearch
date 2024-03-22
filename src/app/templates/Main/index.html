@@ -230,12 +230,6 @@
                          <a class="btn btn-outline-light btn-lg px-4" href="#about">Learn More</a>
                       </div>
                    </div>
-                   <!-- <div class="input-group" style="width: 60%; margin: 25px auto 15px;">
-                     <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
-                     <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
-                         <i class="fa fa-search"></i>
-                     </button>
-                   </div> -->
                 </div>
              </div>
           </div>
@@ -294,16 +288,8 @@
             <div class="text-center" style="margin: 0 auto 100px;">
                <h1 class="display-5 fw-bolder text-black mb-2" id="about">About</h1>
             </div>
-            <div class="text-center" style="margin: 0px auto 150px;">
-               <p class="lead">
-                  Abyssara is a price tracking service that allows users to track prices of products on different marketplaces.
-                  There are a lot of marketplaces currently and it takes a significant amount of time to research the market to find a good deal.
-                  Good deals could be found on different marketplaces, and it is hard to track prices of all products on all marketplaces manually.
-                  Meanwhile, a good deal could save up to thousands of dollars.
-                  That's why we decided to create an application that would allow users to find the best deal and save time.
-                  Abyssara's main goal is to put an end to this problem.
-                  Since its launch, Abyssara has been helping users find the best deals on the market and save money.
-               </p>
+            <div id="about-text" class="text-center" style="margin: 0px auto 150px;">
+               
             </div>
          </div>
       </div>
@@ -313,12 +299,14 @@
       <div>
          <h1 class="display-5 fw-bolder text-black mb-2" style="text-align: center;">Get started</h1>
       </div>
-      <div class="input-group" style="width: 60%; margin: 85px auto 15px;">
-      <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
-      <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
-            <i class="fa fa-search"></i>
-      </button>
-      </div>
+      <form action="{{ url_for('search_get') }}">
+            <div class="input-group" style="width: 60%; margin: 85px auto 15px;">
+            <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
+            <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
+               <i class="fa fa-search"></i>
+            </button>
+         </div>
+      </form>
     </div>
 
 
@@ -329,29 +317,7 @@
  </body>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B0ELJBKQN0"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-B0ELJBKQN0');
-
-let flashClose = document.querySelectorAll('.flash-close');
-let message = document.querySelector('.alert');
-flashClose.forEach((close) => {
-    close.addEventListener('click', () => {
-        message.parentElement.style.display = 'none';
-    });
-});
-
-let navbarToggle = document.querySelector('.navbar-toggler');
-let navbarCollapse = document.querySelector('.navbar-collapse');
-
-navbarToggle.addEventListener('click', () => {
-    navbarCollapse.classList.toggle('show');
-});
-
-</script>
+<script type="text/javascript" src="../../static/js/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 {% block scripts %}
 {% endblock %}

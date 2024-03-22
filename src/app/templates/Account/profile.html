@@ -2,54 +2,99 @@
 
 {% block title %}
 <title>Profile</title>
+<link rel="stylesheet" href="../../static/css/colors.css">
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card bg-dark text-white">
+    <div class="card text-white" style="background-color: rgb(31, 31, 31);">
         <div class="card-body">
-            <h1 class="card-title">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
-            <h1 class="card-title">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
-            <h1 class="card-title">Email address: {{ current_user.email_address }}</h1>
-            {% if not current_user.is_confirmed() %}
-            <div class="mt-3">
-                <a href="{{ url_for('ask_of_verification') }}" class="btn btn-primary">Confirm your email</a>
+            <div class="text-center">
+                <div class="m-3">
+                    <h1 class="card-title">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
+                </div>
+                <div class="m-3">
+                    <h1 class="card-title">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
+                </div>
+                <div class="m-3">
+                    <h1 class="card-title">Email address: {{ current_user.email_address }}</h1>
+                </div>
             </div>
-            {% endif %}
-            <div class="mt-3">
-                <a href="{{ url_for('change_username_get')}}" class="btn btn-primary">Change profile credentials</a>
-            </div>
-            {% if current_user.password_hash %}
-            <div class="mt-3">
-                <a href="{{ url_for('change_password_get') }}" class="btn btn-primary">Change password</a>
-            </div>
-            {% else %}
-            <div class="mt-3">
-                <a href="{{ url_for('set_password_get') }}" class="btn btn-primary">Set password</a>
-            </div>
-            {% endif %}
-            <div class="mt-3">
-                <a href="{{ url_for('logout')}}" class="btn btn-danger">Log out</a>
-            </div>
-            <div class="mt-3">
-                <a href="{{ url_for('delete_account_get') }}" class="btn btn-danger">Delete account</a>
+            <div class="mt-5 mb-3" style="display: flex; justify-content: space-around;">
+                {% if not current_user.is_confirmed() %}
+                <div class="mt-3">
+                    <a href="{{ url_for('ask_of_verification') }}" class="btn btn-primary">Confirm your email</a>
+                </div>
+                {% endif %}
+                <div class="mt-3">
+                    <a href="{{ url_for('change_username_get')}}" class="btn btn-primary">Change account credentials</a>
+                </div>
+                {% if current_user.password_hash %}
+                <div class="mt-3">
+                    <a href="{{ url_for('change_password_get') }}" class="btn btn-primary">Change password</a>
+                </div>
+                {% else %}
+                <div class="mt-3">
+                    <a href="{{ url_for('set_password_get') }}" class="btn btn-primary">Set password</a>
+                </div>
+                {% endif %}
+                <div class="mt-3">
+                    <a href="{{ url_for('logout')}}" class="btn btn-danger">Log out</a>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('delete_account_get') }}" class="btn btn-danger">Delete account</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container mt-5">
-    <div class="card bg-dark text-white">
-        <div class="card-body">
-            <h2 class="card-title">Cart</h2>
-            {% if cart %}
-                {% for i in cart %}
-                    <p>{{ i.title }}</p>
-                {% endfor %}
-            {% else %}
-                <p>No items in cart</p>
-            {% endif %}
-        </div>
+<div class="container mt-5 mb-5">
+    <div class="text-white text-center">
+        <h1>Cart</h1>
     </div>
+    {% if cart %}
+    <div class="flex-container" style="display: flex">
+    {% for product in cart %}
+        <div class="card" style="background-color: rgb(31, 31, 31);width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+            <a href="{{ product.url }}" style="text-decoration: none; color: white;">
+                <div class="card-body">
+                    <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
+                    <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
+                    <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
+                    <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
+                    <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
+                </a>
+                    <div style="margin-top: 10px;">
+                        <form>
+                            <button type="button" class="btn btn-danger" id="{{product.id}}" onclick="track('{{ product.id }}')">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+                {% if (loop.index) % 3 == 0 %}
+                </div>
+                <div class="flex-container" style="display: flex">
+                {% endif %}
+    {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center text-white">
+        <p class="m-3">Cart is empty</p>
+    </div>
+    {% endif %}
+    <div id="empty" class="text-center text-white hidden">
+        <p class="m-3">Cart is empty</p>
+    </div>
+    
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="../../static/js/profile.js"></script>
 {% endblock %}
