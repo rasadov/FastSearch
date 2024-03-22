@@ -1,32 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>403 Forbidden</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        h1 {
-            color: #555;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>403 - Forbidden</h1>
-        <p>Access to this resource is forbidden on this server.</p>
+{% extends 'base.html' %}
+
+{% block title %}
+<title>403 Error</title>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <h1 class="display-4">403 Error</h1>
+            <p class="lead">You do not have permission to access this page.</p>
+            <a href="/" class="btn btn-primary">Go back to homepage</a>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
