@@ -75,21 +75,21 @@
         </div>
     </nav>
     {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-    <div class="container" style="margin: 10px auto;">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-            <div style="display: flex;">
+       {% if messages %}
+       <div class="container " style="margin: 10px auto;">
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+             <div style="display: flex;">
                 <p style="margin: auto auto auto 0;">
-                    {{ message }}
+                   {{ message }}
                 </p>
                 <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;">&times;</button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+             </div>
+          </div>
+          {% endfor %}
+       </div>
+       {% endif %}
+       {% endwith %}
     <div class="content">
         
         {% block content %}
@@ -108,7 +108,7 @@ gtag('config', 'G-B0ELJBKQN0');
 let flashClose = document.querySelectorAll('.flash-close');
 flashClose.forEach((close) => {
     close.addEventListener('click', () => {
-        close.parentElement.style.display = 'none';
+        close.parentElement.parentElement.style.display = 'none';
     });
 });
 

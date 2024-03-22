@@ -1,8 +1,8 @@
-body = document.querySelector('body');
-body.style.backgroundColor = 'rgb(47, 47, 47)';
-console.log(document.querySelector('nav'));
-document.querySelector('nav').style.backgroundColor = 'transparent';
-document.querySelector('nav').classList.remove('bg-dark')
+// body = document.querySelector('body');
+// body.style.backgroundColor = 'rgb(47, 47, 47)';
+// console.log(document.querySelector('nav'));
+// document.querySelector('nav').style.backgroundColor = 'transparent';
+// document.querySelector('nav').classList.remove('bg-dark')
 document.querySelector('footer').remove()
 
 cart = document.querySelector('.flex-container');

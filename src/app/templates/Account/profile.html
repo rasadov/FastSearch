@@ -12,7 +12,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card text-white" style="background-color: rgb(31, 31, 31);">
+    <div class="card  shadow-lg">
         <div class="card-body">
             <div class="text-center">
                 <div class="m-3">
@@ -54,15 +54,15 @@
     </div>
 </div>
 
-<div class="container mt-5 mb-5">
-    <div class="text-white text-center">
+<div class="container mt-5 mb-5 ">
+    <div class=" text-center">
         <h1>Cart</h1>
     </div>
     {% if cart %}
     <div class="flex-container" style="display: flex">
     {% for product in cart %}
-        <div class="card" style="background-color: rgb(31, 31, 31);width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
-            <a href="{{ product.url }}" style="text-decoration: none; color: white;">
+        <div class="card shadow-lg border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+            <a href="{{ product.url }}" style="text-decoration: none; color: black;">
                 <div class="card-body">
                     <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
                     <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
@@ -84,11 +84,11 @@
     {% endfor %}
     </div>
     {% else %}
-    <div class="text-center text-white">
+    <div class="text-center ">
         <p class="m-3">Cart is empty</p>
     </div>
     {% endif %}
-    <div id="empty" class="text-center text-white hidden">
+    <div id="empty" class="text-center  hidden">
         <p class="m-3">Cart is empty</p>
     </div>
     

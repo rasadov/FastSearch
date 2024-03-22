@@ -12,12 +12,13 @@ Functions:
 """
 
 from flask import jsonify
-from models import Product, Cart, User
-from web import (app, render_template, flash,
+from models import Product, Cart
+from web import (app, render_template, 
             request, redirect, current_user)
 
-
 from web import login_user
+from models import User
+
 
 @app.get("/")
 def home_get():
