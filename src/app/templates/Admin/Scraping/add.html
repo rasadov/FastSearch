@@ -6,51 +6,33 @@
 {% endblock %}
 
 {% block content %}
-<div style="padding: 50px;">
+<div class="container" style="padding: 50px; text-align: center;">
     <h1>Scrape Product</h1>
     <form method="POST" action="{{ url_for('admin_scrape_post') }}">
-        <div>
-            <select class="input-field" id="source" name="source" onchange="showFields(this.value)">
+        <div class="form-group col-md-3 mx-auto">
+            <label for="source" class="m-4">Source:</label>
+            <select class="form-control" id="source" name="source" onchange="showFields(this.value)">
                 <option value="custom">Custom</option>
                 <option value="google">Google</option>
             </select>
         </div>
-        <div>
-            <input class="input-field" type="text" id="url" name="query" placeholder="Enter URL or query">
-        </div>
-        <div id="customFields">
-            <div>
+        <div id="fields">
+            <div class="form-group">
+                <label for="url" class="m-4">URL:</label>
+                <input class="form-control" type="text" id="url" name="query" placeholder="Enter URL">
+            </div>
+            <div class="m-4">
                 <p>Enter URL for product and spider will scrape it</p>
             </div>
         </div>
-        <div id="googleFields" style="display: none;">
-            <div>
-                <input class="input-field" type="number" id="pages" name="pages" placeholder="Amount of pages">
-            </div>
-            <div>
-                <input class="input-field" type="number" id="results_per_page" name="results_per_page" placeholder="Results per page">
-            </div>
-            <div>
-                <p>This method will search for your query in google and scrape the results</p>
-            </div>
-        </div>
         <div>
-            <input class="submit-btn" type="submit" value="Scrape">
+            <input class="btn btn-primary" type="submit" value="Scrape">
         </div>
     </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-function showFields(source) {
-    if (source === 'custom') {
-        document.getElementById('customFields').style.display = 'block';
-        document.getElementById('googleFields').style.display = 'none';
-    } else if (source === 'google') {
-        document.getElementById('customFields').style.display = 'none';
-        document.getElementById('googleFields').style.display = 'block';
-    }
-}
+<script type="text/javascript" src="../../../static/js/scrape.js">
 </script>
 {% endblock %}

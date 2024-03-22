@@ -4,72 +4,6 @@
 <title>Search</title>
 <link rel="stylesheet" href="../static/css/auth.css">
     <style>
-    .search-field {
-        width: 24%;
-        font-size: 15px;
-        padding: 10px;
-        margin: 20px 0 20px 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px 0 0 10px;
-    }
-
-    .search-btn {
-        width: 3%;
-        padding: 0;
-        font-size: 15px;
-        margin: 20px 0;
-        border: 1px solid #ccc;
-        border-radius: 0 10px 10px 0;
-    }
-
-    .search-btn:focus {
-        outline: none;
-    }
-    .search-field:focus {
-        outline: none;
-    }
-
-    .search-container {
-        display: flex;
-        justify-content: center;
-
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .page-link {
-        display: inline-block;
-        padding: 5px 10px;
-        margin: 0 5px;
-        color: #333;
-        background-color: #ccc;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-
-    .page-link:hover {
-        background-color: #aaa;
-    }
-
-    .page-link.active {
-        background-color: #333;
-        color: #fff;
-    }
-    .current-page {
-        background-color: rgb(0, 153, 255);
-        color: #fff;
-        pointer-events: none;
-    }
-
-    .current-page:hover {
-        background-color: rgb(0, 153, 255) !important;
-        color: #fff !important;
-        pointer-events: none;
-    }
-
     .hidden {
         display: none;
     }
@@ -248,24 +182,37 @@
 
 <div style="text-align: center; margin: 20px auto 40px;">
     <div class="pagination">
-        {% if products.has_prev %}
-            <a class="page-link" style="background: #ffffff;"  href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
-        {% endif %}
-        {% for num in products.iter_pages() %}
-            {% if num %}
-                {% if products.page == num %}
-                    <a class="page-link current-page" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
-                {% else %}
-                    <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
-                {% endif %}
-            {% else %}
-                <span class="page-link" style="background: #ffffff;">...</span>
+        <ul class="pagination justify-content-center mx-auto mt-5">
+            {% if products.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" style="background: #ffffff;"  href="{{ url_for('search_get', page=products.prev_num, **params ) }}">Previous</a>
+                </li>
             {% endif %}
-        {% endfor %}
-        
-        {% if products.has_next %}
-            <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=products.next_num, **params) }}">Next</a>
-        {% endif %}
+            
+            {% for num in products.iter_pages() %}
+                {% if num %}
+                    {% if products.page == num %}
+                        <li class="page-item">
+                            <a class="page-link current-page" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=num, **params) }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="page-item">
+                        <span class="page-link" style="background: #ffffff;">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" style="background: #ffffff;" href="{{ url_for('search_get', page=products.next_num, **params) }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
     </div>
 </div>
 

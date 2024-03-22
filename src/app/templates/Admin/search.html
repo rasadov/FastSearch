@@ -1,86 +1,9 @@
 {% extends 'Admin/base.html' %}
 
 {% block title %}
-<title>View {{data_type}}s</title>
+<title>View database</title>
 <link rel="stylesheet" href="../../static/css/auth.css">
 <style>
-        .search-field {
-        width: 24%;
-        font-size: 15px;
-        padding: 10px;
-        margin: 20px 0 20px 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px 0 0 10px;
-    }
-
-    .search-btn {
-        width: 3%;
-        padding: 0;
-        font-size: 15px;
-        margin: 20px 0;
-        border: 1px solid #ccc;
-        border-radius: 0 10px 10px 0;
-        cursor: pointer;
-    }
-
-    .search-btn:focus {
-        outline: none;
-        }
-    .search-field:focus {
-        outline: none;
-    }
-
-    .search-container {
-        display: flex;
-        justify-content: center;
-
-    }
-
-    .user {
-        width: 30%;
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
-        margin: 10px;
-        border-radius: 15px;
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .page-link {
-        display: inline-block;
-        padding: 5px 10px;
-        margin: 0 5px;
-        color: #333;
-        background-color: #ccc;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-
-    .page-link:hover {
-        background-color: #aaa;
-    }
-
-    .page-link.active {
-        background-color: #333;
-        color: #fff;
-    }
-
-    .current-page {
-        background-color: rgb(0, 153, 255);
-        color: #fff;
-        pointer-events: none;
-    }
-
-    .current-page:hover {
-        background-color: rgb(0, 153, 255) !important;
-        color: #fff !important;
-        pointer-events: none;
-    }
     .hidden {
         display: none;
     }
@@ -93,40 +16,46 @@
     <div>
         <div>    
             <form method="GET" action="{{ url_for(function, **variables) }}">
-                <div class="search-container">
-                    <input type="text" name="search" class="search-field" placeholder="Search..." value="{{search_query}}">
-                    <button type="submit" class="search-btn">Search</button>
+                <div class="col-md-6 mx-auto mb-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control border-frame" id="search" placeholder="Search..." value="{{search}}">
+                        <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                 </div>
                 {% if 'product' in function %}
-                <div>
-                    <div class="hidden" id="args" style="justify-content: space-between;">
-                        <div style="display: flex;">
-                            <div style="width: 30%; display: flex; margin: auto;">
-                                <input class="input-field" type="number" name="min_price" id="min_price" value="{% if variables['min_price'] %}{{variables['min_price']}}{% endif %}" placeholder="Min price" style="width: 50%; margin: 10px;">
-                                <input class="input-field" type="number" name="max_price" id="max_price" value="{% if variables['max_price'] %}{{variables['max_price']}}{% endif %}" placeholder="Max price" style="width: 50%; margin: 10px;">
-                            </div>
+                <div class="filters-container">
+                    <div class="hidden" id="args" style="justify-content: space-between; width: 50%; margin: auto;">
+                        <div class="row" style="margin: 10px auto;">
+                            <input class="form-control" type="number" name="min_price" id="min_price" value="{% if min_price %} {{min_price}} {% endif %}" placeholder="Min price" style="width: 45%; margin: 9px;">
+                            <input class="form-control" type="number" name="max_price" id="max_price" value="{% if max_price %} {{max_price}} {% endif %}" placeholder="Max price" style="width: 45%; margin: 9px;">
                         </div>
-                        <div style="display: flex;">
-                            <div style="width: 30%; display: flex; margin: auto;">
-                                <input class="input-field" type="text" name="brand" id="brand" value="{% if variables['brand'] %}{{variables['brand']}}{% endif %}" placeholder="Brand" style="width: 50%; margin: 10px;">    
-                                <input class="input-field" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if variables['min_rating'] %}{{variables['min_rating']}}{% endif %}" placeholder="Min rating" style="width: 20%; margin: 10px;">
-                                <input class="input-field" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if variables['max_rating'] %}{{variables['max_rating']}}{% endif %}" placeholder="Max rating" style="width: 20%; margin: 10px;">
-                            </div>
+                        <div class="row" style="margin: 10px auto;">
+                            <input class="form-control" type="text" name="brand" id="brand" value="{% if brand %} {{brand}} {% endif %}" placeholder="Brand" style="width: 30%;margin: 5px;">
+                            <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}  {{min_rating}} {% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
+                            <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}  {{max_rating}} {% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
                         </div>
-                        <div>
-                            <button type="submit" class="submit-btn">Filter</button>
+                        <div class="row" style="margin: 10px auto;">
+                            <a href="{{ url_for('search_get') }}" class="clear-filters">
+                                <button type="menu" class="btn btn-primary">
+                                    Clear filters
+                                </button>
+                            </a>
                         </div>
+                        
                     </div>
                 </div>
                 {% endif %}
             </form>
             {% if 'product' in function %}
-            <button id="filters" type="menu">
-                filter
-            </button>
-            <button>
-                <a href="{{ url_for(function) }}">Clear</a>
-            </button>
+            <div class="filters" style="width: 10%; margin: 10px auto;">
+                <div>
+                    <button id="filters" type="menu" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+                        Filters
+                    </button>
+                </div>
+            </div>
             {% endif %}
             {% if items.total == 0 %}
                 <p>No items found</p>
@@ -137,46 +66,55 @@
             {% for item in items %}
                 {% if item.__tablename__ == 'product' %}
                 <a href="{{item.url}}" style="text-decoration: none; color: white;">
-                    <div class="section" style="max-width: 30%; max-height: 50%; padding: 20px; ">
-                        <h4>
-                            {% if item.title|length > 60 %}
-                                {{ item.title[:60] }}...
-                            {% else %}
+                    <div class="card bg-dark mx-auto mb-4" style="max-width: 30%; max-height: 50%; padding: 20px;">
+                        <div style="height: 65px;">
+                            <h6 class="card-title">
+                                {% if item.title|length > 100 %}
+                                {{ item.title[:100] }}...
+                                {% else %}
                                 {{ item.title }}
-                            {% endif %}
-                        </h4>
-                        <p>{{ item.price }}</p>
-                        <div style="width: 40%; margin: auto; display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_product_info_get', id=item.id )}}" style="text-decoration: none; color: white;">
-                                <h4>Info</h4>
+                                {% endif %}
+                            </h6>
+                        </div>
+                        <div class="mb-2"> 
+                            <p class="card-text">{{ item.price }}</p>
+                        </div>
+                        <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
+                            <a href="{{ url_for('admin_product_info_get', id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
+                                Info
                             </a>
-                            <a href="{{ url_for('admin_product_edit_get', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
-                                <h4>Edit</h4>
+                            <a href="{{ url_for('admin_product_edit_get', id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
+                                Edit
                             </a>
-                            <a href="{{ url_for('admin_product_delete_get', id=item.id) }}" style="text-decoration: none; color: red;">
-                                <h4>Delete</h4>
+                            <a href="{{ url_for('admin_product_delete_get', id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
+                                Delete
                             </a>
                         </div>
                     </div>
                 </a>
                 {% endif %}
                 {% if item.__tablename__ == 'user' %}
-                    <div class="user" style="display: inline-block; width: 30%;">
-                        <div>
-                            <p>{{ item.username }}</p>
-                            <p>{{ item.email_address }}</p>
-                            <p>{{ item.is_confirmed() }}</p>
-                            <p>{{ item.role }}</p>
+                    <div class="card bg-dark mx-auto mb-4 col-md-3" style=" max-height: 50%; padding: 20px;">
+                        <div style="height: 65px; color: white;">
+                            <div>
+                                <p>{{ item.username }}</p>
+                            </div>
+                            <div>
+                                <p>{{ item.name }}</p>
+                            </div>
                         </div>
-                        <div style="width: 50%; margin: auto; display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_user_edit_get', id=item.id) }}" style="text-decoration: none; color: white;">
-                                <h4>Edit</h4>
+                        <div class="mb-2 p-3" style="color: white;"> 
+                            <p class="card-text">{{ item.email_address }}</p>
+                        </div>
+                        <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
+                            <a href="{{ url_for('admin_user_info_get', id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
+                                Info
                             </a>
-                            <a href="{{ url_for('admin_user_info_get', id=item.id) }}" style="text-decoration: none; color: rgb(0, 110, 255);">
-                                <h4>Info</h4>
+                            <a href="{{ url_for('admin_user_edit_get', id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
+                                Edit
                             </a>
-                            <a href="{{ url_for('admin_user_delete_get', id=item.id) }}" style="text-decoration: none; color: red;">
-                                <h4>Delete</h4>
+                            <a href="{{ url_for('admin_user_delete_get', id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
+                                Delete
                             </a>
                         </div>
                     </div>
@@ -193,26 +131,38 @@
         </div>
     </div>
     <div style="text-align: center;">
-        <div class="pagination">
-            {% if items.has_prev %}
-                <a class="page-link" href="{{ url_for(function, page=items.prev_num, **variables) }}">Previous</a>
-            {% endif %}
-            
-            {% for num in items.iter_pages() %}
-                {% if num %}
-                    {% if items.page == num %}
-                        <a class="page-link current-page" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
-                    {% else %}
-                        <a class="page-link" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
-                    {% endif %}
-                {% else %}
-                    <span class="page-link">...</span>
+        <div class="pagination mb-5">
+            <ul class="pagination justify-content-center mx-auto">
+                {% if items.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for(function, page=items.prev_num, **variables) }}">Previous</a>
+                </li>
                 {% endif %}
-            {% endfor %}
-            
-            {% if items.has_next %}
-                <a class="page-link" href="{{ url_for(function, page=items.next_num, **variables) }}">Next</a>
-            {% endif %}
+                
+                {% for num in items.iter_pages() %}
+                    {% if num %}
+                        {% if items.page == num %}
+                            <li class="page-item">
+                                <a class="page-link active" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for(function, page=num, **variables) }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                            <li class="page-item">
+                                <span class="page-link">...</span>
+                            </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if items.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for(function, page=items.next_num, **variables) }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
     </div>
 </div>

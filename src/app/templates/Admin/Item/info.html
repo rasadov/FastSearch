@@ -18,12 +18,11 @@
 
 {% block content %}
 {% for key, value in item.items() %}
-    <p>{{ key }}: {{ value }}</p>
+    <p class="text-center">{{ key }}: {{ value }}</p>
 {% endfor %}
 
-
 {% if item.__tablename__ == "user" %}
-    <div>
+    <div class="text-center">
         {% if cart %}
             {% for i in cart %}
                 <p>{{ i.title }}</p>

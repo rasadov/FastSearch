@@ -4,7 +4,8 @@ This section contains routes for running the scrapy spider.
 - The spider can be runned by entering the query to the search engine.
 """
 from models import Product
-from web import app, admin_required, render_template, request, redirect, flash
+from web import (app, admin_required, render_template,
+                request, redirect, flash, session)
 from urllib.parse import urlparse
 from multiprocessing import Process
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -32,7 +33,6 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
     """
     spider = MySpider(url, method, pages, results_per_page)
     spider.run()
-    spider.close()
 
 
 @app.get("/admin/product/scrape")
@@ -70,7 +70,7 @@ def admin_scrape_post():
 
         if not url:
             flash("Enter query", category="danger")
-            return redirect("/admin/product/add/manual")
+            return redirect("/admin/product/scrape")
 
         parsed_url = urlparse(url)
         url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
@@ -96,7 +96,7 @@ def admin_scrape_post():
                 "Check if the URL is correct and supported by our program",
                 category="danger",
             )
-            return redirect("/admin/product/add")
+            return redirect("/admin/product/scrape")
 
     elif method == "google":
         url = request.form.get("query")
@@ -105,7 +105,7 @@ def admin_scrape_post():
 
         if not url:
             flash("Enter query", category="danger")
-            return redirect("/admin/product/add")
+            return redirect("/admin/product/scrape")
 
         p = Process(
             target=run_spider, args=(url, "google", int(pages), int(results_per_page))
@@ -114,7 +114,7 @@ def admin_scrape_post():
         p.join()
 
         flash("Function run successfully", category="success")
-        return redirect("/admin/Products/products")
+        return redirect("/admin/products/search")
 
 # Automatic scraping 
 """
