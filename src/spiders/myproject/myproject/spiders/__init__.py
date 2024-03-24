@@ -30,7 +30,8 @@ import warnings
 import scrapy
 from scrapy.crawler import CrawlerProcess
 
-from .utils import *
+from .utils.parsing import parsing_method
+from .utils.search import Search
 
 warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
 
@@ -72,7 +73,7 @@ class MySpider(scrapy.Spider):
             generator: A generator of scrapy.Request objects.
 
         """
-        self.start_urls = [link for link in search(self.query, self.method, self.pages)]
+        self.start_urls = [link for link in Search.search(self.query, self.method, self.pages)]
 
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
