@@ -1,0 +1,91 @@
+.hidden {
+    display: none;
+}
+
+.clear-filters {
+    width: 22.5%; 
+    margin: 20px auto;
+}
+
+.clear-filters button {
+    width: 100%;
+}
+
+.pag-loop {
+    display: none;        
+}
+
+.track {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.track:hover {
+    background-color: #0d7dfd;
+    color: white;
+}
+
+.tracked {
+    background-color: #6c757d;
+    color: white;
+}
+
+
+@media (max-width: 767px) {
+        .flex-container {
+            display: block !important;
+        }
+
+        .card {
+            width: 90% !important;
+        }
+
+        .search-div {
+            width: 90% !important;
+        }
+        .filters {
+            width: 90% !important;
+            display: block !important;
+            justify-content: space-around;
+            margin: 20px auto 40px !important;
+        }
+        
+        .filters-container .form-control {
+            display: block;
+            width: 90% !important;
+            margin: 10px auto !important;
+
+        
+        }
+        .filters-container{
+            margin-bottom: 20px;
+        }
+
+        #args {
+            width: 100% !important;
+            justify-content: center;
+        }
+        
+        .clear-filters {
+            width: 95% !important;
+            margin: 20px auto !important;
+        }
+
+        .pagination {
+            display: block !important;
+        }
+
+        .pagination a {
+            margin: 5px !important;
+        }
+    }
+
+
+    footer {
+        margin-top: 60px !important; 
+    }
+    
+    .current-page {
+        background-color: #0d6efd;
+        color: white;
+    }

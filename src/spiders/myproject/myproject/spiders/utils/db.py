@@ -92,7 +92,7 @@ def save_product_to_database(
                 f"""
                 UPDATE product
                 SET price = %s, title = %s, item_class = %s, producer = %s,
-                    amount_of_ratings = %s, rating = %s, image_url = %s
+                    amount_of_ratings = %s, rating = %s, image_url = %s, availability = 'In stock'
                 WHERE url = %s;
             """,
                 (price, title, item_class, producer, amount_of_ratings, rating, image_url, url),
@@ -101,8 +101,8 @@ def save_product_to_database(
         # This product does not exist, insert a new record into the database
         curr.execute(
             """
-            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating, image_url)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating, image_url, availability)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
         """,
             (url, title, price, item_class, producer, amount_of_ratings, rating, image_url),
         )

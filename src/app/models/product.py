@@ -56,7 +56,7 @@ class Product(db.Model):
     amount_of_ratings: Mapped[int] = mapped_column(default=None)
     rating: Mapped[float] = mapped_column(default=None)
     image_url: Mapped[str] = mapped_column(default=None)
-    availability: Mapped[bool] = mapped_column(default=None)
+    availability: Mapped[str] = mapped_column(default=None)
 
     tsvector_title: Mapped[TSVector] = mapped_column(
         TSVector(),

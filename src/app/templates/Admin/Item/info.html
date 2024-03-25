@@ -17,20 +17,43 @@
 {% endblock %}
 
 {% block content %}
-{% for key, value in item.items() %}
-    <p class="text-center">{{ key }}: {{ value }}</p>
-{% endfor %}
-
-{% if item.__tablename__ == "user" %}
-    <div class="text-center">
-        {% if cart %}
-            {% for i in cart %}
-                <p>{{ i.title }}</p>
+<div class="container">
+    <div class="user-info">
+        {% if item.__tablename__ == "user" %}
+        <div class="section text-center">
+            {% for key, value in item.items() %}
+            <p class="text-center">{{ key }}: {{ value }}</p>
             {% endfor %}
-        {% else %}
-            <p>No items in cart</p>
+            
+            <div class="text-center">
+                {% if cart %}
+                {% for i in cart %}
+                <p>{{ i.title }}</p>
+                {% endfor %}
+                {% else %}
+                <p>No items in cart</p>
+                {% endif %}
+            </div>
+        </div>
         {% endif %}
+        
+        {% if item.__tablename__ == 'product' %}
+        <div class="text-center">
+            <div>
+                <div>
+                    <img src="{{item.get_image()}}" alt="Photo of product-{{item.id}}" class="img-fluid">
+                </div>
+                <div>
+                    
+                    {% for key, value in item.items() %}
+                    <p class="text-center">{{ key }}: {{ value }}</p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-{% endif %}
+</div>
+
 
 {% endblock %}

@@ -73,7 +73,7 @@ def scrape_amazon_item(response, url: None | str = None):
             item_class = None
 
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image_url=image
+            url, title, price, rating, amount_of_ratings, item_class, producer, image
         )
 
     except Exception as e:
@@ -315,9 +315,9 @@ def parsing_method(response):
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
 
-    html_content = response.body.decode(response.encoding)
-    with open(".html", "w", encoding=response.encoding) as f:
-        f.write(html_content)
+    # html_content = response.body.decode(response.encoding)
+    # with open(".html", "w", encoding=response.encoding) as f:
+    #     f.write(html_content)
 
     if domain == "www.ebay.com":
         scrape_ebay_item(response, url)

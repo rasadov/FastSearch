@@ -35,3 +35,13 @@ from .user import User
 from .product import Product
 from .pricehistory import PriceHistory
 from .cart import Cart
+
+__all__ = ["User", "Product", "PriceHistory", "Cart"]
+
+# Code below used to create the database tables
+
+# from web import app, db
+
+# with app.app_context():
+#     db.create_all()
+#     db.session.commit()

@@ -2,95 +2,7 @@
 
 {% block title %}
 <title>Search</title>
-<link rel="stylesheet" href="../static/css/auth.css">
-    <style>
-    .hidden {
-        display: none;
-    }
-
-    .clear-filters {
-        width: 22.5%; 
-        margin: 20px auto;
-    }
-
-    .clear-filters button {
-        width: 100%;
-    }
-
-    .pag-loop {
-        display: none;        
-    }
-
-    .track {
-        background-color: #0d6efd;
-        color: white;
-    }
-
-    .track:hover {
-        background-color: #0d7dfd;
-        color: white;
-    }
-
-    .tracked {
-        background-color: #6c757d;
-        color: white;
-    }
-
-
-    @media (max-width: 767px) {
-            .flex-container {
-                display: block !important;
-            }
-
-            .card {
-                width: 90% !important;
-            }
-
-            .search-div {
-                width: 90% !important;
-            }
-            .filters {
-                width: 90% !important;
-                display: block !important;
-                justify-content: space-around;
-                margin: 20px auto 40px !important;
-            }
-            
-            .filters-container .form-control {
-                display: block;
-                width: 90% !important;
-                margin: 10px auto !important;
-
-            
-            }
-            .filters-container{
-                margin-bottom: 20px;
-            }
-
-            #args {
-                width: 100% !important;
-                justify-content: center;
-            }
-            
-            .clear-filters {
-                width: 95% !important;
-                margin: 20px auto !important;
-            }
-
-            .pagination {
-                display: block !important;
-            }
-
-            .pagination a {
-                margin: 5px !important;
-            }
-        }
-
-
-        footer {
-            margin-top: 60px !important; 
-        }
-    </style>
+<link rel="stylesheet" href="../../static/css/search.css">
 
 {% endblock %}
 
@@ -153,6 +65,7 @@
 {% for product in products %}
     <div class="card shadow border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
         <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
+            <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px;">
             <div class="card-body">
                 <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
                 <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
@@ -221,5 +134,6 @@
 
 {% block scripts %}
 <script type="text/javascript" src="../../static/js/track.js"></script>
+<script type="text/javascript" src="../../static/js/image.js"></script>
 
 {% endblock %}
