@@ -7,6 +7,12 @@ The functions in this module are used to save products to the database or update
 import os
 import psycopg2
 
+import sys
+
+sys.path.append(r"C:\\Users\\RAUF\\Desktop\\Github_works\\FastSearch\\src")
+
+from app.notify import notify_price_change
+
 
 DB_USER = os.environ.get("DB_USER")
 DB_NAME = os.environ.get("DB_NAME")
@@ -77,6 +83,10 @@ def save_product_to_database(
 
             # Checking if price of product has changed
             if price_in_db != price:
+
+                if price_in_db > price:
+                    notify_price_change(url)
+
                 product_id = result[0]
 
                 # Saving price change to keep track of price

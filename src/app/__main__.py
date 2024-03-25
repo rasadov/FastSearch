@@ -19,6 +19,7 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
+- Fix the pagination in the search page for mobile.
 - Scrape functions do not scrape images. Add functionality to scrape image urls and store them in the database.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.

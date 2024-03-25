@@ -73,8 +73,8 @@ def scrape_amazon_item(response, url: None | str = None):
             item_class = None
 
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image
-        )
+                url, title, price, rating, amount_of_ratings, item_class, producer, image
+            )
 
     except Exception as e:
         flash(f"Error: {e}", "danger")

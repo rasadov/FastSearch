@@ -67,3 +67,4 @@ def send_email(reciever, message, subject, title):
         smtp.starttls()
         smtp.login(gmail_username, gmail_password)
         smtp.send_message(email)
+        

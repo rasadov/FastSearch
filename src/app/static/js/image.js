@@ -4,15 +4,13 @@ function scaleImage() {
         var width = image.naturalWidth;
         var height = image.naturalHeight;
         var aspectRatio = width / height;
-        var containerWidth = 300;
-        var containerHeight = 300;
+        var containerWidth = 280;
+        var containerHeight = 280;
+        
 
         if (height < containerHeight) {
-                var margin = (containerHeight - height) / 2;
-                console.log(margin);
-                console.log(containerHeight);
-                console.log(image);   
-                image.style.marginTop = margin + "px";
+                var margin = (containerHeight - height) / 2 ;
+                image.style.marginTop = (margin + 20) + "px";
                 image.style.marginBottom = margin + "px";
             }
         
