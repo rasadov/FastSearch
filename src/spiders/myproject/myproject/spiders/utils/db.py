@@ -22,6 +22,7 @@ def save_product_to_database(
     amount_of_ratings=None,
     item_class=None,
     producer=None,
+    image_url=None,
 ):
     """
     Saves a product to the database or updates an existing product if it already exists.
@@ -91,19 +92,19 @@ def save_product_to_database(
                 f"""
                 UPDATE product
                 SET price = %s, title = %s, item_class = %s, producer = %s,
-                    amount_of_ratings = %s, rating = %s
+                    amount_of_ratings = %s, rating = %s, image_url = %s
                 WHERE url = %s;
             """,
-                (price, title, item_class, producer, amount_of_ratings, rating, url),
+                (price, title, item_class, producer, amount_of_ratings, rating, image_url, url),
             )
     else:
         # This product does not exist, insert a new record into the database
         curr.execute(
             """
-            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating)
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
+            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating, image_url)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
         """,
-            (url, title, price, item_class, producer, amount_of_ratings, rating),
+            (url, title, price, item_class, producer, amount_of_ratings, rating, image_url),
         )
 
         curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")

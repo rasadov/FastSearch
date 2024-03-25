@@ -55,6 +55,7 @@ class Product(db.Model):
     producer: Mapped[str] = mapped_column(default=None)
     amount_of_ratings: Mapped[int] = mapped_column(default=None)
     rating: Mapped[float] = mapped_column(default=None)
+    image_url: Mapped[str] = mapped_column(default=None)
     availability: Mapped[bool] = mapped_column(default=None)
 
     tsvector_title: Mapped[TSVector] = mapped_column(
@@ -80,6 +81,7 @@ class Product(db.Model):
         producer,
         amount_of_ratings,
         rating,
+        image_url,
         availability,
     ):
         self.url = url
@@ -88,7 +90,8 @@ class Product(db.Model):
         self.item_class = item_class
         self.producer = producer
         self.amount_of_ratings = amount_of_ratings
-        self.rating = rating
+        self.rating = rating,
+        self.image_url = image_url
         self.availability = availability
 
     def is_available(self):
@@ -127,6 +130,15 @@ class Product(db.Model):
             "amount_of_ratings": self.amount_of_ratings,
             "availability": self.is_available(),
         }.items()
+    
+    def get_image(self):
+        """
+        Returns the image URL of the product.
+
+        Returns:
+            str: The image URL of the product.
+        """
+        return self.image_url
 
     @staticmethod
     def search(search, query):
