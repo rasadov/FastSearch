@@ -9,6 +9,7 @@ Routes:
 from web import (app, render_template, send_from_directory,
                 request, flash, redirect, url_for,
                 current_user, send_email, os)
+from models import User
 
 
 @app.get("/favicon.ico")
@@ -44,12 +45,14 @@ def contact_post():
     subject = request.form["subject"]
     message = request.form["message"]
     if name and message:
-        send_email(
-            "rasadov20309@ada.edu.az",
+        users = User.query.filter(User.role == "admin" | User.role == "owner").all()
+        for user in users:
+            send_email(
+            user.email_address,
             f"{name} ({current_user.email_address} | {number if number else 'No number'}) has sent you message: \n\n {message}",
             subject=subject,
             title=f"Abyssara user sent you a message",
-        )
+            )
         flash("Your message has been sent. Thank you!", "success")
     else:
         flash("Please fill out all the fields", "danger")
