@@ -1,24 +1,54 @@
 google.charts.load('current', {
-    'packages':['geochart'],
-    });
-google.charts.load('current', {'packages':['table']});
-google.charts.load('current', {'packages':['corechart']});
+    'packages':['geochart', 'table', 'corechart']
+});
 
-google.charts.setOnLoadCallback(drawRegionsMap);
-google.charts.setOnLoadCallback(drawChart);
-google.charts.setOnLoadCallback(routesTable);
-google.charts.setOnLoadCallback(countriesTable);
+// Declare the variables at the top of your script
+var routes, countries, user_devices, country_sessions;
 
+function drawAllCharts() {
+    drawRegionsMap(country_sessions);
+    drawChart(user_devices);
+    routesTable(routes);
+    countriesTable(countries);
+}
 
+var xhr = new XMLHttpRequest();
+xhr.open('GET', '/admin/analytics/data', true);
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        routes = response.page_views;
+        countries = response.country_sessions;
+        user_devices = response.user_devices;
+        country_sessions = response.country_sessions;
+        country_sessions.unshift(['Country', 'Sessions']);
 
-function drawRegionsMap() {
+        user_devices.unshift(['Device', 'Sessions']);
+
+        routes = routes.slice(0, 15);
+
+        console.log("Data received successfully");
+        for (var i = 0; i < routes.length; i++) {
+            routes[i][1] = parseInt(routes[i][1]);
+        }
+        for (var i = 1; i < countries.length; i++) {
+            countries[i][1] = parseInt(countries[i][1]);
+        }
+        // Call the function to draw all charts
+        google.charts.setOnLoadCallback(drawAllCharts);
+    }
+};
+xhr.send();
+
+function drawRegionsMap(country_sessions) {
 var data = google.visualization.arrayToDataTable(country_sessions);
 
 var options = {
     'width': '1350px', 
     'height': '750px',
     'backgroundColor': '#222e3c',
-    "colorAxis": {minValue: 0, colors: ['#183258', '#183243']}};
+    "colorAxis": {minValue: 0, colors: ['#fff', '#183243']}
+};
 
 var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
 
@@ -27,7 +57,7 @@ chart.draw(data, options);
 
 
 
-function drawChart() {
+function drawChart(user_devices) {
     var data = google.visualization.arrayToDataTable(user_devices);
 
     var options = {
@@ -43,7 +73,7 @@ function drawChart() {
 }
 
 
-function routesTable() {
+function routesTable(routes) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Page');
     data.addColumn('number', 'Views');
@@ -58,7 +88,7 @@ function routesTable() {
     table.draw(data, options);
 }
 
-function countriesTable() {
+function countriesTable(countries) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'City');
     data.addColumn('number', 'Sessions');

@@ -34,7 +34,11 @@ class Product(db.Model):
 
     Methods:
         is_available(): Checks if the product is available.
+        get_domain(): Returns the domain of the product's URL.
         items(): Returns a dictionary of the product's attributes.
+        get_attributes(): Returns a dictionary of the product's attributes for editing.
+        get_image(): Returns the image URL of the product.
+        search(search, query): Performs a search operation on the given query based on the provided search string.
         get_filters(): Returns a dictionary of filters for querying products.
         price_change_last(): Returns the price change of the product in the last price history entry.
         price_change_90_days(): Returns the price change of the product in the last 90 days.
@@ -130,6 +134,26 @@ class Product(db.Model):
             "amount_of_ratings": self.amount_of_ratings,
             "availability": self.is_available(),
         }.items()
+    
+    def get_attributes(self):
+        """
+        Returns a dictionary of the product's attributes for editing.
+
+        Returns:
+            dict: A dictionary containing the product's attributes for editing.
+        """
+        return {
+            "id": self.id,
+            "url": self.url,
+            "title": self.title,
+            "price": self.price,
+            "item_class": self.item_class,
+            "producer": self.producer,
+            "rating": self.rating,
+            "amount_of_ratings": self.amount_of_ratings,
+            "availability": self.is_available(),
+            "image_url": self.image_url,
+        }
     
     def get_image(self):
         """

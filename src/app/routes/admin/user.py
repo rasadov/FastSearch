@@ -89,10 +89,11 @@ def admin_user_edit_get(id):
     """
     user = User.query.get(id)
 
-    return render_template("Admin/Item/edit.html", item=user)
+    return render_template("Admin/Item/edit.html", item=user, func="admin_user_edit_post")
 
 
 @app.post("/admin/user/edit/<int:id>")
+@admin_required
 def admin_user_edit_post(id):
     """
     Edits a user with the given ID.

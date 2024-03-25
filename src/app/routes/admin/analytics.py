@@ -6,6 +6,7 @@ from google.analytics.data_v1beta.types import (
     RunReportRequest,
 )
 from web import app, admin_required, render_template, flash, os
+from flask import jsonify
 
 def run_report(dimensions, metrics, date_ranges=[DateRange(start_date="2020-03-31", end_date="today")]):
     """
@@ -91,6 +92,30 @@ def report_on_active_users():
     """
     for i in run_report([Dimension(name="date")], [Metric(name="activeUsers")]):
         yield i
+
+
+@app.get("/admin/analytics/data")
+@admin_required
+def admin_analytics_data():
+    """
+    Retrieves data for admin analytics through AJAX.
+
+    Returns:
+        JSON response containing the data for admin analytics.
+    """
+    country_sessions = list(report_on_user_countries())
+    page_views = list(report_on_page_views())
+    user_devices = list(report_on_user_devices())
+    active_users = list(report_on_active_users())
+
+    report = {
+        "country_sessions": country_sessions,
+        "page_views": page_views,
+        "user_devices": user_devices,
+        "active_users": active_users,
+    }
+
+    return jsonify(report)
 
 @app.get("/admin/analysis")
 @admin_required

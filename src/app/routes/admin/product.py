@@ -104,7 +104,7 @@ def admin_product_edit_get(id):
     """
     product = Product.query.get(id)
 
-    return render_template("Admin/Item/edit.html", item=product)
+    return render_template("Admin/Item/edit.html", item=product, func="admin_product_edit_post")
 
 
 @app.post("/admin/product/edit/<int:id>")

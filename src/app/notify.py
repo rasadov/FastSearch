@@ -9,6 +9,6 @@ def notify_price_change(url):
         send_email(
             i.email_address,
             f"The price of '{products.title}' has changed. The new price is {products.price}.",
-            "Price Change Notification from Abyssara",
+            "Price Change Notification From Abyssara",
             "Price dropped"
         )

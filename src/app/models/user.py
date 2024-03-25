@@ -85,6 +85,21 @@ class User(UserMixin, db.Model):
         self.subscribed_till = subscribed_till
         self.role = role
 
+    def get_attributes(self):
+        """
+        Returns a dictionary of the user's attributes for editing.
+
+        Returns:
+            dict: A dictionary of the user's attributes for editing.
+        """
+        return {
+            "username": self.username,
+            "name": self.name,
+            "email_address": self.email_address,
+            "role": self.role,
+            "confirmed_on": self.confirmed_on,
+            "subscribed_till": self.subscribed_till,
+        }
 
     def is_admin(self):
         """

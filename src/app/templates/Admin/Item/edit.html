@@ -12,113 +12,20 @@
 
 {% block content %}
 
-{% if item.__tablename__ == 'product' %}
 <div style="padding: 50px;">
     <h1 class="text-center">Edit Product</h1>
-    <form class="text-center" method="POST" action="{{ url_for('admin_product_edit_post', id=item.id) }}">
-        <div class="form-group">
-            <label for="title">Title:</label><br>
-            <input class="form-control" type="text" id="title" name="title" value="{{ item.title }}">
-        </div>
-        <div class="form-group">
-            <label for="price">Price:</label><br>
-            <input class="form-control" type="text" id="price" name="price" value="{{ item.price }}">
-        </div>
-        <div class="form-group">
-            <label for="rating">Rating:</label><br>
-            <input class="form-control" type="text" id="rating" name="rating" value="{{ item.rating }}">
-        </div>
-        <div class="form-group">
-            <label for="amount_of_ratings">Amount of ratings:</label><br>
-            <input class="form-control" type="text" id="amount_of_ratings" name="amount_of_ratings" value="{{ item.amount_of_ratings }}">
-        </div>
-        <div class="form-group">
-            <label for="url">URL:</label><br>
-            <input class="form-control" type="text" id="url" name="url" value="{{ item.url }}">
-        </div>
-        <div class="form-group">
-            <label for="producer">Brand:</label><br>
-            <input class="form-control" type="text" id="producer" name="producer" value="{{ item.producer }}">
-        </div>
-        <div class="form-group">
-            <label for="item_class">Item class:</label><br>
-            <input class="form-control" type="text" id="item_class" name="item_class" value="{{ item.item_class }}">
-        </div>
-        <div class="form-group">
-            <label for="availability">Availability:</label><br>
-            <select class="form-control" name="availability" id="availability">
-                <option value="True" {% if item.availability %} selected {% endif %}>True</option>
-                <option value="False" {% if not item.availability %} selected {% endif %}>False</option>
-            </select>
-        </div>
-        <div class="form-group" style="justify-content: space-between; display: flex; margin: 60px auto;">
-            <input class="btn btn-primary mx-auto" type="submit" value="Update">
-        </div>
-    </form>
-</div>
-
-{% endif %}
-
-{% if item.__tablename__ == 'user' %}
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h1 class="text-center">Edit User</h1>
-            <form method="POST" action="{{ url_for('admin_user_edit_post', id=item.id) }}">
-                <div class="form-group">
-                    <label for="username">Username:</label><br>
-                    <input class="form-control" type="text" id="username" name="username" {% if item.username and item.username !="None" %} value="{{ item.username }}" {% else %} value="None" {% endif %}>
-                </div>
-                <div class="form-group">
-                    <label for="name">Name:</label><br>
-                    <input class="form-control" type="text" id="name" name="name" {% if item.name and item.name !="None" %} value="{{ item.name }}" {% endif %}>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label><br>
-                    <input class="form-control" type="email" id="email_address" name="email_address" value="{{ item.email_address }}">
-                </div>
-                <div class="form-group">
-                    <label for="role">Role:</label><br>
-                    <select class="form-control" id="role" name="role">
-                        {% if item.role == 'item' %}
-                        <option value="user" selected>User</option>
-                        <option value="admin">Admin</option>
-                        {% if current_user.role == 'owner' %}
-                            <option value="owner">Owner</option>
-                        {% endif %}
-                            
-                        {% elif item.role == 'admin' %}
-                        <option value="admin" selected>Admin</option>
-                        <option value="user">User</option>
-                        {% if current_user.role == 'owner' %}
-                            <option value="owner">Owner</option>
-                        {% endif %}
-
-
-                        {% elif item.role == 'owner' %}
-                        <option value="owner" selected>Owner</option>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                        {% endif %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="confirmed">Confirmed:</label><br>
-                    <select class="form-control" id="confirmed" name="confirmed">
-                        <option value="True" {% if item.is_confirmed() %} selected {% endif %}>True</option>
-                        <option value="False" {% if not item.is_confirmed() %} selected {% endif %}>False</option>
-                    </select>
-                </div>
-                <div class="text-center mt-5">
-                    <button class="btn btn-primary " type="submit">Submit</button>
-                </div>
-            </form>
-        </div>
+<form class="text-center" method="POST" action="{{ url_for(func, id=item.id) }}">
+{% for i in item.get_attributes() %}
+    <div class="form-group">
+        <label for="{{ i }}">{{ i }}:</label><br>
+        <input class="form-control" type="text" id="{{ i }}" name="{{ i }}" value="{{ item[i] }}">
     </div>
+{% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 </div>
 
-{% endif %}
+
 
 {% endblock %}
 
