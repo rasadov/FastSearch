@@ -9,36 +9,89 @@ function drawAllCharts() {
     drawRegionsMap(country_sessions);
     drawChart(user_devices);
     routesTable(routes);
-    countriesTable(countries);
+    activeUsers(countries);
 }
 
-var xhr = new XMLHttpRequest();
-xhr.open('GET', '/admin/analytics/data', true);
-xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        routes = response.page_views;
-        countries = response.country_sessions;
-        user_devices = response.user_devices;
-        country_sessions = response.country_sessions;
-        country_sessions.unshift(['Country', 'Sessions']);
-
-        user_devices.unshift(['Device', 'Sessions']);
-
-        routes = routes.slice(0, 15);
-
-        console.log("Data received successfully");
+var xhrRoutes = new XMLHttpRequest();
+xhrRoutes.open('GET', '/admin/analytics/page_views', true);
+xhrRoutes.onreadystatechange = function() {
+    if (xhrRoutes.readyState === 4 && xhrRoutes.status === 200) {
+        var response = JSON.parse(xhrRoutes.responseText);
+        routes = response;
+        routes = routes.slice(0, 20);
         for (var i = 0; i < routes.length; i++) {
             routes[i][1] = parseInt(routes[i][1]);
         }
-        for (var i = 1; i < countries.length; i++) {
-            countries[i][1] = parseInt(countries[i][1]);
-        }
+        document.getElementById('loader-1').remove();
         // Call the function to draw all charts
         google.charts.setOnLoadCallback(drawAllCharts);
     }
 };
-xhr.send();
+xhrRoutes.send();
+
+var xhrCountries = new XMLHttpRequest();
+xhrCountries.open('GET', '/admin/analytics/active_users', true);
+xhrCountries.onreadystatechange = function() {
+    if (xhrCountries.readyState === 4 && xhrCountries.status === 200) {
+        var response = JSON.parse(xhrCountries.responseText);
+        countries = response;
+        try {
+            countries = countries.slice(0, 10);
+        }
+        catch (e) {
+            console.log(e);
+        }
+        try {
+
+            for (var i = 0; i < countries.length; i++) {
+                countries[i][1] = parseInt(countries[i][1]);
+                countries[i][0] = countries[i][0].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+        document.getElementById('loader-2').remove();
+        try {
+
+        // Call the function to draw all charts
+        google.charts.setOnLoadCallback(drawAllCharts);
+         }
+        catch (e) {
+            console.log(e);
+        }
+    }
+};
+xhrCountries.send();
+
+var xhrUserDevices = new XMLHttpRequest();
+xhrUserDevices.open('GET', '/admin/analytics/user_devices', true);
+xhrUserDevices.onreadystatechange = function() {
+    if (xhrUserDevices.readyState === 4 && xhrUserDevices.status === 200) {
+        var response = JSON.parse(xhrUserDevices.responseText);
+        user_devices = response;
+        user_devices.unshift(['Device', 'Sessions']);
+        // Call the function to draw all charts
+        document.getElementById('loader-3').remove();
+        google.charts.setOnLoadCallback(drawAllCharts);
+    }
+};
+xhrUserDevices.send();
+
+var xhrCountrySessions = new XMLHttpRequest();
+xhrCountrySessions.open('GET', '/admin/analytics/country_sessions', true);
+xhrCountrySessions.onreadystatechange = function() {
+    if (xhrCountrySessions.readyState === 4 && xhrCountrySessions.status === 200) {
+        var response = JSON.parse(xhrCountrySessions.responseText);
+        country_sessions = response;
+        country_sessions.unshift(['Country', 'Sessions']);
+        // Call the function to draw all charts
+        document.getElementById('loader-4').remove();
+        google.charts.setOnLoadCallback(drawAllCharts);
+    }
+};
+xhrCountrySessions.send();
 
 function drawRegionsMap(country_sessions) {
 var data = google.visualization.arrayToDataTable(country_sessions);
@@ -58,6 +111,9 @@ chart.draw(data, options);
 
 
 function drawChart(user_devices) {
+    for (var i = 1; i < user_devices.length; i++) {
+        user_devices[i][1] = parseInt(user_devices[i][1]);
+    }
     var data = google.visualization.arrayToDataTable(user_devices);
 
     var options = {
@@ -65,6 +121,8 @@ function drawChart(user_devices) {
         allowHtml: true,
         backgroundColor: '#222e3c',
         legend: {textStyle: {color: 'white', fontSize: 16}},
+        pieSliceText: 'value',
+        pieSliceTextStyle: {color: 'white', fontSize: 14},
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -72,15 +130,11 @@ function drawChart(user_devices) {
     chart.draw(data, options);
 }
 
-
 function routesTable(routes) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Page');
     data.addColumn('number', 'Views');
     data.addRows(routes);
-
-    console.log(routes);
-
     var table = new google.visualization.Table(document.getElementById('table_div_routes'));
     var options = {allowHtml: true, showRowNumber: true,  width: '100%', height: '100%', backgroundColor: 'black'};
     
@@ -88,11 +142,11 @@ function routesTable(routes) {
     table.draw(data, options);
 }
 
-function countriesTable(countries) {
+function activeUsers(active_users) {
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'City');
-    data.addColumn('number', 'Sessions');
-    data.addRows(countries);
+    data.addColumn('string', 'Date');
+    data.addColumn('number', 'Users');
+    data.addRows(active_users);
     
 
     var options = {allowHtml: true, showRowNumber: true,  width: '100%', height: '100%', color: 'black'};

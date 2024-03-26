@@ -1,3 +1,22 @@
+"""
+This file contains functions and routes related to analytics for the admin section of the application.
+
+The functions in this file utilize the Google Analytics API to generate reports on various metrics such as user countries, page views, user devices, and active users. The reports are then used to provide data for the admin analytics page.
+
+To use the functions in this file, you need to download the credentials from the Google Cloud Console and set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the credentials file.
+
+Functions:
+- run_report(dimensions, metrics, date_ranges): Runs a report using the Google Analytics API.
+- report_on_user_countries(): Generates a report on user countries.
+- report_on_page_views(): Generates a report on page views.
+- report_on_user_devices(): Generates a report on user devices.
+- report_on_active_users(): Generates a report on active users.
+
+Routes:
+- admin_analytics_data(): Retrieves data for admin analytics through AJAX.
+- admin_analytics_get(): Renders the admin analytics page.
+"""
+
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
     DateRange,
@@ -94,28 +113,56 @@ def report_on_active_users():
         yield i
 
 
-@app.get("/admin/analytics/data")
+@app.get("/admin/analytics/country_sessions")
 @admin_required
-def admin_analytics_data():
+def admin_analytics_country_sessions():
     """
-    Retrieves data for admin analytics through AJAX.
+    Retrieves data for admin analytics on country sessions.
 
     Returns:
-        JSON response containing the data for admin analytics.
+        JSON response containing the data for country sessions.
     """
     country_sessions = list(report_on_user_countries())
+    return jsonify(country_sessions)
+
+
+@app.get("/admin/analytics/page_views")
+@admin_required
+def admin_analytics_page_views():
+    """
+    Retrieves data for admin analytics on page views.
+
+    Returns:
+        JSON response containing the data for page views.
+    """
     page_views = list(report_on_page_views())
+    return jsonify(page_views)
+
+
+@app.get("/admin/analytics/user_devices")
+@admin_required
+def admin_analytics_user_devices():
+    """
+    Retrieves data for admin analytics on user devices.
+
+    Returns:
+        JSON response containing the data for user devices.
+    """
     user_devices = list(report_on_user_devices())
+    return jsonify(user_devices)
+
+
+@app.get("/admin/analytics/active_users")
+@admin_required
+def admin_analytics_active_users():
+    """
+    Retrieves data for admin analytics on active users.
+
+    Returns:
+        JSON response containing the data for active users.
+    """
     active_users = list(report_on_active_users())
-
-    report = {
-        "country_sessions": country_sessions,
-        "page_views": page_views,
-        "user_devices": user_devices,
-        "active_users": active_users,
-    }
-
-    return jsonify(report)
+    return jsonify(active_users)
 
 @app.get("/admin/analysis")
 @admin_required
@@ -126,22 +173,4 @@ def admin_analytics_get():
     Returns:
         A rendered template for the admin analytics page.
     """
-
-    country_sessions = report_on_user_countries()
-    page_views = report_on_page_views()
-    user_devices = report_on_user_devices()
-    active_users = report_on_active_users()
-
-    country_sessions = list(country_sessions) if country_sessions else []
-    page_views = list(page_views) if page_views else []
-    user_devices = list(user_devices) if user_devices else []
-    active_users = list(active_users) if active_users else []
-
-    report = {
-        "country_sessions": country_sessions,
-        "page_views": page_views,
-        "user_devices": user_devices,
-        "active_users": active_users,
-    }
-
-    return render_template("Admin/analytics.html", report=report)
+    return render_template("Admin/analytics.html")

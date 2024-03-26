@@ -2,20 +2,7 @@
 
 {% block title %}
 <title>Analytics</title>
-<style>
-    body.dark-theme {
-        /* background-color: #333; */
-        background-color: #19222c;
-        color: #fff;
-    }
-    html,body { height:100%; }
-    
-    .sidebar {
-        padding: 20px;
-        height: 100%;
-    }
-    
-    </style>
+<link rel="stylesheet" href="../../static/css/analytics.css">
 {% endblock %}
 
 {% block content %}
@@ -27,6 +14,9 @@
                     <h5 class="card-title" style="padding: 5px;">User Devices</h5>
                 </div>
                 <div class="card-body">
+                    <div class="text-center">
+                        <div class="lds-ring" id="loader-1"><div></div><div></div><div></div><div></div></div>
+                    </div>
                     <div id="piechart"></div>
                 </div>
             </div>
@@ -34,6 +24,9 @@
                 <div class="card-head" style="text-align: center;">
                 </div>
                 <div class="card-body" style="color: black !important;">
+                    <div class="text-center">
+                        <div class="lds-ring" id="loader-2"><div></div><div></div><div></div><div></div></div>
+                    </div>
                     <div id="table_div_countries"></div>
                 </div>
             </div>
@@ -41,6 +34,9 @@
         <div class="col-md-6" style="padding-right: 0;">
             <div class="card" style="background-color: #222e3c; color: white; padding: 0; margin: 0;">
                 <div class="card-body" style="color: black;">
+                    <div class="text-center">
+                        <div class="lds-ring" id="loader-3"><div></div><div></div><div></div><div></div></div>
+                    </div>
                     <div id="table_div_routes"></div>
                 </div>
             </div>
@@ -53,6 +49,7 @@
             <div class="card-head" style="text-align: center;">
                 <h5 class="card-title" style="padding: 5px; color: white;">Country Sessions</h5>
                 <div>
+                    <div class="lds-ring" id="loader-4"><div></div><div></div><div></div><div></div></div>
                     <div id="country-sessions-chart" ></div>
                 </div>
             </div>
