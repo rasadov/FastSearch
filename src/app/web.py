@@ -8,6 +8,7 @@ The web application is built using Flask, a micro web framework for Python.
 It provides the necessary functionality for handling HTTP requests, rendering templates, and managing user authentication.
 
 The following libraries are imported in this file:
+----------------
 - Flask: The main Flask module for creating the web application.
 - flash: A module for displaying flash messages to the user.
 - redirect: A function for redirecting the user to a different URL.
@@ -40,6 +41,7 @@ The web application also integrates with Google OAuth for user authentication.
 The client ID and client secret are read from environment variables.
 
 The web application defines several decorators for handling user authentication and authorization:
+----------------
 - login_required: A decorator that requires the user to be authenticated.
 - logout_required: A decorator that requires the user to be logged out.
 - admin_required: A decorator that requires the user to have the "admin" or "owner" role.

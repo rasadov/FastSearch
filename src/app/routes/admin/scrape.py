@@ -1,11 +1,42 @@
 """
-This section contains routes for running the scrapy spider.
-- The spider can be runned by entering the URL of the product manually.
-- The spider can be runned by entering the query to the search engine.
+This file contains the implementation of manual and automated web scraping functionality.
+~~~~~~~~~~~~~~~~~~~~~
+
+Manual Scraping:
+----------------
+The manual scraping functionality allows users to scrape product information from a given URL
+and add it to the database. The scraping process is triggered by making a POST request to the
+'/admin/product/scrape' endpoint. The scraping method can be either 'custom' or 'google'.
+
+- If the method is 'custom', the URL is retrieved from the request form.
+The URL is validated and checked against the existing products in the database.
+If the product already exists, the user is redirected to the product details page. 
+If not, a new process is started to run the spider for scraping the product information from the URL.
+After the process completes, the product is checked
+if it was successfully added to the database and the user is redirected accordingly.
+
+- If the method is 'google', the query, pages, and results_per_page parameters are retrieved from the request form.
+The query parameter is validated and a new process is started to run the spider
+for scraping the product information from Google search results.
+After the process completes, a success message is displayed and the user is redirected to the product listing page.
+
+Automated Scraping:
+-------------------
+The automated scraping functionality runs the spider automatically
+at regular intervals to update the records in the database. 
+This is achieved using the apscheduler library.
+The spider retrieves all the products from the database and updates their information by scraping the web.
+If an exception occurs during the scraping process, the function continues to the next product.
+The spider is scheduled to run every 24 hours.
+
+Note: The code in this file assumes the presence of other modules and packages
+such as 'models', 'web', 'spiders', etc., which are not included in this code snippet.
+
 """
+
 from models import Product
 from web import (app, admin_required, render_template,
-                request, redirect, flash, session)
+                request)
 from urllib.parse import urlparse
 from multiprocessing import Process
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -40,10 +71,10 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
 @admin_required
 def admin_scrape_get():
     """
-    Renders the 'Admin/Scraping/add.html' template.
+    Renders the 'Admin/scrape.html' template.
     """
 
-    return render_template("Admin/Scraping/add.html")
+    return render_template("Admin/scrape.html")
 
 
 @app.post("/admin/product/scrape")
@@ -69,12 +100,12 @@ def admin_scrape_post():
     data = request.get_json()
 
     method = data.get("source")
-
+    
     url = data.get("query")
     if not url:
         return jsonify(
             {
-                "status": "error", 
+                "status": "error",
                 "message": "Please enter a valid URL"
             }
         )
@@ -87,12 +118,15 @@ def admin_scrape_post():
         if product.count():
             return jsonify(
                 {
-                    "status": "error", 
+                    "status": "error",
                     "message": "Product already exists"
                 }
             )
 
-        p = Process(target=run_spider, args=(url, "url"))
+        p = Process(
+            target=run_spider,
+            args=(url, "url")
+            )
         p.start()
         p.join()
 
@@ -101,14 +135,14 @@ def admin_scrape_post():
             product = product.first()
             return jsonify(
                 {
-                    "status": "success", 
+                    "status": "success",
                     "message": "Product added successfully"
                 }
             )
         else:
             return jsonify(
                 {
-                    "status": "error", 
+                    "status": "error",
                     "message": "Product could not be added"
                 }
             )
@@ -118,7 +152,8 @@ def admin_scrape_post():
         results_per_page = data.get("results_per_page")
 
         p = Process(
-            target=run_spider, args=(url, "google", int(pages), int(results_per_page))
+            target=run_spider, 
+            args=(url, "google", int(pages), int(results_per_page))
         )
         p.start()
         p.join()

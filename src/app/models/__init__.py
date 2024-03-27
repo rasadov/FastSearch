@@ -6,6 +6,7 @@ The models in this module represent the entities in the application, such as use
 Each model class defines the attributes and methods associated with the entity it represents.
 
 Classes:
+-------
 - User: Represents a user in the application.
 - Product: Represents a product in the application.
 - PriceHistory: Represents the price history of a product.

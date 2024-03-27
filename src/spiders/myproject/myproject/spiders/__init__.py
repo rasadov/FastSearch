@@ -31,7 +31,6 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 
 from .utils.parsing import parsing_method
-from .progress import send_progress
 from .utils.search import Search
 
 warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
@@ -93,7 +92,6 @@ class MySpider(scrapy.Spider):
         try:
             parsing_method(response)
             self.progress += 1
-            send_progress(self)
         except Exception:
             pass
 

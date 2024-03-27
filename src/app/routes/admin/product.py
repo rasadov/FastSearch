@@ -1,7 +1,34 @@
 """
-This file contains routes for managing products.
-- Product search in database
-- Product editing, deleting and viewing pages
+This file contains routes for managing products in the admin panel.
+~~~~~~~~~~~~~~~~~~~~~
+
+Routes:
+----------
+- GET '/admin/products/search': Handles the search functionality for admin users to search for products.
+- GET '/admin/product/<int:id>': Displays the information of a specific product in the admin panel.
+- GET '/admin/product/edit/<int:id>': Renders the admin product edit page and allows editing of a specific product.
+- POST '/admin/product/edit/<int:id>': Edits a product with the given ID.
+- GET '/admin/product/delete/<int:id>': Renders the delete page for a specific product in the admin panel and allows deletion of the product.
+- POST '/admin/product/delete/<int:id>': Deletes a product and its associated price history from the database.
+
+Functions:
+----------
+- admin_products_search_get(): Handles the search functionality for admin users to search for products.
+- admin_product_info_get(id): Displays the information of a specific product in the admin panel.
+- admin_product_edit_get(id): Renders the admin product edit page and allows editing of a specific product.
+- admin_product_edit_post(id): Edits a product with the given ID.
+- admin_product_delete_get(id): Renders the delete page for a specific product in the admin panel and allows deletion of the product.
+- admin_product_delete_post(id): Deletes a product and its associated price history from the database.
+
+Note:
+---------
+- These routes and functions require the user to be an admin, as indicated by the @admin_required decorator.
+- The routes and functions are part of a Flask web application and utilize various modules and models imported from other files.
+- The routes handle different operations related to managing products, such as searching, viewing, editing, and deleting.
+- The functions retrieve data from the database, perform necessary operations, and render templates to display the information or perform actions.
+- The functions utilize request arguments, form data, and database queries to handle the required functionality.
+- The functions also utilize pagination to display a limited number of products per page.
+- Flash messages are used to provide feedback to the user after successful editing or deletion of a product.
 """
 
 from web import (app, admin_required, render_template,

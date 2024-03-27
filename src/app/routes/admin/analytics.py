@@ -1,20 +1,31 @@
 """
 This file contains functions and routes related to analytics for the admin section of the application.
+~~~~~~~~~~~~~~~~~~~~~
 
 The functions in this file utilize the Google Analytics API to generate reports on various metrics such as user countries, page views, user devices, and active users. The reports are then used to provide data for the admin analytics page.
 
 To use the functions in this file, you need to download the credentials from the Google Cloud Console and set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the credentials file.
 
 Functions:
+----------------
 - run_report(dimensions, metrics, date_ranges): Runs a report using the Google Analytics API.
 - report_on_user_countries(): Generates a report on user countries.
 - report_on_page_views(): Generates a report on page views.
 - report_on_user_devices(): Generates a report on user devices.
 - report_on_active_users(): Generates a report on active users.
+- admin_analytics_country_sessions(): Retrieves data for admin analytics on country sessions.
+- admin_analytics_page_views(): Retrieves data for admin analytics on page views.
+- admin_analytics_user_devices(): Retrieves data for admin analytics on user devices.
+- admin_analytics_active_users(): Retrieves data for admin analytics on active users.
+- admin_analytics_get(): Renders the admin analytics page.
 
 Routes:
-- admin_analytics_data(): Retrieves data for admin analytics through AJAX.
-- admin_analytics_get(): Renders the admin analytics page.
+----------------
+- GET '/admin/analytics/country_sessions': Retrieves data for admin analytics on country sessions.
+- GET '/admin/analytics/page_views': Retrieves data for admin analytics on page views.
+- GET '/admin/analytics/user_devices': Retrieves data for admin analytics on user devices.
+- GET '/admin/analytics/active_users': Retrieves data for admin analytics on active users.
+- GET '/admin/analysis': Renders the admin analytics page.
 """
 
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
