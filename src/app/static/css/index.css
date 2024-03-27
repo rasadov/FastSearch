@@ -1,0 +1,130 @@
+.buy-sections {
+    display: inline-flex;;
+    width: 90%;
+    margin: 50px auto 150px;
+    justify-content: space-around;
+    max-height: 358px;
+}
+
+/* General for all buy sections */
+.buy-section {
+    background-color:  #333;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    margin: auto;
+    padding: 40px;
+    transition: transform 0.5s;
+}
+.buy-button {
+    padding: 30px;
+}
+.buy-button  a{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #333;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Specific for each buy section */
+
+/* first buy section */
+.buy-section:nth-child(1) {
+    background-color: #333;        
+}
+
+.time-period-1 {
+    color: #FFFF00;
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.buy-section:nth-child(1) a{
+    background-color: #333;
+    color: #FFFF00;
+    border: 2px solid #FFFF00;
+
+}
+
+.buy-section:nth-child(1) a:hover {
+    background-color: #FFFF00;
+    color: #333;
+    border: 2px solid #FFFF00;
+}
+
+.scale-1:hover{
+    border: #FFFF00 2px solid;
+    transform:scale(1.03);
+}
+
+/* second buy section */
+.buy-section:nth-child(2) {
+    background-color: #333;
+}
+
+.time-period-2 {
+    color: #CC00FF;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+
+.buy-section:nth-child(2) a{
+    background-color: #333;
+    color: #CC00FF;
+    border: 2px solid #CC00FF;
+
+}
+
+.buy-section:nth-child(2) a:hover {
+    background-color: #CC00FF;
+    color: #333;
+    border: 2px solid #CC00FF;
+}
+
+.scale-2:hover{
+    border: #CC00FF 2px solid;
+    transform: scale(1.03);
+}
+
+/* 3th buy section */
+.buy-section:nth-child(3) {
+    background-color: #333;
+}
+
+
+.time-period-3 {
+    color: #00FF00;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+
+.buy-section:nth-child(3) a{
+    background-color: #333;
+    color: #00FF00;
+    border: 2px solid #00FF00;
+}
+
+.buy-section:nth-child(3) a:hover {
+    background-color: #00FF00;
+    color: #333;
+    border: 2px solid #00FF00;
+}
+
+.scale-3:hover{
+    border: #00FF00 2px solid;
+    transform:scale(1.03);
+}    
+.body-head {
+    color: white;
+}
+
+
+footer {
+margin-top: 100px;
+}
