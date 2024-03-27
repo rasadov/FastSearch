@@ -2,13 +2,16 @@
 
 {% block title %}
 <title>Scrape Product</title>
-<link rel="stylesheet" href="../../../static/css/auth.css">
 {% endblock %}
 
 {% block content %}
+<div>
+    <div id="alert-messages">
+    </div>
+</div>
 <div class="container" style="padding: 50px; text-align: center;">
     <h1>Scrape Product</h1>
-    <form method="POST" action="{{ url_for('admin_scrape_post') }}">
+    <form id="scrape-form">
         <div class="form-group col-md-3 mx-auto">
             <label for="source" class="m-4">Source:</label>
             <select class="form-control" id="source" name="source" onchange="showFields(this.value)">
@@ -26,7 +29,7 @@
             </div>
         </div>
         <div>
-            <input class="btn btn-primary" type="submit" value="Scrape">
+            <input class="btn btn-primary" value="Scrape" id="submit-button" onclick="send_request()">
         </div>
     </form>
 </div>

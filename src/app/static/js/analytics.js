@@ -34,7 +34,9 @@ xhrCountries.open('GET', '/admin/analytics/active_users', true);
 xhrCountries.onreadystatechange = function() {
     if (xhrCountries.readyState === 4 && xhrCountries.status === 200) {
         var response = JSON.parse(xhrCountries.responseText);
-        countries = response;
+        countries = response.sort(function(a, b) {
+            return b[0].localeCompare(a[0]);
+        });
         try {
             countries = countries.slice(0, 10);
         }

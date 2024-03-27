@@ -31,6 +31,7 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 
 from .utils.parsing import parsing_method
+from .progress import send_progress
 from .utils.search import Search
 
 warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
@@ -56,6 +57,8 @@ class MySpider(scrapy.Spider):
 
     name = "myspider"
     start_urls = []
+    progress = 0
+    estimated = 0
 
     def __init__(
         self, query: str = "", method: str = "url", pages=None, results_per_page=None
@@ -74,6 +77,7 @@ class MySpider(scrapy.Spider):
 
         """
         self.start_urls = [link for link in Search.search(self.query, self.method, self.pages)]
+        self.estimated = len(self.start_urls)
 
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
@@ -88,8 +92,20 @@ class MySpider(scrapy.Spider):
         """
         try:
             parsing_method(response)
+            self.progress += 1
+            send_progress(self)
         except Exception:
             pass
+
+    def get_progress(self):
+        """
+        Returns the progress of the scraping process.
+
+        Returns:
+            tuple: The progress and estimated number of pages to be scraped.
+
+        """
+        return self.progress, self.estimated
 
     def run(self):
         """

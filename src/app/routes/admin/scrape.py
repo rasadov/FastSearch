@@ -11,6 +11,7 @@ from multiprocessing import Process
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import sys
+from flask import jsonify
 
 sys.path.append(r"C:\\Users\\RAUF\\Desktop\\Github_works\\FastSearch\\src")
 
@@ -64,22 +65,32 @@ def admin_scrape_post():
         If the product could not be added, redirects back to the add product page with an error message.
 
     """
-    method = request.form.get("source")
+
+    data = request.get_json()
+
+    method = data.get("source")
+
+    url = data.get("query")
+    if not url:
+        return jsonify(
+            {
+                "status": "error", 
+                "message": "Please enter a valid URL"
+            }
+        )
+
     if method == "custom":
-        url = request.form.get("query")
-
-        if not url:
-            flash("Enter query", category="danger")
-            return redirect("/admin/product/scrape")
-
         parsed_url = urlparse(url)
         url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
         product = Product.query.filter_by(url=url)
         if product.count():
-            flash("Product already in database", category="info")
-            product = product.first()
-            return redirect(f"/admin/product/{product.id}")
+            return jsonify(
+                {
+                    "status": "error", 
+                    "message": "Product already exists"
+                }
+            )
 
         p = Process(target=run_spider, args=(url, "url"))
         p.start()
@@ -87,25 +98,24 @@ def admin_scrape_post():
 
         product = Product.query.filter_by(url=url)
         if product.count():
-            flash("Product added to database successfully", category="success")
             product = product.first()
-            return redirect(f"/admin/product/{product.id}")
-        else:
-            flash("Product could not be added to database", category="danger")
-            flash(
-                "Check if the URL is correct and supported by our program",
-                category="danger",
+            return jsonify(
+                {
+                    "status": "success", 
+                    "message": "Product added successfully"
+                }
             )
-            return redirect("/admin/product/scrape")
+        else:
+            return jsonify(
+                {
+                    "status": "error", 
+                    "message": "Product could not be added"
+                }
+            )
 
     elif method == "google":
-        url = request.form.get("query")
-        pages = request.form.get("pages")
-        results_per_page = request.form.get("results_per_page")
-
-        if not url:
-            flash("Enter query", category="danger")
-            return redirect("/admin/product/scrape")
+        pages = data.get("pages")
+        results_per_page = data.get("results_per_page")
 
         p = Process(
             target=run_spider, args=(url, "google", int(pages), int(results_per_page))
@@ -113,8 +123,12 @@ def admin_scrape_post():
         p.start()
         p.join()
 
-        flash("Function run successfully", category="success")
-        return redirect("/admin/products/search")
+        return jsonify(
+            {
+                "status": "success",
+                "message": "Products added to database successfully",
+            }
+        )
 
 # Automatic scraping 
 """

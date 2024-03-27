@@ -31,3 +31,67 @@ function showFields(source) {
         document.getElementById('fields').innerHTML = googleField;
     }
 }
+
+function send_request() {
+    var form = document.getElementById('scrape-form');
+    var formData = new FormData(form);
+    console.log(form);
+    console.log(formData);
+    var xml = new XMLHttpRequest();
+    xml.open('POST', '/admin/product/scrape', true);
+    xml.setRequestHeader('Content-Type', 'application/json');
+    var data = {
+        'source': formData.get('source'),
+        'query': formData.get('query'),
+        'pages': formData.get('pages'),
+        'results_per_page': formData.get('results_per_page')
+    };
+    console.log(data)
+
+    var jsonData = JSON.stringify(data);
+
+    xml.onload = function() {
+        if (this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            console.log(response);
+            alertmessage = document.getElementById('alert-messages');
+            if (response['status'] == 'success') {
+                console.log('Scraping successful');
+                alertmessage.innerHTML
+                    = `<div class="alert alert-success">
+                    <div style="display: flex;">
+                        <p style="margin: auto auto auto 0;">
+                            ` + response['message'] + `
+                        </p>
+                        <button type="button" 
+                        class="flash-close float-right" 
+                        data-dismiss="alert" 
+                        style="margin: auto 0 auto auto;"
+                        onclick="alertmessage.style.display = 'none';"
+                    </div>`
+                } else {
+                    console.log('Scraping failed');
+                    alertmessage.innerHTML 
+                    = `<div class="alert alert-danger flash-close">
+                    <div style="display: flex;">
+                        <p style="margin: auto auto auto 0;">
+                            ` + response['message'] + `
+                        </p>
+                        <button type="button" 
+                        class="flash-close float-right" 
+                        data-dismiss="alert" 
+                        style="margin: auto 0 auto auto; background-color: transparent; border: none;"
+                        onclick="alertmessage.style.display = 'none';"
+                        >&times;</button>
+                    </div>
+                </div>`;
+                }
+            document.getElementById('results').innerHTML = this.responseText;
+        }
+    };
+
+    xml.send(jsonData);
+};
+
+
