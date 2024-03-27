@@ -48,6 +48,19 @@ function send_request() {
     };
     console.log(data)
 
+    formhtml = document.getElementById('fields').parentElement.innerHTML
+    
+
+
+    document.getElementById('fields').parentElement.innerHTML = `
+    <div class="loader">
+    <div class="lds-ring mt-5" id="loader-1"><div></div><div></div><div></div><div></div></div>
+    <div>
+        <p>Scraping... Please Wait.</p>
+    </div>
+    </div>    
+    `;
+
     var jsonData = JSON.stringify(data);
 
     xml.onload = function() {
@@ -56,10 +69,11 @@ function send_request() {
             var response = JSON.parse(this.responseText);
             console.log(response);
             alertmessage = document.getElementById('alert-messages');
+            document.querySelector('.loader').parentElement.innerHTML = formhtml;
             if (response['status'] == 'success') {
                 console.log('Scraping successful');
                 alertmessage.innerHTML
-                    = `<div class="alert alert-success">
+                    = `<div class="alert alert-success flash-close">
                     <div style="display: flex;">
                         <p style="margin: auto auto auto 0;">
                             ` + response['message'] + `
@@ -67,9 +81,10 @@ function send_request() {
                         <button type="button" 
                         class="flash-close float-right" 
                         data-dismiss="alert" 
-                        style="margin: auto 0 auto auto;"
+                        style="margin: auto 0 auto auto; background-color: transparent; border: none;"
                         onclick="alertmessage.style.display = 'none';"
-                    </div>`
+                        >&times;</button>
+                </div>`;
                 } else {
                     console.log('Scraping failed');
                     alertmessage.innerHTML 
@@ -82,12 +97,10 @@ function send_request() {
                         class="flash-close float-right" 
                         data-dismiss="alert" 
                         style="margin: auto 0 auto auto; background-color: transparent; border: none;"
-                        onclick="alertmessage.style.display = 'none';"
+                        onclick="alertmessage.child.style.display = 'none';"
                         >&times;</button>
-                    </div>
                 </div>`;
                 }
-            document.getElementById('results').innerHTML = this.responseText;
         }
     };
 
