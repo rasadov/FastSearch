@@ -92,3 +92,10 @@
         background-color: #0d6efd;
         color: white;
     }
+    .product-title {
+        font-size: large; 
+        max-width: 80%; 
+        margin: auto; 
+        padding: 20px; 
+        max-lines: 3 !important;
+    }

@@ -4,11 +4,20 @@
 <title>
 Change Password
 </title>
+<style>
+footer { 
+    display: none; 
+}
+.muted {
+    opacity: 0.5;
+
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div>
-    <div style="text-align: center;">
+    <div class="text-center mb-5">
         <h1>
             {{ h1 }}
         </h1> 
@@ -19,11 +28,13 @@ Change Password
             <div class="form-group">
                 {% if field.label.text == 'Submit' %}
                 </div>
-                <div style="width: 30%; margin: 15px auto;">
+                <div style="width: 30%; margin: 25px auto;">
                     {{ field(class='btn btn-primary', value='Submit', style='width: 100%;') }}
                 </div>
                 {% else %}
-                {{ field(class='form-control', placeholder=field.label.text, style='width:30%; max-width:50%; margin: 15px auto;') }}
+                <div style="margin: 45px auto;">
+                    {{ field(class='form-control', placeholder=field.label.text, style='width:30%; max-width:50%; margin: 15px auto;') }}
+                </div>
                 {% endif %}
                 
                 {% for error in field.errors %}
@@ -33,4 +44,21 @@ Change Password
         {% endfor %}
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('submit').classList.add('muted');
+    document.getElementById('submit').disabled = true;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.form-control').forEach(element => {
+            element.addEventListener('input', function() {
+                // Your code to handle the value change goes here
+                document.getElementById('submit').classList.remove('muted');
+                document.getElementById('submit').disabled = false;
+            });
+            
+        });
+    });
+</script>
 {% endblock %}

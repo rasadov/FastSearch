@@ -61,7 +61,10 @@
                 <p style="margin: auto auto auto 0;">
                     {{ message }}
                 </p>
-                <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;">&times;</button>
+                <button type="button" class="flash-close float-right" data-dismiss="alert"
+                style="margin: auto 0 auto auto; border: none; background-color: transparent;"
+                onclick="this.parentElement.parentElement.remove()"
+                >&times;</button>
             </div>
         </div>
         {% endfor %}

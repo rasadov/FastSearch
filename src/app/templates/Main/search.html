@@ -67,7 +67,13 @@
         <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
             <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
             <div class="card-body">
-                <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
+                <h1 class="card-title product-title">
+                    {% if product.title|length < 101 %}
+                        {{ product.title }}
+                    {% else %}
+                        {{ product.title[:100] }}... 
+                    {% endif %}
+                </h1>
                 <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
                 <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
                 <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
