@@ -3,9 +3,6 @@ from flask_login import UserMixin
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped
 
-import sys
-
-sys.path.append(r"./../../..")
 
 from app import SignatureExpired, bcrypt, db, s
 

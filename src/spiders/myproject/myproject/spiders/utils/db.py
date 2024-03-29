@@ -112,8 +112,6 @@ def save_product_to_database(
             )
     else:
         # This product does not exist, insert a new record into the database
-        print("Inserting new record into database")
-        print(price_currency)
         try:
             curr.execute(
                 """
@@ -126,8 +124,6 @@ def save_product_to_database(
         except Exception as e:
             print(f"An error occurred: {e}")
         
-
-        print("Inserted new record into database")
 
         curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
 

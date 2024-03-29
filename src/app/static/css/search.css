@@ -12,7 +12,7 @@
 }
 
 .pag-loop {
-    display: none;        
+    display: none;
 }
 
 .track {
@@ -85,7 +85,7 @@
 
 
     footer {
-        margin-top: 60px !important; 
+        display: none;
     }
     
     .current-page {

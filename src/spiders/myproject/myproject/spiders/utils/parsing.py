@@ -14,9 +14,8 @@ import json
 import re
 from urllib.parse import urlparse
 
-from flask import flash
 from .db import save_product_to_database
-from .converter import get_country_name
+from .converter import SignsConverter
 
 
 def scrape_amazon_item(response, url: None | str = None):
@@ -38,11 +37,10 @@ def scrape_amazon_item(response, url: None | str = None):
     """
     try:
         title = response.css("#productTitle::text").get().strip()
-        price = float(f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()}'.strip())
+        price = float(f'{response.css("span.a-price-whole::text").get().replace(",","")}.{response.css("span.a-price-fraction::text").get()}'.strip())
 
         price_currency = response.css("span.a-price-symbol::text").get().strip()
-        price_currency = get_country_name(price_currency)
-        print(price_currency)
+        price_currency = SignsConverter.convert_signs(price_currency)
 
         try:
             image = response.css("div#imgTagWrapperId img::attr(src)").get()
@@ -85,7 +83,7 @@ def scrape_amazon_item(response, url: None | str = None):
             )
 
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 
 def scrape_ebay_item(response, url: str, method: str = "add"):
@@ -150,7 +148,7 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
             item_class, producer, image
         )
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 
 def scrape_newegg_item(response, url: None | str = None):
@@ -210,7 +208,7 @@ def scrape_newegg_item(response, url: None | str = None):
             item_class, producer, image
         )
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 
 def scrape_gamestop_item(response, url: None | str = None):
@@ -263,7 +261,7 @@ def scrape_gamestop_item(response, url: None | str = None):
             item_class, producer, image
         )
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 
 def scrape_excaliberpc_item(response, url: None | str = None):
@@ -318,7 +316,7 @@ def scrape_excaliberpc_item(response, url: None | str = None):
             item_class, producer, image
         )
     except Exception as e:
-        flash(f"Error: {e}", "danger")
+        print(f"Error: {e}", "danger")
 
 
 # Main parsing function
@@ -339,10 +337,13 @@ def parsing_method(response):
     # with open(".html", "w", encoding=response.encoding) as f:
     #     f.write(html_content)
 
+    print(response.meta.get('download_slot'))
+
     if response.meta.get('download_slot') == "www.ebay.com":
         scrape_ebay_item(response, url)
 
     elif response.meta.get('download_slot') == "www.amazon.com":
+        print("Amazon")
         scrape_amazon_item(response, url)
 
     elif response.meta.get('download_slot') == "www.amazon.co.uk":
