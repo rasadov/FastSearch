@@ -23,7 +23,7 @@ DB_PORT = os.environ.get("DB_PORT")
 def save_product_to_database(
     url: str,
     title: str,
-    price: int,
+    price: float,
     price_currency: str,
     rating: float =None,
     amount_of_ratings: int =None,
@@ -37,7 +37,7 @@ def save_product_to_database(
     Parameters:
     - url (str): The URL of the product.
     - title (str): The title of the product.
-    - price (int): The price of the product.
+    - price (float): The price of the product.
     - price_currency (str): The currency of the price.
     - rating (float, optional): The rating of the product. Defaults to None.
     - amount_of_ratings (int, optional): The number of ratings for the product. Defaults to None.
@@ -64,7 +64,8 @@ def save_product_to_database(
                     CREATE TABLE IF NOT EXISTS price_history (
                     price_history_id SERIAL PRIMARY KEY,
                     product_id INT,
-                    price VARCHAR(255),
+                    price INT NOT NULL,
+                    price_currency VARCHAR(255) NOT NULL,
                     change_date DATE NOT NULL,
 
                     FOREIGN KEY (product_id) REFERENCES product(id)
@@ -111,14 +112,22 @@ def save_product_to_database(
             )
     else:
         # This product does not exist, insert a new record into the database
-        curr.execute(
-            """
-            INSERT INTO product (url, title, price, price_currency, item_class,
-            producer, amount_of_ratings, rating, image_url, availability)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
-        """,
-            (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url),
-        )
+        print("Inserting new record into database")
+        print(price_currency)
+        try:
+            curr.execute(
+                """
+                INSERT INTO product (url, title, price, price_currency, item_class,
+                producer, amount_of_ratings, rating, image_url, availability)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
+                """,
+                (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url),
+            )
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        
+
+        print("Inserted new record into database")
 
         curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
 
@@ -128,11 +137,12 @@ def save_product_to_database(
 
         curr.execute(
             """
-            INSERT INTO price_history (product_id, price, change_date)
+            INSERT INTO price_history (product_id, price, price_currency, change_date)
             VALUES (%s, %s, %s, CURRENT_DATE);
         """,
             (product_id, price, price_currency),
         )
+
 
     conn.commit()
     curr.close()

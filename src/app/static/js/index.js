@@ -4,14 +4,6 @@ gtag('js', new Date());
 
 gtag('config', 'G-B0ELJBKQN0');
 
-let flashClose = document.querySelectorAll('.flash-close');
-let message = document.querySelector('.alert');
-flashClose.forEach((close) => {
-    close.addEventListener('click', () => {
-        message.parentElement.style.display = 'none';
-    });
-});
-
 let navbarToggle = document.querySelector('.navbar-toggler');
 let navbarCollapse = document.querySelector('.navbar-collapse');
 

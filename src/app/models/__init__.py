@@ -41,8 +41,8 @@ __all__ = ["User", "Product", "PriceHistory", "Cart"]
 
 # Code below used to create the database tables
 
-# from web import app, db
+from web import app, db
 
-# with app.app_context():
-#     db.create_all()
-#     db.session.commit()
+with app.app_context():
+    db.create_all()
+    db.session.commit()

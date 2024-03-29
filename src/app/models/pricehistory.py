@@ -27,7 +27,7 @@ class PriceHistory(db.Model):
 
     price_history_id : Mapped[int] = mapped_column(primary_key=True)
     product_id : Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
-    price : Mapped[int] = mapped_column(nullable=False)
+    price : Mapped[float] = mapped_column(nullable=False)
     price_currency : Mapped[str] = mapped_column(default="USD")
     change_date : Mapped[datetime] = mapped_column(nullable=False, default=datetime.now().date())
 

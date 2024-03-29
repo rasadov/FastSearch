@@ -51,7 +51,7 @@ class MySpider(scrapy.Spider):
     Args:
     ----------
         query (str): The search query to be used for scraping.
-        method (str): The method to be used for scraping, e.g., 'url', 'api'.
+        method (str): The method to be used for scraping, e.g., 'url', 'google'.
         pages (int): The number of pages to scrape.
         results_per_page (int): The number of results to scrape per page.
 

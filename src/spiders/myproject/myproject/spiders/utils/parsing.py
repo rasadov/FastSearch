@@ -38,7 +38,7 @@ def scrape_amazon_item(response, url: None | str = None):
     """
     try:
         title = response.css("#productTitle::text").get().strip()
-        price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()}'.strip()
+        price = float(f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()}'.strip())
 
         price_currency = response.css("span.a-price-symbol::text").get().strip()
         price_currency = get_country_name(price_currency)
@@ -111,7 +111,7 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
         ).getall()[1]
         parsed_data = json.loads(script_content)
         title = parsed_data.get("name")
-        price = parsed_data.get("offers").get("price")
+        price = float(parsed_data.get("offers").get("price"))
         price_currency = parsed_data.get("offers").get("price_currency")
 
         try:
@@ -183,7 +183,7 @@ def scrape_newegg_item(response, url: None | str = None):
         ).getall()[2]
         parsed_data = json.loads(script_content)
 
-        price = parsed_data.get("offers").get("price")
+        price = float(parsed_data.get("offers").get("price"))
         title = parsed_data.get("name")
         price_currency = parsed_data.get("offers").get("price_currency")
 
@@ -235,7 +235,7 @@ def scrape_gamestop_item(response, url: None | str = None):
         parsed_data = json.loads(script_content)
 
         title = parsed_data.get("name")
-        price = parsed_data.get("offers")[0].get("price")
+        price = float(parsed_data.get("offers")[0].get("price"))
         price_currency =  parsed_data.get("offers")[0].get("price_currency") 
 
         producer = parsed_data.get("brand")
@@ -281,7 +281,7 @@ def scrape_excaliberpc_item(response, url: None | str = None):
         None
     """
     try:
-        price = response.css('meta[property="price"]::attr(content)').get()
+        price = float(response.css('meta[property="price"]::attr(content)').get())
         price_currency = response.css('meta[property="price_currency"]::attr(content)').get()            
 
         title = response.css("h1.product-head_name::text").get().strip()
