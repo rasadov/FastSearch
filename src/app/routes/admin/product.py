@@ -31,7 +31,7 @@ Note:
 - Flash messages are used to provide feedback to the user after successful editing or deletion of a product.
 """
 
-from web import (app, admin_required, render_template,
+from app import (app, admin_required, render_template,
                 request, redirect, flash, db, datetime)
 from models import Product, PriceHistory
 

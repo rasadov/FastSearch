@@ -35,7 +35,7 @@ from google.analytics.data_v1beta.types import (
     Metric,
     RunReportRequest,
 )
-from web import app, admin_required, render_template, flash, os
+from app import app, admin_required, render_template, flash, os
 from flask import jsonify
 
 def run_report(dimensions, metrics, date_ranges=[DateRange(start_date="2020-03-31", end_date="today")]):

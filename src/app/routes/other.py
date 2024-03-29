@@ -6,7 +6,7 @@ Routes:
 - `robots.txt` : Serves the robots.txt file for web crawlers
 """
 
-from web import app, send_from_directory, os
+from app import app, send_from_directory, os
 from models import User
 
 

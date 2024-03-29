@@ -34,7 +34,7 @@ Note:
 
 
 from models import User, Product
-from web import app, admin_required, render_template
+from app import app, admin_required, render_template
 
 from .analytics import *
 from .scrape import *

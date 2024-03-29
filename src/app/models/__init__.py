@@ -30,6 +30,10 @@ Note: This module uses SQLAlchemy for database operations and Flask-Login for us
 
 from sqlalchemy.ext.declarative import declarative_base
 
+import sys
+
+sys.path.append("src")
+
 Base = declarative_base()
 
 from .user import User
@@ -41,7 +45,7 @@ __all__ = ["User", "Product", "PriceHistory", "Cart"]
 
 # Code below used to create the database tables
 
-from web import app, db
+from app import app, db
 
 with app.app_context():
     db.create_all()

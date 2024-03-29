@@ -1,5 +1,5 @@
 from models import Product, Cart, User
-from email_sender import send_email
+from app.__email__sender__ import send_email
 
 def notify_price_change(url):
     products = Product.query.filter_by(url=url).first()

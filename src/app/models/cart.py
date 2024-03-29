@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from web import db
+from app import db
 from .user import User
 from .product import Product
 

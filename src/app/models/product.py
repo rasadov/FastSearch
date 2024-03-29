@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.types import TypeDecorator
 
-from web import db, request
+from app import db, request
 from .pricehistory import PriceHistory
 
 

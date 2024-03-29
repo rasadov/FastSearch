@@ -9,9 +9,9 @@ import psycopg2
 
 import sys
 
-sys.path.append(r"C:\\Users\\RAUF\\Desktop\\Github_works\\FastSearch\\src")
+sys.path.append("src")
 
-from app.notify import notify_price_change
+from app.__notifications__ import notify_price_change
 
 
 DB_USER = os.environ.get("DB_USER")

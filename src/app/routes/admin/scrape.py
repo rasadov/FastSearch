@@ -35,7 +35,7 @@ such as 'models', 'web', 'spiders', etc., which are not included in this code sn
 """
 
 from models import Product
-from web import (app, admin_required, render_template,
+from app import (app, admin_required, render_template,
                 request, current_user)
 from urllib.parse import urlparse
 from multiprocessing import Process
@@ -44,7 +44,7 @@ import atexit
 import sys
 from flask import jsonify
 
-sys.path.append(r"C:\\Users\\RAUF\\Desktop\\Github_works\\FastSearch\\src")
+sys.path.append("src")
 
 from spiders import MySpider
 

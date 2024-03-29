@@ -22,11 +22,11 @@ Functions:
 
 from flask import jsonify
 from models import Product, Cart
-from web import (app, render_template, 
+from app import (app, render_template, 
             request, redirect, current_user,
             flash, url_for, send_email)
 
-from web import login_user
+from app import login_user
 from models import User
 
 

@@ -14,11 +14,11 @@ Profile pages:
 """
 
 from models import User
-from web import (app, db, session, oauth, render_template,
+from app import (app, db, session, oauth, render_template,
                 url_for, redirect, flash, login_user,
                 logout_user, login_required,
                 logout_required, datetime)
-from forms import RegisterForm, LoginForm
+from app.__forms__ import RegisterForm, LoginForm
 
 # login and registration routes
 

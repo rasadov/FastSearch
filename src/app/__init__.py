@@ -64,7 +64,7 @@ from random import randint
 
 import dotenv
 from authlib.integrations.flask_client import OAuth
-from email_sender import send_email
+from app.__email__sender__ import send_email
 from flask import (Flask, flash, redirect, render_template, request,
                    send_from_directory, session, url_for)
 from flask_bcrypt import Bcrypt

@@ -19,8 +19,8 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
+- Currency conversion functionality in `src/spiders/myproject/myproject/spiders/utils/converter.py` doesn't work
 - Fix the pagination in the search page for mobile.
-- Scrape functions do not scrape images. Add functionality to scrape image urls and store them in the database.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
@@ -40,7 +40,7 @@ Notes:
 """
 
 from models import User
-from web import app, db, login_manager
+from app import app, db, login_manager
 
 @login_manager.user_loader
 def load_user(user_id):

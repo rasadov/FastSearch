@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import ForeignKey, desc 
 from sqlalchemy.orm import mapped_column, Mapped
 
-from web import db
+from app import db
 
 class PriceHistory(db.Model):
     """

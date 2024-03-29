@@ -14,11 +14,11 @@ The following routes are defined:
 """
 
 from models import User, Cart
-from web import (app, login_required, render_template,
+from app import (app, login_required, render_template,
                 flash, redirect, url_for, send_email,
                 login_user, request, db, current_user,
                 datetime, SignatureExpired)
-from forms import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm, 
+from app.__forms__ import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm, 
                 DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
 
 @app.get("/profile")
