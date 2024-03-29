@@ -71,7 +71,7 @@
                                 <p style="margin: auto auto auto 0;">
                                     {{ message }}
                                 </p>
-                                <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;">&times;</button>
+                                <button type="button" class="flash-close float-right" data-dismiss="alert" style="margin: auto 0 auto auto;" onclick="close(this)">&times;</button>
                             </div>
                         </div>
                         {% endfor %}
@@ -87,16 +87,7 @@
 
     {% block scripts %}
     {% endblock %}
-    <script>
-        let flashClose = document.querySelectorAll('.flash-close');
-        let message = document.querySelector('.alert');
-        flashClose.forEach((close) => {
-            close.addEventListener('click', () => {
-                message.parentElement.style.display = 'none';
-            });
-        });
-
-    </script>
+    <script type="text/javascript" src="../../static/js/base.js"></script>
 </body>
 </html>
 

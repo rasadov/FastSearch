@@ -36,7 +36,7 @@ such as 'models', 'web', 'spiders', etc., which are not included in this code sn
 
 from models import Product
 from web import (app, admin_required, render_template,
-                request)
+                request, current_user)
 from urllib.parse import urlparse
 from multiprocessing import Process
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -78,7 +78,6 @@ def admin_scrape_get():
 
 
 @app.post("/admin/product/scrape")
-@admin_required
 def admin_scrape_post():
     """
     Scrapes the product information from the provided URL and adds it to the database.
@@ -96,6 +95,14 @@ def admin_scrape_post():
         If the product could not be added, redirects back to the add product page with an error message.
 
     """
+
+    if current_user.is_anonymous:
+        return jsonify(
+            {
+                "status": "error",
+                "message": "You have been logged out, please log in again to continue."
+            }
+        )
 
     data = request.get_json()
 

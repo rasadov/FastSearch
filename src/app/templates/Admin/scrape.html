@@ -37,6 +37,11 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="../../../static/js/scrape.js">
+<script>
+    
+function close(element) {
+    element.parentElement.style.display = 'none';
+    console.log('close');
+}
 </script>
 {% endblock %}

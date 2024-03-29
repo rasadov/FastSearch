@@ -18,3 +18,9 @@ let navbarCollapse = document.querySelector('.navbar-collapse');
 navbarToggle.addEventListener('click', () => {
     navbarCollapse.classList.toggle('show');
 });
+
+
+function close(element) {
+    element.parentElement.style.display = 'none';
+    console.log('close');
+}

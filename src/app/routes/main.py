@@ -38,8 +38,8 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    if current_user.is_anonymous:
-        login_user(User.query.get(1))
+    # if current_user.is_anonymous:
+    #     login_user(User.query.get(1))
     return render_template("Main/index.html")
 
 @app.get("/search")

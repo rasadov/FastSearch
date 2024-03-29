@@ -82,7 +82,7 @@ function send_request() {
                         class="flash-close float-right" 
                         data-dismiss="alert" 
                         style="margin: auto 0 auto auto; background-color: transparent; border: none;"
-                        onclick="alertmessage.style.display = 'none';"
+                        onclick="this.parentElement.parentElement.style.display = 'none';"
                         >&times;</button>
                 </div>`;
                 } else {
@@ -97,7 +97,7 @@ function send_request() {
                         class="flash-close float-right" 
                         data-dismiss="alert" 
                         style="margin: auto 0 auto auto; background-color: transparent; border: none;"
-                        onclick="alertmessage.child.style.display = 'none';"
+                        onclick="this.parentElement.parentElement.style.display = 'none';"
                         >&times;</button>
                 </div>`;
                 }

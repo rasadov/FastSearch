@@ -21,14 +21,15 @@ DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 
 def save_product_to_database(
-    url,
-    title,
-    price,
-    rating=None,
-    amount_of_ratings=None,
-    item_class=None,
-    producer=None,
-    image_url=None,
+    url: str,
+    title: str,
+    price: int,
+    price_currency: str,
+    rating: float =None,
+    amount_of_ratings: int =None,
+    item_class: str=None,
+    producer: str=None,
+    image_url: str=None,
 ):
     """
     Saves a product to the database or updates an existing product if it already exists.
@@ -36,7 +37,8 @@ def save_product_to_database(
     Parameters:
     - url (str): The URL of the product.
     - title (str): The title of the product.
-    - price (str): The price of the product.
+    - price (int): The price of the product.
+    - price_currency (str): The currency of the price.
     - rating (float, optional): The rating of the product. Defaults to None.
     - amount_of_ratings (int, optional): The number of ratings for the product. Defaults to None.
     - item_class (str, optional): The class/category of the product. Defaults to None.
@@ -92,29 +94,30 @@ def save_product_to_database(
                 # Saving price change to keep track of price
                 curr.execute(
                     """
-                    INSERT INTO price_history (product_id, price, change_date)
-                    VALUES (%s, %s, CURRENT_DATE);
+                    INSERT INTO price_history (product_id, price, price_currency, change_date)
+                    VALUES (%s, %s, %s, CURRENT_DATE);
                 """,
-                    (product_id, price),
+                    (product_id, price, price_currency),
                 )
 
             curr.execute(
                 f"""
                 UPDATE product
-                SET price = %s, title = %s, item_class = %s, producer = %s,
+                SET price = %s, price_currency=%s, title = %s, item_class = %s, producer = %s,
                     amount_of_ratings = %s, rating = %s, image_url = %s, availability = 'In stock'
                 WHERE url = %s;
             """,
-                (price, title, item_class, producer, amount_of_ratings, rating, image_url, url),
+                (price, price_currency, title, item_class, producer, amount_of_ratings, rating, image_url, url),
             )
     else:
         # This product does not exist, insert a new record into the database
         curr.execute(
             """
-            INSERT INTO product (url, title, price, item_class, producer, amount_of_ratings, rating, image_url, availability)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
+            INSERT INTO product (url, title, price, price_currency, item_class,
+            producer, amount_of_ratings, rating, image_url, availability)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
         """,
-            (url, title, price, item_class, producer, amount_of_ratings, rating, image_url),
+            (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url),
         )
 
         curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
@@ -126,9 +129,9 @@ def save_product_to_database(
         curr.execute(
             """
             INSERT INTO price_history (product_id, price, change_date)
-            VALUES (%s, %s, CURRENT_DATE);
+            VALUES (%s, %s, %s, CURRENT_DATE);
         """,
-            (product_id, price),
+            (product_id, price, price_currency),
         )
 
     conn.commit()

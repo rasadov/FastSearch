@@ -11,7 +11,8 @@ class PriceHistory(db.Model):
     Attributes:
         price_history_id (int): The unique identifier for the price history entry.
         product_id (int): The ID of the product associated with the price history.
-        price (str): The price of the product at a specific date.
+        price (int): The price of the product at a specific date.
+        price_currency (str): The currency of the price.
         change_date (datetime): The date and time when the price was changed.
 
     Methods:
@@ -26,14 +27,16 @@ class PriceHistory(db.Model):
 
     price_history_id : Mapped[int] = mapped_column(primary_key=True)
     product_id : Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
-    price : Mapped[str] = mapped_column(nullable=False)
+    price : Mapped[int] = mapped_column(nullable=False)
+    price_currency : Mapped[str] = mapped_column(default="USD")
     change_date : Mapped[datetime] = mapped_column(nullable=False, default=datetime.now().date())
 
     # Methods
 
-    def __init__(self, product_id, price, date=datetime.now().date()):
+    def __init__(self, product_id, price, price_currency, date=datetime.now().date()):
         self.product_id = product_id
         self.price = price
+        self.price_currency = price_currency
         self.date = date
         
     @staticmethod

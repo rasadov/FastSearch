@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 
 from flask import flash
 from .db import save_product_to_database
+from .converter import get_country_name
 
 
 def scrape_amazon_item(response, url: None | str = None):
@@ -30,14 +31,19 @@ def scrape_amazon_item(response, url: None | str = None):
         None
 
     Raises:
-        None
+        None`
 
     Example:
         >>> scrape_amazon_item(response, 'https://www.amazon.com/product')
     """
     try:
         title = response.css("#productTitle::text").get().strip()
-        price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()} {response.css("span.a-price-symbol::text").get()}'.strip()
+        price = f'{response.css("span.a-price-whole::text").get()}.{response.css("span.a-price-fraction::text").get()}'.strip()
+
+        price_currency = response.css("span.a-price-symbol::text").get().strip()
+        price_currency = get_country_name(price_currency)
+        print(price_currency)
+
         try:
             image = response.css("div#imgTagWrapperId img::attr(src)").get()
         except Exception:
@@ -73,7 +79,9 @@ def scrape_amazon_item(response, url: None | str = None):
             item_class = None
 
         save_product_to_database(
-                url, title, price, rating, amount_of_ratings, item_class, producer, image
+                url, title, price, price_currency,
+                rating, amount_of_ratings,
+                item_class, producer, image
             )
 
     except Exception as e:
@@ -104,8 +112,7 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
         parsed_data = json.loads(script_content)
         title = parsed_data.get("name")
         price = parsed_data.get("offers").get("price")
-        price_currency = parsed_data.get("offers").get("priceCurrency")
-        price = price + price_currency if price_currency == "USD" else price
+        price_currency = parsed_data.get("offers").get("price_currency")
 
         try:
             image = parsed_data.get("image")
@@ -138,7 +145,9 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image_url=image
+            url, title, price, price_currency,
+            rating, amount_of_ratings,
+            item_class, producer, image
         )
     except Exception as e:
         flash(f"Error: {e}", "danger")
@@ -176,8 +185,7 @@ def scrape_newegg_item(response, url: None | str = None):
 
         price = parsed_data.get("offers").get("price")
         title = parsed_data.get("name")
-        price_currency = parsed_data.get("offers").get("priceCurrency")
-        price += "$" if price_currency == "USD" else ""
+        price_currency = parsed_data.get("offers").get("price_currency")
 
         try:
             image = parsed_data.get("image")
@@ -197,7 +205,9 @@ def scrape_newegg_item(response, url: None | str = None):
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image_url=image
+            url, title, price, price_currency,
+            rating, amount_of_ratings,
+            item_class, producer, image
         )
     except Exception as e:
         flash(f"Error: {e}", "danger")
@@ -205,7 +215,17 @@ def scrape_newegg_item(response, url: None | str = None):
 
 def scrape_gamestop_item(response, url: None | str = None):
     """
-    Takes title, price, rating, amount of ratings, producer, and class of the item.\n\nWorks only with `gamestop.com`
+    Extracts data from the item page on `gamestop.com` and saves it to the database.
+
+    Args:
+        response: The response object containing the HTML of the item page.
+        url (optional): The URL of the item page. Defaults to None.
+
+    Raises:
+        Exception: If there is an error during the scraping process.
+
+    Returns:
+        None
     """
 
     try:
@@ -216,8 +236,8 @@ def scrape_gamestop_item(response, url: None | str = None):
 
         title = parsed_data.get("name")
         price = parsed_data.get("offers")[0].get("price")
-        if parsed_data.get("offers")[0].get("priceCurrency") == "USD":
-            price += "$"
+        price_currency =  parsed_data.get("offers")[0].get("price_currency") 
+
         producer = parsed_data.get("brand")
         item_class = parsed_data.get("category")
 
@@ -238,7 +258,9 @@ def scrape_gamestop_item(response, url: None | str = None):
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image_url=image
+            url, title, price, price_currency,
+            rating, amount_of_ratings,
+            item_class, producer, image
         )
     except Exception as e:
         flash(f"Error: {e}", "danger")
@@ -260,8 +282,7 @@ def scrape_excaliberpc_item(response, url: None | str = None):
     """
     try:
         price = response.css('meta[property="price"]::attr(content)').get()
-        if response.css('meta[property="priceCurrency"]::attr(content)').get() == "USD":
-            price += "$"
+        price_currency = response.css('meta[property="price_currency"]::attr(content)').get()            
 
         title = response.css("h1.product-head_name::text").get().strip()
 
@@ -292,7 +313,9 @@ def scrape_excaliberpc_item(response, url: None | str = None):
             amount_of_ratings = 0
 
         save_product_to_database(
-            url, title, price, rating, amount_of_ratings, item_class, producer, image_url=image
+            url, title, price, price_currency,
+            rating, amount_of_ratings,
+            item_class, producer, image
         )
     except Exception as e:
         flash(f"Error: {e}", "danger")
@@ -312,20 +335,17 @@ def parsing_method(response):
     """
     url = response.meta.get("url", "")
 
-    parsed_url = urlparse(url)
-    domain = parsed_url.netloc
-
     # html_content = response.body.decode(response.encoding)
     # with open(".html", "w", encoding=response.encoding) as f:
     #     f.write(html_content)
 
-    if domain == "www.ebay.com":
+    if response.meta.get('download_slot') == "www.ebay.com":
         scrape_ebay_item(response, url)
 
-    elif domain == "www.amazon.com":
+    elif response.meta.get('download_slot') == "www.amazon.com":
         scrape_amazon_item(response, url)
 
-    elif domain == "www.amazon.co.uk":
+    elif response.meta.get('download_slot') == "www.amazon.co.uk":
         scrape_amazon_item(response, url)
 
     elif "newegg" in url:

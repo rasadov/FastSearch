@@ -39,14 +39,17 @@ warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWa
 class MySpider(scrapy.Spider):
     """
     Spider class for web scraping.
+    ~~~~~~~~~~~~~~~~~~~~~
 
     This class receives and processes requests to scrape data from web pages. It inherits from the Scrapy Spider class.
 
     Attributes:
+    ----------
         name (str): The name of the spider.
         start_urls (list): The list of URLs to start scraping from.
 
     Args:
+    ----------
         query (str): The search query to be used for scraping.
         method (str): The method to be used for scraping, e.g., 'url', 'api'.
         pages (int): The number of pages to scrape.

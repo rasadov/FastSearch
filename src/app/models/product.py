@@ -19,7 +19,8 @@ class Product(db.Model):
     Attributes:
         url (str): The URL of the product.
         title (str): The title of the product.
-        price (str): The price of the product.
+        price (int): The price of the product.
+        price_currency (str): The currency of the price.
         item_class (str, optional): The class of the product.
         producer (str, optional): The producer of the product.
         amount_of_ratings (int, optional): The number of ratings for the product.
@@ -54,7 +55,8 @@ class Product(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     url: Mapped[str] = mapped_column(nullable=False)
     title: Mapped[str] = mapped_column(nullable=False)
-    price: Mapped[str] = mapped_column(nullable=False)
+    price: Mapped[int] = mapped_column(nullable=False)
+    price_currency: Mapped[str] = mapped_column(default="USD")
     item_class: Mapped[str] = mapped_column(default=None)
     producer: Mapped[str] = mapped_column(default=None)
     amount_of_ratings: Mapped[int] = mapped_column(default=None)
@@ -81,6 +83,7 @@ class Product(db.Model):
         url,
         title,
         price,
+        price_currency,
         item_class,
         producer,
         amount_of_ratings,
@@ -91,6 +94,7 @@ class Product(db.Model):
         self.url = url
         self.title = title
         self.price = price
+        self.price_currency = price_currency
         self.item_class = item_class
         self.producer = producer
         self.amount_of_ratings = amount_of_ratings
@@ -147,11 +151,12 @@ class Product(db.Model):
             "url": self.url,
             "title": self.title,
             "price": self.price,
+            "price_currency": self.price_currency,
             "item_class": self.item_class,
             "producer": self.producer,
             "rating": self.rating,
             "amount_of_ratings": self.amount_of_ratings,
-            "availability": self.is_available(),
+            "availability": self.availability,
             "image_url": self.image_url,
         }
     
