@@ -198,6 +198,7 @@ def change_username_post():
             current_user.name = form.name.data
             db.session.commit()
             return redirect("/profile")
+    return redirect("/profile/username/change")
 
 @app.get("/password/reset/<token>")
 def reset_password_get(token):

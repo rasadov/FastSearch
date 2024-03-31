@@ -210,4 +210,4 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=update_records, trigger="interval", hours=24)
 scheduler.start()
 
-atexit.register(lambda: scheduler.shutdown())
+atexit.register(scheduler.shutdown)

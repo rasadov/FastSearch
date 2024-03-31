@@ -48,12 +48,20 @@ Notes:
 
 """
 
-from __init__ import app, db, login_manager
+# Import the necessary modules
+
+import sys
+
+# Add the project directory to the system path
+
+sys.path.append("src")
+
+# Import the app module
+
+from app import app, db, login_manager
 from app.models import User
-from app.routes import *
 
-
-
+# Configure the login manager to load the user
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -70,6 +78,10 @@ def load_user(user_id):
         return db.session.get(User, int(user_id))  # noqa: F405
     except (ValueError, TypeError):
         return None
+
+# Import routes
+
+from app.routes import *
 
 # Main function
 

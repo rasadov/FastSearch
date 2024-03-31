@@ -26,15 +26,14 @@ an Object-Relational Mapping (ORM) library, with Flask.
 - OAuth: A module for integrating OAuth authentication with Flask.
 - URLSafeTimedSerializer: A module for generating and verifying URL-safe timed signatures.
 
-- forms: A module containing the forms used in the web application.
-- email_sender: A module for sending emails.
-
 - dotenv: A module for loading environment variables from a .env file.
 - os: A module for interacting with the operating system.
 - datetime: A module for working with dates and times.
 - timedelta: A module for representing time intervals.
 - randint: A function for generating random integers.
 - sys: A module for interacting with the Python interpreter.
+- wraps: A function for creating well-behaved decorators.
+- json: A module for working with JSON data.
 
 The web application uses a PostgreSQL database for storing user data. 
 The database connection details are read from environment variables using the dotenv module.
@@ -59,7 +58,6 @@ Overall, this file serves as the central configuration file for the web applicat
 importing all necessary modules and defining important variables and decorators.
 """
 
-import sys
 import json
 import os
 from datetime import datetime, timedelta
@@ -73,8 +71,6 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
-
-sys.path.append("src")
 
 dotenv.load_dotenv()
 

@@ -206,7 +206,10 @@ def admin_product_edit_post(product_id):
                     db.session.add(price_history)
                     setattr(product, "price_currency", price_currency)
                 else:
-                    price_history = PriceHistory(product_id, value, product.price_currency, date=datetime.now().date())
+                    price_history = PriceHistory(product_id,
+                                                value,
+                                                product.price_currency,
+                                                date=datetime.now().date())
                 db.session.add(price_history)
             setattr(product, field, value)
 

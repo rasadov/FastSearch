@@ -117,18 +117,21 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if item.__tablename__ == 'messages' %}
+                {% if item.__tablename__ == 'message' %}
                     <div class="card bg-dark mx-auto mb-4 col-md-3" style=" max-height: 50%; padding: 20px;">
                         <div style="height: 65px; color: white;">
                             <div>
-                                <p>{{ item.name }}</p>
-                            </div>
-                            <div>
-                                <p>{{ item.email }}</p>
+                                <p>{{ item.sender_id }}</p>
                             </div>
                         </div>
                         <div class="mb-2 p-3" style="color: white;"> 
-                            <p class="card-text">{{ item.message }}</p>
+                            <p class="card-text">
+                                {% if item.text|length > 100 %}
+                                {{ item.text[:100] }}...
+                                {% else %}
+                                {{ item.text }}
+                                {% endif %}
+                            </p>
                         </div>
                         <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
                             <a href="/admin/message/{{item.id}}" class="btn btn-primary" style="text-decoration: none; color: white;">

@@ -164,8 +164,9 @@ def contact_post():
     subject = request.form["subject"]
     message = request.form["message"]
     if name and message:
-        users = User.query.filter(User.role == "admin" | User.role == "owner").all()
+        users = User.query.filter(User.role=="admin" or User.role=="owner").all()
         for user in users:
+            print(user.email_address)
             send_email(
                 user.email_address,
                 f"""{name} ({current_user.email_address} | {number if number else 'No number'})

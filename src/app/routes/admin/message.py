@@ -6,7 +6,7 @@ from app import (db, admin_required,
                 render_template, request,
                 redirect, url_for, app, flash)
 
-from app.models import Message
+from app.models import Message, User
 
 @app.get("/admin/messages")
 @admin_required
@@ -35,7 +35,8 @@ def admin_message_info_get(message_id):
         A rendered template of the message details page.
     """
     message = Message.query.get(message_id)
-    return render_template("Admin/info.html", message=message)
+    user = User.query.get(message.sender_id)
+    return render_template("Admin/Item/info.html", item=message, user=user)
 
 @app.get("/admin/message/delete")
 @admin_required
@@ -55,5 +56,31 @@ def admin_message_delete():
         return redirect(url_for("admin_messages_get"))
     message = Message.query.get(message_id)
     db.session.delete(message)
+    db.session.commit()
+    return redirect(url_for("admin_messages_get"))
+
+@app.post("/admin/message/mark_as_read")
+@admin_required
+def admin_message_mark_as_read():
+    """
+    This route is used to mark a message as read in the admin panel.
+
+    Args:
+        message_id (int): The ID of the message to mark as read.
+
+    Returns:
+        A redirect to the admin message page after marking the message as read.
+    """
+    data = request.get_json()
+    
+    try:
+        message_id = int(data.get("message_id"))
+    except ValueError:
+        flash("Invalid message ID", "error")
+    if message_id is None:
+        flash("Message ID is required", "error")
+        return redirect(url_for("admin_messages_get"))
+    message = Message.query.get(message_id)
+    message.mark_as_read()
     db.session.commit()
     return redirect(url_for("admin_messages_get"))

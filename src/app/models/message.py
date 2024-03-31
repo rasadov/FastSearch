@@ -24,8 +24,8 @@ class Message(db.Model):
 
     id : Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(String(length=1000), nullable=False)
-    sender_id: Mapped[int] = mapped_column(ForeignKey('User.id'), nullable=False)
-    recipient_id: Mapped[int] = mapped_column(ForeignKey('User.id'), nullable=False)
+    sender_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
+    recipient_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
     read: Mapped[bool] = mapped_column(default=False)
 
     def __init__(self, text, sender_id, recipient_id):
@@ -49,3 +49,29 @@ class Message(db.Model):
         Marks the message as read.
         """
         self.read = True
+
+    def items(self):
+        # Method implementation goes here
+        """
+        Returns a list of all messages.
+
+        Returns:
+            list: A list of all messages.
+        """
+        return {
+            "id": self.id,
+            "text": self.text,
+            "sender_id": self.sender_id,
+            "recipient_id": self.recipient_id,
+            "read": self.read
+        }.items()
+
+    def __repr__(self):
+        # Method implementation goes here
+        """
+        Returns a string representation of the message.
+
+        Returns:
+            str: A string representation of the message.
+        """
+        return f"Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id})"

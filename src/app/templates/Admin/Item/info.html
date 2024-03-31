@@ -31,8 +31,24 @@
                 {% endif %}
             </div>
         {% endif %}
-    </div>
+            {% if item.__tablename__ == 'message' %}
+            <div class="card user-info">
+
+                {% for key, value in user.items() %}
+                <p>{{ key }}: {{ value }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
 </div>
+{% if item.__tablename__ == 'product' %}
 <script type="text/javascript" src="../../../static/js/image.js"></script>
+{% endif %}
+{% if item.__tablename__ == 'message' %}
+<p id="message_id" style="display: none;">{{item.id}}</p>
+<script type="text/javascript" src="../../../static/js/message.js"></script>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
 
 {% endblock %}

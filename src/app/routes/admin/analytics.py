@@ -47,7 +47,7 @@ from app import app, admin_required, render_template, flash, os
 def run_report(
         dimensions,
         metrics,
-        date_ranges=[DateRange(start_date="2020-03-31", end_date="today")]):
+        date_ranges=DateRange(start_date="2020-03-31", end_date="today")):
     """
     Runs a report using the Google Analytics API.
 
@@ -74,7 +74,7 @@ def run_report(
             property=f"properties/{os.environ.get('GA4_PROPERTY_ID')}",
             dimensions=dimensions,
             metrics=metrics,
-            date_ranges=date_ranges,
+            date_ranges=[date_ranges],
         )
         response = client.run_report(request)
 
