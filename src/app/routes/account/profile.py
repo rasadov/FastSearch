@@ -5,7 +5,8 @@ The following routes are defined:
 - `/profile`: Renders the profile management page.
 - `/profile/password/change`: Allows the user to change their password.
 - `/profile/password/set`: Allows the user to set a new password.
-- `/profile/username/change`: Handles the functionality to change the username and name of the current user.
+- `/profile/username/change`: Handles the functionality to change the username
+  and name of the current user.
 - `/profile/delete`: Handles the deletion of a user account.
 - `/password/forgot`: Handles the forgot password functionality.
 - `/password/reset/<token>`: Handles the reset password functionality using a reset token.
@@ -13,17 +14,25 @@ The following routes are defined:
 - `/email/verify/<token>`: Handles the email verification functionality using the provided token.
 """
 
-from models import User, Cart
 from app import (app, login_required, render_template,
-                flash, redirect, url_for, send_email,
-                login_user, request, db, current_user,
+                flash, redirect, url_for, login_user,
+                request, db, current_user,
                 datetime, SignatureExpired)
-from app.__forms__ import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm, 
+from app.models import User, Cart
+from app.__forms__ import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm,
                 DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
+from app.__email__sender__ import send_email
+
 
 @app.get("/profile")
 @login_required
 def profile_get():
+    """
+    Retrieve the user's profile and render the profile page.
+
+    Returns:
+        The rendered profile page with the user's cart items.
+    """
     cart = Cart.items(current_user.id)
     return render_template("Account/profile.html", cart=cart)
 
@@ -42,7 +51,7 @@ def change_password_get():
     if not current_user.password_hash:
         return redirect("/profile/password/set")
     form = ChangePasswordForm()
-    
+
     return render_template("form_base.html",h1="Change passwrod", form=form)
 
 @app.post("/profile/password/change")
@@ -75,8 +84,7 @@ def change_password_post():
             db.session.commit()
             flash("Password changed successfully", category="success")
             return redirect("/profile")
-        else:
-            flash("Old password is not correct", category="danger")
+        flash("Old password is not correct", category="danger")
     return redirect("/profile/password/change")
 
 @app.get("/profile/password/set")
@@ -93,7 +101,7 @@ def set_password_get():
     if current_user.password_hash:
         return redirect("/profile/password/change")
     form = SetPasswordForm()
-    
+
     return render_template("form_base.html", form=form)
 
 @app.post("/profile/password/set")
@@ -117,8 +125,8 @@ def set_password_post():
         db.session.commit()
         flash("Password changed successfully", category="success")
         return redirect("/profile")
-    else:
-        flash("Old password is not correct", category="danger")
+    flash("Old password is not correct", category="danger")
+    return redirect("/profile/password/set")
 
 @app.get("/profile/username/change")
 @login_required
@@ -190,7 +198,7 @@ def change_username_post():
             current_user.name = form.name.data
             db.session.commit()
             return redirect("/profile")
-        
+
 @app.get("/password/reset/<token>")
 def reset_password_get(token):
     """
@@ -211,12 +219,14 @@ def reset_password_post(token):
     Handles the reset password form submission.
 
     Validates the reset password form data.
-    If the form is valid, the user's password is updated in the database and a success message is flashed.
+    If the form is valid, the user's password is updated in the database and
+    a success message is flashed.
     If there are form validation errors, the error messages are flashed.
 
     Returns:
         If the form is submitted successfully, redirects to the login page.
-        If there are form validation errors, renders the reset password page with the error messages.
+        If there are form validation errors, renders the reset password page
+        with the error messages.
     """
     form = ResetPasswordForm()
     user = User.verify_reset_token(token)
@@ -225,6 +235,7 @@ def reset_password_post(token):
         db.session.commit()
         flash("Your password has been updated!", "success")
         return redirect(url_for("login_get"))
+    return redirect(url_for("reset_password_get", token=token))
 
 
 @app.get("/verification")
@@ -242,8 +253,10 @@ def send_verification_email():
     """
     Handle the ask-of-verification route.
 
-    This route is used to ask for email verification. It renders a form for the user to enter their verification code.
-    If the form is submitted and valid, it sends an email to the user's email address with a verification token.
+    This route is used to ask for email verification.
+    It renders a form for the user to enter their verification code.
+    If the form is submitted and valid,
+    it sends an email to the user's email address with a verification token.
     The user is then redirected to the verify_email route.
 
     Returns:
@@ -265,6 +278,15 @@ def send_verification_email():
 
 @app.get("/email/verify/<token>")
 def verify_email_get(token):
+    """
+    Renders the verify_email.html template with the provided token.
+
+    Parameters:
+    - token (str): The verification token.
+
+    Returns:
+    - The rendered template.
+    """
     return render_template("Account/verify_email.html", token=token)
 
 
@@ -298,13 +320,19 @@ def verify_email_post(token):
     except SignatureExpired:
         flash("The confirmation link is invalid or has expired.", "danger")
         return redirect(url_for("profile_get"))
-    
+
 @app.get("/password/forgot")
 def forgot_password_get():
     """
     Handle the forgot password functionality.
 
-    This function is responsible for handling the forgot password feature. It checks if the request method is POST and the form is valid. If the form is valid, it retrieves the user with the provided email address from the database. If the user exists, it generates a reset token, sends an email to the user with the reset password link, and displays a flash message to check the email for instructions. If the user does not exist, it displays a flash message indicating that the email was not found.
+    This function is responsible for handling the forgot password feature.
+    It checks if the request method is POST and the form is valid.
+    If the form is valid, it retrieves the user with the provided email address from the database.
+    If the user exists, it generates a reset token, sends an email to the user with the reset
+    password link, and displays a flash message to check the email for instructions.
+    If the user does not exist,
+    it displays a flash message indicating that the email was not found.
 
     Returns:
         A rendered template 'form_base.html' with the form object.
@@ -316,14 +344,26 @@ def forgot_password_get():
 
 @app.post("/password/forgot")
 def forgot_password_post():
+    """
+    Handle the POST request for the 'forgot password' functionality.
+
+    This function validates the form data submitted by the user. If the form is valid,
+    it retrieves the user with the provided email address from the database. If the user
+    exists, a password reset token is generated and an email is sent to the user with a
+    link to reset their password. If the user does not exist, a warning message is flashed.
+
+    Returns:
+        None
+    """
     form = ForgotPasswordForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email_address=form.email_address.data).first()
         if user:
             token = user.get_reset_token()
+            url = f"127.0.0.1:5000/password/reset/{token}"
             send_email(
                 user.email_address,
-                f'Link to reset the password 127.0.0.1:5000{ url_for("reset_password_get", token=token) }',
+                f"Link to reset the password: {url}",
                 "Reset Password",
                 "Password Reset Request",
             )
@@ -373,6 +413,5 @@ def delete_account_post():
             db.session.commit()
             flash("Account deleted successfully", category="success")
             return redirect("/")
-        else:
-            flash("Password is not correct", category="danger")
-
+        flash("Password is not correct", category="danger")
+    return redirect("/profile/delete")

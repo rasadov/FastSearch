@@ -1,10 +1,15 @@
 """
-This file contains functions and routes related to analytics for the admin section of the application.
+This file contains functions and routes related to analytics
+for the admin section of the application.
 ~~~~~~~~~~~~~~~~~~~~~
 
-The functions in this file utilize the Google Analytics API to generate reports on various metrics such as user countries, page views, user devices, and active users. The reports are then used to provide data for the admin analytics page.
+The functions in this file utilize the Google Analytics API to generate reports on various metrics
+such as user countries, page views, user devices, and active users.
+The reports are then used to provide data for the admin analytics page.
 
-To use the functions in this file, you need to download the credentials from the Google Cloud Console and set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the credentials file.
+To use the functions in this file, you need to download the credentials
+from the Google Cloud Console and set the environment variable 
+GOOGLE_APPLICATION_CREDENTIALS to the path of the credentials file.
 
 Functions:
 ----------------
@@ -35,17 +40,22 @@ from google.analytics.data_v1beta.types import (
     Metric,
     RunReportRequest,
 )
-from app import app, admin_required, render_template, flash, os
 from flask import jsonify
 
-def run_report(dimensions, metrics, date_ranges=[DateRange(start_date="2020-03-31", end_date="today")]):
+from app import app, admin_required, render_template, flash, os
+
+def run_report(
+        dimensions,
+        metrics,
+        date_ranges=[DateRange(start_date="2020-03-31", end_date="today")]):
     """
     Runs a report using the Google Analytics API.
 
     Args:
         dimensions (list): A list of dimensions to include in the report.
         metrics (list): A list of metrics to include in the report.
-        date_ranges (DateRange, optional): The date range for the report. Defaults to [DateRange(start_date="2020-03-31", end_date="today")].
+        date_ranges (DateRange, optional): The date range for the report.
+        Defaults to [DateRange(start_date="2020-03-31", end_date="today")].
 
     Yields:
         tuple: A tuple containing the dimension value and metric value for each row in the report.
@@ -55,7 +65,8 @@ def run_report(dimensions, metrics, date_ranges=[DateRange(start_date="2020-03-3
 
     Note: 
         You need to download the credentials from the Google Cloud Console and
-        set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of the credentials file.
+        set the environment variable GOOGLE_APPLICATION_CREDENTIALS
+        to the path of the credentials file.
     """
     try:
         client = BetaAnalyticsDataClient()
@@ -70,9 +81,9 @@ def run_report(dimensions, metrics, date_ranges=[DateRange(start_date="2020-03-3
         for row in response.rows:
             yield (row.dimension_values[0].value, row.metric_values[0].value)
 
-    except Exception as e:
+    except IndexError as e:
         flash(f"An error occurred: {e}")
-    
+
 def report_on_user_countries():
     """
     Generates a report on user countries.
@@ -80,9 +91,8 @@ def report_on_user_countries():
     Returns:
         tuple: A tuple containing the country name and the number of sessions.
     """
-    for i in run_report([Dimension(name="country")], [Metric(name="sessions")]):
-        yield i
-    
+    yield from run_report([Dimension(name="country")], [Metric(name="sessions")])
+
 def report_on_page_views():
     """
     Generates a report on page views.
@@ -90,9 +100,8 @@ def report_on_page_views():
     Returns:
         tuple: A tuple containing the page path and the number of screen page views.
     """
-    for i in run_report([Dimension(name="pagePath")], [Metric(name="screenPageViews")]):
-        yield i
-    
+    yield from run_report([Dimension(name="pageTitle")], [Metric(name="screenPageViews")])
+
 def report_on_user_devices():
     """
     Generates a report on user devices.
@@ -105,8 +114,7 @@ def report_on_user_devices():
     Returns:
         None
     """
-    for i in run_report([Dimension(name="deviceCategory")], [Metric(name="sessions")]):
-        yield i
+    yield from run_report([Dimension(name="deviceCategory")], [Metric(name="sessions")])
 
 def report_on_active_users():
     """
@@ -120,12 +128,11 @@ def report_on_active_users():
     Returns:
         None
     """
-    for i in run_report([Dimension(name="date")], [Metric(name="activeUsers")]):
-        yield i
+    yield from run_report([Dimension(name="date")], [Metric(name="activeUsers")])
 
 
 @app.get("/admin/analytics/country_sessions")
-# @admin_required
+@admin_required
 def admin_analytics_country_sessions():
     """
     Retrieves data for admin analytics on country sessions.
@@ -138,7 +145,7 @@ def admin_analytics_country_sessions():
 
 
 @app.get("/admin/analytics/page_views")
-# @admin_required
+@admin_required
 def admin_analytics_page_views():
     """
     Retrieves data for admin analytics on page views.
@@ -151,7 +158,7 @@ def admin_analytics_page_views():
 
 
 @app.get("/admin/analytics/user_devices")
-# @admin_required
+@admin_required
 def admin_analytics_user_devices():
     """
     Retrieves data for admin analytics on user devices.
@@ -164,7 +171,7 @@ def admin_analytics_user_devices():
 
 
 @app.get("/admin/analytics/active_users")
-# @admin_required
+@admin_required
 def admin_analytics_active_users():
     """
     Retrieves data for admin analytics on active users.
@@ -176,7 +183,7 @@ def admin_analytics_active_users():
     return jsonify(active_users)
 
 @app.get("/admin/analysis")
-# @admin_required
+@admin_required
 def admin_analytics_get():
     """
     Renders the admin analytics page.

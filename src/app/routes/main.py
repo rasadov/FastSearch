@@ -21,13 +21,11 @@ Functions:
 """
 
 from flask import jsonify
-from models import Product, Cart
-from app import (app, render_template, 
+from app.models import Product, Cart, User, Message
+from app import (app, render_template,
             request, redirect, current_user,
-            flash, url_for, send_email, db)
-
-from app import login_user
-from models import User, Message
+            flash, url_for, db, login_user)
+from app.__email__sender__ import send_email
 
 
 @app.get("/")
@@ -78,7 +76,8 @@ def search_get():
 
     total_pages = products.pages
     return render_template(
-        "Main/search.html", products=products, total_pages=total_pages, **variables, in_cart=Cart.in_cart
+        "Main/search.html", products=products, total_pages=total_pages,
+        **variables, in_cart=Cart.in_cart
     )
 
 @app.post('/cart/add')
@@ -97,26 +96,27 @@ def add_to_cart():
     If the action is 'remove', it removes the product from the cart.
 
     Returns:
-    - If the action is 'track', it returns a JSON response with status 'success' and action 'track'.
-    - If the action is 'remove', it returns a JSON response with status 'success' and action 'remove'.
-    - If there is an error, it returns a JSON response with status 'error' and HTTP status code 400.
+    - If the action is 'track',
+    it returns a JSON response with status 'success' and action 'track'.
+    - If the action is 'remove',
+    it returns a JSON response with status 'success' and action 'remove'.
+    - If there is an error,
+    it returns a JSON response with status 'error' and HTTP status code 400.
     """
-    
+
     data = request.get_json()
 
     if not data['product_id'] or not data['action']:
         return redirect("/")
     product = Product.query.get(data['product_id'])
-    
+
     if product:
         if data['action'] == 'track':
             Cart.append(current_user.id, product.id)
             return jsonify({'status': 'success', 'action': 'track'}), 200
-        else:
-            Cart.remove(current_user.id, product.id)
-            return jsonify({'status': 'success', 'action': 'remove'}), 200
+        Cart.remove(current_user.id, product.id)
+        return jsonify({'status': 'success', 'action': 'remove'}), 200
     return jsonify({'status': 'error'}), 400
-
 
 
 @app.get("/donate")
@@ -160,7 +160,7 @@ def contact_post():
         flash("You need to be logged in to send a message", "danger")
         return redirect(url_for("login"))
     name = request.form["name"]
-    number = request.form["number"] 
+    number = request.form["number"]
     subject = request.form["subject"]
     message = request.form["message"]
     if name and message:
@@ -168,19 +168,23 @@ def contact_post():
         for user in users:
             send_email(
                 user.email_address,
-                f"{name} ({current_user.email_address} | {number if number else 'No number'}) has sent you message: \n\n {message}",
+                f"""{name} ({current_user.email_address} | {number if number else 'No number'})
+                has sent you message: \n\n {message}""",
                 subject=subject,
                 title=f"Abyssara user sent you a message",
             )
 
             db.session.add(
                 Message(
-                    text=f"{name} ({current_user.email_address} | {number if number else 'No number'}) has sent you message: \n\n {message}", 
-                    sender_id=current_user.id, 
+                    text=f"""{name}
+                    ({current_user.email_address} | {number if number else 'No number'})
+                    has sent you message: \n\n {message}""",
+                    sender_id=current_user.id,
                     recipient_id=user.id)
                 )
             db.session.commit()
-            
+
         flash("Your message has been sent. Thank you!", "success")
-    else:
-        flash("Please fill out all the fields", "danger")
+        return redirect(url_for("home_get"))
+    flash("Please fill out all the fields", "danger")
+    return redirect(url_for("contact_get"))

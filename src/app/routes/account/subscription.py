@@ -10,7 +10,7 @@ Routes:
 - `/subcribe/<int:period>`: Subscribes the user for 1 month.
 """
 
-from models import User
+from app.models import User
 from app import app, db, current_user, redirect, url_for, flash, request, datetime, timedelta
 
 

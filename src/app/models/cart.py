@@ -1,3 +1,7 @@
+"""
+This module contains the Cart model which represents a cart in the application.
+"""
+
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
@@ -27,9 +31,8 @@ class Cart(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id : Mapped[int] = mapped_column(Integer(), primary_key=True)
-    user_id = mapped_column(Integer(), ForeignKey("user.id"), nullable=False)    
+    user_id = mapped_column(Integer(), ForeignKey("user.id"), nullable=False)
     product_id = mapped_column(Integer(), ForeignKey("product.id"), nullable=False)
-    
     user: Mapped["User"] = relationship(backref="cart")
     product: Mapped["Product"] = relationship(backref="cart")
 
@@ -56,7 +59,7 @@ class Cart(db.Model):
             list: A list of Cart objects representing the items in the cart.
         """
         return [i.product for i in Cart.query.filter_by(user_id=user_id).all()]
-    
+
     @staticmethod
     def append(user_id, product_id):
         """
@@ -67,11 +70,11 @@ class Cart(db.Model):
             product_id (int): The ID of the product to add to the cart.
         """
         if Cart.in_cart(user_id, product_id):
-           return
+            return
         cart = Cart(user_id, product_id)
         db.session.add(cart)
         db.session.commit()
-    
+
     @staticmethod
     def in_cart(user_id, product_id):
         """
@@ -109,4 +112,3 @@ class Cart(db.Model):
         """
         Cart.query.filter_by(user_id=user_id).delete()
         db.session.commit()
-

@@ -13,11 +13,11 @@ Profile pages:
 
 """
 
-from models import User
 from app import (app, db, session, oauth, render_template,
                 url_for, redirect, flash, login_user,
                 logout_user, login_required,
                 logout_required, datetime)
+from app.models import User
 from app.__forms__ import RegisterForm, LoginForm
 
 # login and registration routes
@@ -41,10 +41,12 @@ def register_post():
     """
     Handles the registration form submission
 
-    Validates the registration form data. If the form is valid and the email address is not already registered,
-    a new user is created and added to the database. The user is then logged in and redirected to the verification page.
-    If the email address is already registered, an error message is flashed. If there are any form validation errors,
-    the error messages are flashed.
+    Validates the registration form data. 
+    If the form is valid and the email address is not already registered,
+    a new user is created and added to the database.
+    The user is then logged in and redirected to the verification page.
+    If the email address is already registered, an error message is flashed.
+    If there are any form validation errors, the error messages are flashed.
 
     Returns:
         If the form is submitted successfully, redirects to the verification page.
@@ -62,12 +64,12 @@ def register_post():
             db.session.commit()
             login_user(user, remember=form.remember.data)
             return redirect("/verification")
-        else:
-            flash("This Email is already used", category="danger")
+        flash("This Email is already used", category="danger")
 
     if form.errors != {}:
         for err_msg in form.errors.values():
             flash(err_msg[0], category="danger")
+    return redirect("/register")
 
 
 @app.get("/login")
@@ -76,8 +78,10 @@ def login_get():
     """
     Renders the login page.
 
-    This function is responsible for rendering the login page. It creates an instance of the `LoginForm` class,
-    and then passes it to the `render_template` function along with the template name "Account/login.html".
+    This function is responsible for rendering the login page.
+    It creates an instance of the `LoginForm` class,
+    and then passes it to the `render_template` function along with
+    the template name "Account/login.html".
     The rendered HTML page is returned as the response.
 
     Returns:
@@ -94,8 +98,10 @@ def login_post():
     """
     Handles the login form submission.
 
-    Validates the login form data. If the form is valid and the user exists with the provided email address,
-    and the password is correct, the user is logged in and redirected to the home page. If the user does not exist
+    Validates the login form data. If the form is valid and the user exists
+    with the provided email address,
+    and the password is correct, the user is logged in and redirected to the home page.
+    If the user does not exist
     or the password is incorrect, an error message is flashed.
 
     Returns:
@@ -113,11 +119,11 @@ def login_post():
         ):
             login_user(attempted_user, remember=form.remember.data)
             return redirect("/")
-        else:
-            flash("Username or password is not correct", category="danger")
+        flash("Username or password is not correct", category="danger")
+    return redirect("/login")
 
 
-# OAuth2.0 with Google 
+# OAuth2.0 with Google
 
 
 @app.route("/login/google", methods=["GET", "POST"])
@@ -138,10 +144,13 @@ def login_with_google():
 @logout_required
 def authorize_google():
     """
-    This route handles the authorization process for the user. It uses Google OAuth to authenticate the user and retrieve their information.
+    This route handles the authorization process for the user.
+    It uses Google OAuth to authenticate the user and retrieve their information.
 
     Returns:
-        redirect: If the user is already subscribed, it redirects them to the '/search' page. Otherwise, it redirects them to the '/#subscription' page.
+        redirect: If the user is already subscribed,
+        it redirects them to the '/search' page.
+        Otherwise, it redirects them to the '/#subscription' page.
     """
     google = oauth.create_client("google")  # create the google oauth client
     token = (
@@ -156,7 +165,7 @@ def authorize_google():
         name=user["name"],
         confirmed_on=datetime.now().date(),
     )
-    if not User.user_exists(user_to_add.email_address):
+    if not User.email_registered(user_to_add.email_address):
         db.session.add(user_to_add)
         db.session.commit()
         login_user(user_to_add)
@@ -169,7 +178,9 @@ def authorize_google():
             db.session.commit()
         login_user(user_to_login)
     session["profile"] = user_info
-    session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
+
+    # make the session permanent, so it keeps existing after browser gets closed
+    session.permanent = True
 
     return redirect("/search")
 
@@ -195,7 +206,8 @@ def login_with_microsoft():
 @logout_required
 def authorize_microsoft():
     """
-    Authorizes the user using Microsoft OAuth and performs necessary actions based on the user's information.
+    Authorizes the user using Microsoft OAuth and
+    performs necessary actions based on the user's information.
 
     Returns:
         A redirect response to the "/search" page.
@@ -210,7 +222,7 @@ def authorize_microsoft():
         name=user["givenName"],
         confirmed_on=datetime.now().date(),
     )
-    if not User.user_exists(user_to_add.email_address):
+    if not User.email_registered(user_to_add.email_address):
         db.session.add(user_to_add)
         db.session.commit()
         login_user(user_to_add)
@@ -223,7 +235,10 @@ def authorize_microsoft():
             db.session.commit()
         login_user(user_to_login)
     session["profile"] = user_info
-    session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
+
+    # make the session permanent, so it keeps existing after browser gets closed
+    session.permanent = True
+
     return redirect("/search")
 
 # Logout page
@@ -239,6 +254,3 @@ def logout():
     """
     logout_user()
     return redirect("/")
-
-
-# Profile management page

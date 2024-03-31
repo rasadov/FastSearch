@@ -7,14 +7,18 @@ password change, username change, account deletion, and verification code submis
 
 Classes:
 - `LoginForm`: Form for user login with email address and password fields.
-- `RegisterForm`: Form for user registration with email address, password, and confirm password fields.
-- `ChangePasswordForm`: Form for changing the user's password with old password, new password, and confirm password fields.
+- `RegisterForm`: Form for user registration with
+email address, password, and confirm password fields.
+- `ChangePasswordForm`: Form for changing the user's password
+with old password, new password, and confirm password fields.
 - `SetPasswordForm`: Form for setting a new password with password and confirm password fields.
 - `ChangeUsernameForm`: Form for changing the user's username with username and name fields.
 - `DeleteAccountForm`: Form for deleting the user's account with password field.
 - `VerificationForm`: Form for submitting a verification code with a code field.
-- `ForgotPasswordForm`: Form for submitting the user's email address to reset the password with email address field.
-- `ResetPasswordForm`: Form for resetting the user's password with password and confirm password fields.
+- `ForgotPasswordForm`: Form for submitting the user's email address
+to reset the password with email address field.
+- `ResetPasswordForm`: Form for resetting the user's password with
+password and confirm password fields.
 """
 
 from flask_wtf import FlaskForm

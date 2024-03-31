@@ -1,10 +1,14 @@
+"""
+This module contains the Product model for the application.
+"""
+
 import re
 from sqlalchemy import Index, Computed, func
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import db, request
-from .pricehistory import PriceHistory
-from .ts_vector import TSVector
+from app.models.pricehistory import PriceHistory
+from app.models.ts_vector import TSVector
 
 
 
@@ -15,7 +19,7 @@ class Product(db.Model):
     Attributes:
         url (str): The URL of the product.
         title (str): The title of the product.
-        price (int): The price of the product.
+        price (float): The price of the product.
         price_currency (str): The currency of the price.
         item_class (str, optional): The class of the product.
         producer (str, optional): The producer of the product.
@@ -35,13 +39,11 @@ class Product(db.Model):
         items(): Returns a dictionary of the product's attributes.
         get_attributes(): Returns a dictionary of the product's attributes for editing.
         get_image(): Returns the image URL of the product.
-        search(search, query): Performs a search operation on the given query based on the provided search string.
+        search(search, query): Performs a search operation on the given
+        query based on the provided search string.
         get_filters(): Returns a dictionary of filters for querying products.
-        price_change_last(): Returns the price change of the product in the last price history entry.
-        price_change_90_days(): Returns the price change of the product in the last 90 days.
-        price_change_30_days(): Returns the price change of the product in the last 30 days.
-        price_change_7_days(): Returns the price change of the product in the last 7 days.
-        price_change_1_day(): Returns the price change of the product in the last 1 day.
+        price_change(days=None): Returns the price change of the product
+        in the last price history entry.
     """
 
     # Attributes
@@ -74,30 +76,6 @@ class Product(db.Model):
     price_history: Mapped["PriceHistory"] = relationship(backref="product")
 
     # Methods
-
-    def __init__(
-        self,
-        url,
-        title,
-        price,
-        price_currency,
-        item_class,
-        producer,
-        amount_of_ratings,
-        rating,
-        image_url,
-        availability,
-    ):
-        self.url = url
-        self.title = title
-        self.price = price
-        self.price_currency = price_currency
-        self.item_class = item_class
-        self.producer = producer
-        self.amount_of_ratings = amount_of_ratings
-        self.rating = rating,
-        self.image_url = image_url
-        self.availability = availability
 
     def is_available(self):
         """
@@ -135,7 +113,7 @@ class Product(db.Model):
             "amount_of_ratings": self.amount_of_ratings,
             "availability": self.is_available(),
         }.items()
-    
+
     def get_attributes(self):
         """
         Returns a dictionary of the product's attributes for editing.
@@ -156,7 +134,7 @@ class Product(db.Model):
             "availability": self.availability,
             "image_url": self.image_url,
         }
-    
+
     def get_image(self):
         """
         Returns the image URL of the product.
@@ -171,12 +149,17 @@ class Product(db.Model):
         """
         Perform a search operation on the given query based on the provided search string.
 
-        This function applies filtering to the given query based on the search string. It checks if the length of the search
-        string is less than 10 characters or the number of words in the search string is less than 4. If either of these
-        conditions is true, it applies a filter to the query using similarity functions and the ilike operator to match
-        the search string against the title, producer, and item_class attributes of the Product model.
+        This function applies filtering to the given query based on the search string.
+        It checks if the length of the search
+        string is less than 10 characters or the number of words
+        in the search string is less than 4. If either of these
+        conditions is true, it applies a filter to the query using
+        similarity functions and the ilike operator to match
+        the search string against the title, producer,
+        and item_class attributes of the Product model.
 
-        If the search string meets the length and word count requirements, it applies a full-text search filter to the query
+        If the search string meets the length and word count requirements,
+        it applies a full-text search filter to the query
         using the tsvector_title column of the Product model.
 
         Args:
@@ -196,6 +179,26 @@ class Product(db.Model):
 
     @staticmethod
     def get_filters():
+        """
+        Returns a dictionary of filters based on the request arguments.
+
+        The dictionary contains filter names as keys and a list as values.
+        Each list contains two elements:
+        - The first element is the value obtained from the request arguments.
+        - The second element is a lambda function that takes the filter value
+          and a query object as arguments, and applies the filter to the query.
+
+        Available filters:
+        - "search": Filters products based on a search term.
+        - "min_price": Filters products based on a minimum price.
+        - "max_price": Filters products based on a maximum price.
+        - "brand": Filters products based on a brand name.
+        - "min_rating": Filters products based on a minimum rating.
+        - "max_rating": Filters products based on a maximum rating.
+
+        Returns:
+        A dictionary of filters.
+        """
         return {
             "search": [
                 request.args.get("search", ""),
@@ -240,8 +243,7 @@ class Product(db.Model):
         if PriceHistory.if_price_change(self.id):
             if days:
                 return PriceHistory.price_change(self.id, days)
-            else:
-                return PriceHistory.price_change(self.id)
+            return PriceHistory.price_change(self.id)
         return "No price change recorded."
 
     def __repr__(self):

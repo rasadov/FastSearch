@@ -38,14 +38,14 @@ Note:
 """
 
 
-from models import User, Product
+from app.models import User, Product
 from app import app, admin_required, render_template
 
-from .analytics import *
-from .scrape import *
-from .user import *
-from .product import *
-from .message import *
+from app.routes.admin.analytics import *
+from app.routes.admin.scrape import *
+from app.routes.admin.user import *
+from app.routes.admin.product import *
+from app.routes.admin.message import *
 
 @app.get("/admin")
 @admin_required

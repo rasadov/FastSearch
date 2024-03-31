@@ -2,12 +2,12 @@
 This module imports all the routes for the application.
 """
 
-from .main import *
+from app.routes.main import *
 
-from .account import *
+from app.routes.account import *
 
-from .admin import *
+from app.routes.admin import *
 
-from .other import *
+from app.routes.other import *
 
-from .errors import *
+from app.routes.errors import *

@@ -1,3 +1,7 @@
+"""
+This module contains the User class, which represents a user in the application.
+"""
+
 from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import String
@@ -28,7 +32,7 @@ class User(UserMixin, db.Model):
         password.setter(): Sets the password of the user.
         chech_password_correction(attempted_password): Checks if the attempted password is correct.
         username_exists(username): Checks if a user with the given username exists.
-        user_exists(email_address): Checks if a user with the given email address exists.
+        email_registered(email_address): Checks if a user with the given email address exists.
         is_confirmed(): Checks if the user is confirmed.
         is_subscribed(): Checks if the user is subscribed.
         items(): Returns a dictionary of the user's attributes.
@@ -75,8 +79,10 @@ class User(UserMixin, db.Model):
             password (str, optional): The password of the user. Defaults to None.
             username (str, optional): The username of the user. Defaults to None.
             name (str, optional): The name of the user. Defaults to None.
-            confirmed_on (datetime, optional): The date and time when the user was confirmed. Defaults to None.
-            subscribed_till (datetime, optional): The date and time until which the user is subscribed. Defaults to None.
+            confirmed_on (datetime, optional):
+            The date and time when the user was confirmed. Defaults to None.
+            subscribed_till (datetime, optional):
+            The date and time until which the user is subscribed. Defaults to None.
             role (str, optional): The role of the user. Defaults to 'user'.
         """
         self.username = username
@@ -110,7 +116,7 @@ class User(UserMixin, db.Model):
         Returns:
             bool: True if the user has admin privileges, False otherwise.
         """
-        return self.role == "admin" or self.role == "owner"
+        return self.role in ["admin", "owner"]
 
     def is_owner(self):
         """
@@ -170,7 +176,8 @@ class User(UserMixin, db.Model):
         """
         return username and User.query.filter_by(username=username).count()
 
-    def user_exists(email_address) -> bool:
+    @staticmethod
+    def email_registered(email_address) -> bool:
         """
         Checks if a user with the given email address exists.
 
@@ -189,7 +196,7 @@ class User(UserMixin, db.Model):
         Returns:
             bool: True if the user is confirmed, False otherwise.
         """
-        return self.confirmed_on != None
+        return self.confirmed_on is not None
 
     def is_subscribed(self):
         """
@@ -198,16 +205,17 @@ class User(UserMixin, db.Model):
         Returns:
             bool: True if the user is subscribed, False otherwise.
         """
-        if self.role == "admin" or self.role == "owner":
+        if self.role in ["admin", "owner"]:
             return True
         return self.subscribed_till and self.subscribed_till >= datetime.now().date()
 
-    def get_verification_token(self, expires_sec=1800):
+    def get_verification_token(self):
         """
         Generates a verification token for the user.
 
         Args:
-            expires_sec (int, optional): The expiration time of the token in seconds. Defaults to 1800.
+            expires_sec (int, optional):
+            The expiration time of the token in seconds. Defaults to 1800.
 
         Returns:
             str: The verification token.

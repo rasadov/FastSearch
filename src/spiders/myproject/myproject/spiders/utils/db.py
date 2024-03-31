@@ -7,10 +7,6 @@ The functions in this module are used to save products to the database or update
 import os
 import psycopg2
 
-import sys
-
-sys.path.append("src")
-
 from app.__notifications__ import notify_price_change
 
 

@@ -59,9 +59,9 @@ Overall, this file serves as the central configuration file for the web applicat
 importing all necessary modules and defining important variables and decorators.
 """
 
+import sys
 import json
 import os
-import sys
 from datetime import datetime, timedelta
 from functools import wraps
 from random import randint
@@ -73,7 +73,8 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
-from app.__email__sender__ import send_email
+
+sys.path.append("src")
 
 dotenv.load_dotenv()
 
