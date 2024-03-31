@@ -36,17 +36,18 @@ sys.path.append("src")
 
 Base = declarative_base()
 
-from .user import User
-from .product import Product
-from .pricehistory import PriceHistory
-from .cart import Cart
+from app.models.user import User
+from app.models.product import Product
+from app.models.pricehistory import PriceHistory
+from app.models.cart import Cart
+from app.models.message import Message
 
-__all__ = ["User", "Product", "PriceHistory", "Cart"]
+__all__ = ["User", "Product", "PriceHistory", "Cart", "Message"]
 
 # Code below used to create the database tables
 
-from app import app, db
+# from app import app, db
 
-with app.app_context():
-    db.create_all()
-    db.session.commit()
+# with app.app_context():
+#     db.create_all()
+#     db.session.commit()

@@ -28,7 +28,8 @@ Functions:
 # Import necessary modules and classes
 from app import (app, admin_required, render_template, request,
                 redirect, flash, db, current_user, datetime)
-from models import User, Cart
+
+from app.models import User, Cart
 
 # Route for rendering the admin user search page
 @app.get("/admin/users")

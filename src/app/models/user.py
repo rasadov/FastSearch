@@ -43,6 +43,7 @@ class User(UserMixin, db.Model):
     # Attributes
 
     __tablename__ = "user"
+    __table_args__ = {'extend_existing': True}
 
     id : Mapped[int] = mapped_column(primary_key=True)
     username : Mapped[str] = mapped_column(String(length=30), unique=True, default=None)

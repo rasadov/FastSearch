@@ -16,6 +16,7 @@ var trackButtons = document.querySelectorAll('.track-button');
         
         if (button.getAttribute('data-tracked') == 'True') {
             action = 'untrack';
+            button.setAttribute('data-tracked', 'False');
         } else {
             action = 'track';
         } 

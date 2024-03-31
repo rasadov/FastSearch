@@ -24,6 +24,7 @@ class Cart(db.Model):
     """
 
     __tablename__ = "cart"
+    __table_args__ = {'extend_existing': True}
 
     id : Mapped[int] = mapped_column(Integer(), primary_key=True)
     user_id = mapped_column(Integer(), ForeignKey("user.id"), nullable=False)    

@@ -1,15 +1,11 @@
 import re
 from sqlalchemy import Index, Computed, func
-from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from sqlalchemy.types import TypeDecorator
 
 from app import db, request
 from .pricehistory import PriceHistory
+from .ts_vector import TSVector
 
-
-class TSVector(TypeDecorator):
-    impl = TSVECTOR
 
 
 class Product(db.Model):
@@ -70,8 +66,9 @@ class Product(db.Model):
         name="tsvector_title",
     )
 
-    __table_args__: Mapped[tuple] = (
-        Index("ix_video___ts_vector__", tsvector_title, postgresql_using="gin"),
+    __table_args__ = (
+        Index("ix_product_tsvector_title", tsvector_title, postgresql_using="gin"),
+        {"extend_existing": True},
     )
 
     price_history: Mapped["PriceHistory"] = relationship(backref="product")

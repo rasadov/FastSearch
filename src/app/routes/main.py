@@ -24,10 +24,10 @@ from flask import jsonify
 from models import Product, Cart
 from app import (app, render_template, 
             request, redirect, current_user,
-            flash, url_for, send_email)
+            flash, url_for, send_email, db)
 
 from app import login_user
-from models import User
+from models import User, Message
 
 
 @app.get("/")
@@ -172,6 +172,15 @@ def contact_post():
                 subject=subject,
                 title=f"Abyssara user sent you a message",
             )
+
+            db.session.add(
+                Message(
+                    text=f"{name} ({current_user.email_address} | {number if number else 'No number'}) has sent you message: \n\n {message}", 
+                    sender_id=current_user.id, 
+                    recipient_id=user.id)
+                )
+            db.session.commit()
+            
         flash("Your message has been sent. Thank you!", "success")
     else:
         flash("Please fill out all the fields", "danger")

@@ -22,6 +22,7 @@ class PriceHistory(db.Model):
     """
 
     __tablename__ = "price_history"
+    __table_args__ = {'extend_existing': True}
 
     # Attributes
 

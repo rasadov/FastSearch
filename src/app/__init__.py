@@ -5,7 +5,8 @@ This file contains the main web application and its configuration.
 All commonly imported libraries in routes and main file are defined in this file.
 
 The web application is built using Flask, a micro web framework for Python. 
-It provides the necessary functionality for handling HTTP requests, rendering templates, and managing user authentication.
+It provides the necessary functionality for handling HTTP requests, 
+rendering templates, and managing user authentication.
 
 The following libraries are imported in this file:
 ----------------
@@ -20,7 +21,8 @@ The following libraries are imported in this file:
 
 - Flask_Bcrypt: A module for encrypting and verifying passwords using bcrypt.
 - Flask_Login: A module for managing user authentication and sessions.
-- Flask_SQLAlchemy: A module for integrating SQLAlchemy, an Object-Relational Mapping (ORM) library, with Flask.
+- Flask_SQLAlchemy: A module for integrating SQLAlchemy, 
+an Object-Relational Mapping (ORM) library, with Flask.
 - OAuth: A module for integrating OAuth authentication with Flask.
 - URLSafeTimedSerializer: A module for generating and verifying URL-safe timed signatures.
 
@@ -46,13 +48,15 @@ The web application defines several decorators for handling user authentication 
 - logout_required: A decorator that requires the user to be logged out.
 - admin_required: A decorator that requires the user to have the "admin" or "owner" role.
 - owner_required: A decorator that requires the user to have the "owner" role.
-- confirmed_required: A decorator that requires the user to have confirmed their email address.
-- unconfirmed_required: A decorator that requires the user to have not confirmed their email address.
+- confirmed_required: A decorator that requires the user to have confirmed email address.
+- unconfirmed_required: A decorator that requires the user to have unconfirmed email address.
 - subscribed_required: A decorator that requires the user to be subscribed.
 
-These decorators are used in the routes of the web application to control access to certain pages based on the user's authentication and authorization status.
+These decorators are used in the routes of the web application to control 
+access to certain pages based on the user's authentication and authorization status.
 
-Overall, this file serves as the central configuration file for the web application, importing all necessary modules and defining important variables and decorators.
+Overall, this file serves as the central configuration file for the web application, 
+importing all necessary modules and defining important variables and decorators.
 """
 
 import json
@@ -61,16 +65,15 @@ import sys
 from datetime import datetime, timedelta
 from functools import wraps
 from random import randint
-
 import dotenv
 from authlib.integrations.flask_client import OAuth
-from app.__email__sender__ import send_email
 from flask import (Flask, flash, redirect, render_template, request,
                    send_from_directory, session, url_for)
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from app.__email__sender__ import send_email
 
 dotenv.load_dotenv()
 
@@ -104,7 +107,8 @@ google = oauth.register(
     authorize_url="https://accounts.google.com/o/oauth2/auth",
     authorize_params=None,
     api_base_url="https://www.googleapis.com/oauth2/v1/",
-    userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",  # This is only needed if using openId to fetch user info
+    userinfo_endpoint="https://openidconnect.googleapis.com/v1/userinfo",
+    # Parameter above is only needed if using openId to fetch user info
     client_kwargs={"scope": "email profile"},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )
@@ -120,19 +124,9 @@ microsft = oauth.register(
     api_base_url="https://graph.microsoft.com/v1.0/",
     userinfo_endpoint="https://graph.microsoft.com/v1.0/me",
     client_kwargs={"scope": "User.Read"},
-    sever_metadata_url="https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
+    sever_metadata_url=
+    "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
 )
-
-# facebook = oauth.register(
-#     name="facebook",
-#     client_id=os.environ.get("FACEBOOK_CLIENT_ID"),
-#     client_secret=os.environ.get("FACEBOOK_CLIENT_SECRET"),
-#     authorize_url="https://www.facebook.com/v11.0/dialog/oauth",
-#     access_token_url="https://graph.facebook.com/v11.0/oauth/access_token",
-#     userinfo_endpoint="https://graph.facebook.com/v11.0/me?fields=id,name,email",
-#     client_kwargs={"scope": "email"},
-# )
-
 
 bcrypt = Bcrypt(app)
 
@@ -142,6 +136,19 @@ login_manager.login_view = "login"
 s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 def login_required(f):
+    """
+    Decorator function to require login for a route.
+
+    This function is used as a decorator to protect routes that require authentication.
+    If the current user is not authenticated, they will be redirected to the login page.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous:
@@ -153,6 +160,21 @@ def login_required(f):
 
 
 def logout_required(f):
+    """
+    Decorator function to require logout before accessing a route.
+
+    This decorator checks if the current user is already authenticated.
+    If the user is authenticated,
+    a flash message is displayed and the user is redirected to the home page. 
+    Otherwise, the original function is called.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_authenticated:
@@ -164,10 +186,25 @@ def logout_required(f):
 
 
 def admin_required(f):
+    """
+    Decorator function to restrict access to admin-only views.
+
+    This decorator checks if the current user is authenticated and
+    has the role of "admin" or "owner".
+    If the user is not authorized,
+    they are redirected to the home page with a flash message.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous or (
-            current_user.role != "admin" and current_user.role != "owner"
+            current_user.role not in ["admin", "owner"]
         ):
             flash("You are not authorized to view this page.", "info")
             return redirect(url_for("home_get"))
@@ -177,6 +214,16 @@ def admin_required(f):
 
 
 def owner_required(f):
+    """
+    Decorator function that checks if the current user is an owner.
+    If the user is not authorized, it flashes a message and redirects to the home page.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous or current_user.role != "owner":
@@ -188,6 +235,20 @@ def owner_required(f):
 
 
 def confirmed_required(f):
+    """
+    Decorator function to require user confirmation.
+
+    This decorator checks if the current user has confirmed their email address.
+    If the user has not confirmed their email, a flash message is displayed and
+    the user is redirected to the home page.
+
+    Args:
+        f: The function to be decorated.
+
+    Returns:
+        The decorated function.
+
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_confirmed():
@@ -199,6 +260,17 @@ def confirmed_required(f):
 
 
 def unconfirmed_required(f):
+    """
+    Decorator function that checks if the current user is confirmed.
+    If the user is already confirmed, it flashes a message and redirects to the home page.
+    Otherwise, it calls the decorated function.
+
+    Args:
+        f: The function to be decorated.
+
+    Returns:
+        The decorated function.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_confirmed():
@@ -210,6 +282,19 @@ def unconfirmed_required(f):
 
 
 def subscribed_required(f):
+    """
+    Decorator function to require subscription for accessing a page.
+
+    This decorator checks if the current user is subscribed. If not, it displays a flash message
+    indicating that the user needs to subscribe and redirects them to the home page.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_subscribed():

@@ -8,28 +8,33 @@ Routes for managing users and products are defined in this file.
 - The scrapy spider can be run by accessing the '/admin/product/add' route.
 
 User Management:
-- `/admin/users` route handles the admin user search page, where admin users can search for users in the database.
+- `/admin/users` route handles the admin user search page,
+where admin users can search for users in the database.
 - `/admin/user/<int:id>` route displays the information of a specific user in the admin panel.
 - `/admin/user/edit/<int:id>` route allows editing a user's information in the admin panel.
 - `/admin/user/delete/<int:id>` route is used to delete a user from the admin panel.
 
 Product Management:
-- `/admin/products/search` route handles the search functionality for admin users to search for products in the database.
+- `/admin/products/search` route handles the search functionality
+for admin users to search for products in the database.
 - `/admin/product/<int:id>` route displays the information of a specific product in the admin panel.
 - `/admin/product/edit/<int:id>` route allows editing a product's information in the admin panel.
 - `/admin/product/delete/<int:id>` route is used to delete a product from the admin panel.
 
 Scraping:
 - `/admin/product/scrape` route allows running the scrapy spider to scrape product information.
-    - The spider can be run by entering the URL of the product manually or by entering a search query to the search engine.
+    - The spider can be run by entering the URL of the
+    product manually or by entering a search query to the search engine.
 
 Automatic Scraping:
-- The `update_records()` function is used to update the records in the database by scraping products from the web.
+- The `update_records()` function is used to update the records
+  in the database by scraping products from the web.
 - The `scheduler` is used to run the `update_records()` function at regular intervals.
 
 Note:
 - All routes require the user to be logged in as an admin.
-- Certain actions, such as editing or deleting a user/product, may have additional restrictions based on user roles.
+- Certain actions, such as editing or deleting a user/product,
+  may have additional restrictions based on user roles.
 """
 
 
@@ -40,6 +45,7 @@ from .analytics import *
 from .scrape import *
 from .user import *
 from .product import *
+from .message import *
 
 @app.get("/admin")
 @admin_required

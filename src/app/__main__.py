@@ -19,7 +19,7 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
-- Currency conversion functionality in `src/spiders/myproject/myproject/spiders/utils/converter.py` doesn't work
+- Implement anti-scraping measures in the web application. Use AJAX to load the search results like in analytics.py.
 - Fix the pagination in the search page for mobile.
 - Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
