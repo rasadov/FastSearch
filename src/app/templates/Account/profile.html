@@ -61,9 +61,16 @@
     <div class="flex-container" style="display: flex">
     {% for product in cart %}
         <div class="card shadow-lg border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
-            <a href="{{ product.url }}" style="text-decoration: none; color: black;">
+            <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
+                <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
                 <div class="card-body">
-                    <h1 class="card-title" style="font-size: large; max-width: 80%; margin: auto; padding: 20px; max-lines: 3 !important;">{% if product.title|length < 46 %} {{ product.title }} {% else %} {{ product.title[:45] }}... {% endif %}</h1>
+                    <h1 class="card-title product-title" style="font-size: 15px;">
+                        {% if product.title|length < 101 %}
+                            {{ product.title }}
+                        {% else %}
+                            {{ product.title[:100] }}... 
+                        {% endif %}
+                    </h1>
                     <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
                     <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
                     <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
@@ -81,6 +88,29 @@
                 <div class="flex-container" style="display: flex">
                 {% endif %}
     {% endfor %}
+    <div class="flex-container" style="display: flex">    
+        {% for product in products %}
+            <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+                
+                    {% if current_user.is_authenticated %}
+                    <div style="margin-top: 10px;">
+                        <form>
+                            <button type="button" class="btn track-button" id="{{product.id}}" data-tracked="{{in_cart(current_user.id, product.id)}}" onclick="track('{{ product.id }}')">Tracked</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div style="margin-top: 10px;">
+                        <a href="{{ url_for('login_get') }}" class="btn btn-light btn-sm">Login to track</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+                {% if (loop.index) % 3 == 0 %}
+                </div>
+                <div class="flex-container" style="display: flex">
+                {% endif %}
+        {% endfor %}
+        </div>
     </div>
     <div id="empty" class="text-center hidden">
         <p class="m-3">Cart is empty</p>
@@ -91,4 +121,5 @@
 
 {% block scripts %}
 <script type="text/javascript" src="../../static/js/profile.js"></script>
+<script type="text/javascript" src="../../static/js/image.js"></script>
 {% endblock %}

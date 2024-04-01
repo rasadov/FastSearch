@@ -19,6 +19,7 @@ var trackButtons = document.querySelectorAll('.track-button');
             button.setAttribute('data-tracked', 'False');
         } else {
             action = 'track';
+            button.setAttribute('data-tracked', 'True');
         } 
         // Make an AJAX request to the backend
         var xhr = new XMLHttpRequest();
@@ -43,10 +44,12 @@ var trackButtons = document.querySelectorAll('.track-button');
                     console.log('successfully');
                     console.log(response['action']);
                     if (response['action'] == 'track') {
+                        console.log('track');
                         button.classList.remove('track');
                         button.classList.add('tracked');
                         button.innerHTML = 'Tracked';
                     } else {
+                        console.log('untrack');
                         button.classList.remove('tracked');
                         button.classList.add('track');
                         button.innerHTML = 'Track';

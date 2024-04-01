@@ -22,7 +22,7 @@ Functions:
 
 from flask import jsonify
 from app.models import Product, Cart, User, Message
-from app import (app, render_template,
+from app import (app, render_template, login_required,
             request, redirect, current_user,
             flash, url_for, db, login_user)
 from app.__email__sender__ import send_email
@@ -81,6 +81,7 @@ def search_get():
     )
 
 @app.post('/cart/add')
+@login_required
 def add_to_cart():
     """
     Add a product to the user's cart.
