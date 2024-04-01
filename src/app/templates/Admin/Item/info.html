@@ -21,15 +21,37 @@
             {% endfor %}
         </div>
         {% if item.__tablename__ == "user" %}
-            <div>
-                {% if cart %}
-                {% for i in cart %}
-                <p>{{ i.title }}</p>
-                {% endfor %}
-                {% else %}
-                <p>No items in cart</p>
-                {% endif %}
-            </div>
+        <div>
+            <h3>
+                Cart
+            </h3>
+        </div>
+        <div class="flex-container" style="display: flex">
+            {% for product in cart %}
+                <div class="card shadow-lg border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+                    <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
+                        <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
+                        <div class="card-body">
+                            <h1 class="card-title product-title" style="font-size: 15px;">
+                                {% if product.title|length < 101 %}
+                                    {{ product.title }}
+                                {% else %}
+                                    {{ product.title[:100] }}... 
+                                {% endif %}
+                            </h1>
+                            <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
+                            <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
+                            <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
+                            <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
+                        </a>
+                        </div>
+                        </div>
+                        {% if (loop.index) % 3 == 0 %}
+                        </div>
+                        <div class="flex-container" style="display: flex">
+                        {% endif %}
+            {% endfor %}
+        </div>
         {% endif %}
             {% if item.__tablename__ == 'message' %}
             <div class="card user-info">
@@ -40,7 +62,7 @@
             </div>
         {% endif %}
 </div>
-{% if item.__tablename__ == 'product' %}
+{% if item.__tablename__ in ['product', 'user'] %}
 <script type="text/javascript" src="../../../static/js/image.js"></script>
 {% endif %}
 {% if item.__tablename__ == 'message' %}

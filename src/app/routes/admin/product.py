@@ -22,7 +22,7 @@ Functions:
   admin users to search for products.
 - admin_product_info_get(product_id): Displays the information of a specific product in the
   admin panel.
-- admin_product_edit_get(product_id): Renders the admin product edit page and
+- admin_product_edit_get(item_id): Renders the admin product edit page and
   allows editing of a specific product.
 - admin_product_edit_post(product_id): Edits a product with the given ID.
 - admin_product_delete_get(product_id): Renders the delete page for a specific product in the
@@ -108,7 +108,7 @@ def admin_products_search_get():
         total_pages=total_pages,
         variables=variables,
         function="admin_products_search_get",
-        page=page,
+        page=page
     )
 
 
@@ -139,32 +139,32 @@ def admin_product_info_get(product_id):
     return render_template("Admin/Item/info.html", item=product)
 
 
-@app.get("/admin/product/edit/<int:product_id>")
+@app.get("/admin/product/edit/<int:item_id>")
 @admin_required
-def admin_product_edit_get(product_id):
+def admin_product_edit_get(item_id):
     """
     Renders the admin product edit page.
 
     Args:
-        product_id (int): The ID of the product to be edited.
+        item_id (int): The ID of the product to be edited.
 
     Returns:
         A rendered template of the admin product edit page with the product data.
 
     """
-    product = Product.query.get(product_id)
+    product = Product.query.get(item_id)
 
     return render_template("Admin/Item/edit.html", item=product, func="admin_product_edit_post")
 
 
-@app.post("/admin/product/edit/<int:product_id>")
+@app.post("/admin/product/edit/<int:item_id>")
 @admin_required
-def admin_product_edit_post(product_id):
+def admin_product_edit_post(item_id):
     """
     Edit a product with the given ID.
 
     Args:
-        product_id (int): The ID of the product to be edited.
+        item_id (int): The ID of the product to be edited.
 
     Returns:
         redirect: A redirect to the product details page after successful editing.
@@ -184,7 +184,7 @@ def admin_product_edit_post(product_id):
         "rating",
         "availability",
     ]
-    product = Product.query.get(product_id)
+    product = Product.query.get(item_id)
     for field in fields:
         value = request.form.get(field)
         if field == "availability":
@@ -198,7 +198,7 @@ def admin_product_edit_post(product_id):
                 price_currency = request.form.get("price_currency")
                 if getattr(product, "price_currency") != price_currency:
                     price_history = PriceHistory(
-                        product_id,
+                        item_id,
                         value,
                         price_currency,
                         date=datetime.now().date(),
@@ -206,7 +206,7 @@ def admin_product_edit_post(product_id):
                     db.session.add(price_history)
                     setattr(product, "price_currency", price_currency)
                 else:
-                    price_history = PriceHistory(product_id,
+                    price_history = PriceHistory(item_id,
                                                 value,
                                                 product.price_currency,
                                                 date=datetime.now().date())
@@ -215,47 +215,47 @@ def admin_product_edit_post(product_id):
 
     db.session.commit()
     flash("Product edited successfully", category="success")
-    return redirect(f"/admin/product/{product_id}")
+    return redirect(f"/admin/product/{item_id}")
 
 
-@app.get("/admin/product/delete/<int:product_id>")
+@app.get("/admin/product/delete/<int:item_id>")
 @admin_required
-def admin_product_delete_get(product_id):
+def admin_product_delete_get(item_id):
     """
     Renders the delete page for a specific product in the admin panel.
 
     Args:
-        product_id (int): The ID of the product to be deleted.
+        item_id (int): The ID of the product to be deleted.
 
     Returns:
         - Renders the 'Admin/Item/delete.html' template with the product
         information and the function name.
 
     """
-    product = Product.query.get(product_id)
+    product = Product.query.get(item_id)
     return render_template(
         "Admin/Item/delete.html", item=product, func="admin_product_delete_post"
     )
 
 
-@app.post("/admin/product/delete/<int:product_id>")
+@app.post("/admin/product/delete/<int:item_id>")
 @admin_required
-def admin_product_delete_post(product_id):
+def admin_product_delete_post(item_id):
     """
     Delete a product and its associated price history from the database.
 
     Args:
-        product_id (int): The ID of the product to be deleted.
+        item_id (int): The ID of the product to be deleted.
 
     Returns:
         redirect: A redirect response to the admin search page.
 
     """
-    product = Product.query.get(product_id)
-    price_history = PriceHistory.query.filter_by(product_id=product_id)
+    product = Product.query.get(item_id)
+    price_history = PriceHistory.query.filter_by(product_id=item_id)
     for price in price_history:
         db.session.delete(price)
     db.session.delete(product)
     db.session.commit()
     flash("Product deleted successfully", category="success")
-    return redirect("/admin/search")
+    return redirect("/admin/products/search")

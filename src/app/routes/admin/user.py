@@ -18,7 +18,7 @@ Functions:
 ----------------
 1. admin_user_search_get(): Renders the admin user search page.
 2. admin_user_info_get(user_id): Renders the admin user info page for a specific user.
-3. admin_user_edit_get(user_id): Renders the admin user edit page for a specific user.
+3. admin_user_edit_get(item_id): Renders the admin user edit page for a specific user.
 4. admin_user_edit_post(user_id): Edits a user with the given ID.
 5. admin_user_delete_get(user_id): Renders the admin user delete page for a specific user.
 6. admin_user_delete_post(user_id): Deletes a user with the given ID.
@@ -110,32 +110,32 @@ def admin_user_info_get(user_id):
 
 
 # Route for rendering the admin user edit page
-@app.get("/admin/user/edit/<int:user_id>")
+@app.get("/admin/user/edit/<int:item_id>")
 @admin_required
-def admin_user_edit_get(user_id):
+def admin_user_edit_get(item_id):
     """
     Renders the admin user edit page for a specific user.
 
     Args:
-        user_id (int): The ID of the user to be edited.
+        item_id (int): The ID of the user to be edited.
 
     Returns:
         Renders the 'Admin/Item/edit.html' template with the user as context variables.
     """
-    user = User.query.get(user_id)
+    user = User.query.get(item_id)
 
     return render_template("Admin/Item/edit.html", item=user, func="admin_user_edit_post")
 
 
 # Route for handling the admin user edit form submission
-@app.post("/admin/user/edit/<int:user_id>")
+@app.post("/admin/user/edit/<int:item_id>")
 @admin_required
-def admin_user_edit_post(user_id):
+def admin_user_edit_post(item_id):
     """
     Edits a user with the given ID.
 
     Args:
-        user_id (int): The ID of the user to be edited.
+        item_id (int): The ID of the user to be edited.
 
     Returns:
         - Updates the user's fields based on the form data.
@@ -144,7 +144,7 @@ def admin_user_edit_post(user_id):
         - If validation succeeds, commits the changes to the database, flashes a success message,
         and redirects to the users page.
     """
-    user = User.query.get(user_id)
+    user = User.query.get(item_id)
 
     # Check if the user being edited is the owner and the current user is not the owner
     if user.role == "owner" and current_user.role != "owner":
@@ -192,19 +192,19 @@ def admin_user_edit_post(user_id):
 
 
 # Route for rendering the admin user delete page
-@app.get("/admin/user/delete/<int:user_id>")
+@app.get("/admin/user/delete/<int:item_id>")
 @admin_required
-def admin_user_delete_get(user_id):
+def admin_user_delete_get(item_id):
     """
     Renders the admin user delete page for a specific user.
 
     Args:
-    - user_id (int): The ID of the user to be deleted.
+    - item_id (int): The ID of the user to be deleted.
 
     Returns:
         - Renders the 'Admin/Item/delete.html' template with the user object and the function name.
     """
-    user = User.query.get(user_id)
+    user = User.query.get(item_id)
 
     return render_template(
         "Admin/Item/delete.html", item=user, func="admin_user_delete_post"
@@ -212,14 +212,14 @@ def admin_user_delete_get(user_id):
 
 
 # Route for handling the admin user delete form submission
-@app.post("/admin/user/delete/<int:user_id>")
+@app.post("/admin/user/delete/<int:item_id>")
 @admin_required
-def admin_user_delete_post(user_id):
+def admin_user_delete_post(item_id):
     """
     Deletes a user with the specified ID from the admin panel.
 
     Args:
-        - user_id (int): The ID of the user to be deleted.
+        - item_id (int): The ID of the user to be deleted.
 
     Returns:
         - Deletes the user from the database.
@@ -232,7 +232,7 @@ def admin_user_delete_post(user_id):
         the '/admin/users' route.
 
     """
-    user = User.query.get(user_id)
+    user = User.query.get(item_id)
     # Check if the user being deleted is the owner and the current user is not the owner
     if user.role == "owner" and current_user.role != "owner":
         flash("You can't edit owner", category="danger")

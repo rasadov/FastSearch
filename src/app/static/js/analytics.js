@@ -18,7 +18,6 @@ xhrRoutes.onreadystatechange = function() {
     if (xhrRoutes.readyState === 4 && xhrRoutes.status === 200) {
         var response = JSON.parse(xhrRoutes.responseText);
         routes = response;
-        routes = routes.slice(0, 20);
         for (var i = 0; i < routes.length; i++) {
             routes[i][1] = parseInt(routes[i][1]);
         }
@@ -37,12 +36,6 @@ xhrCountries.onreadystatechange = function() {
         countries = response.sort(function(a, b) {
             return b[0].localeCompare(a[0]);
         });
-        try {
-            countries = countries.slice(0, 10);
-        }
-        catch (e) {
-            console.log(e);
-        }
         try {
 
             for (var i = 0; i < countries.length; i++) {

@@ -78,13 +78,13 @@
                             <p class="card-text">{{ item.price }}</p>
                         </div>
                         <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_product_info_get', id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_product_info_get', product_id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
                                 Info
                             </a>
-                            <a href="{{ url_for('admin_product_edit_get', id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_product_edit_get', item_id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
                                 Edit
                             </a>
-                            <a href="{{ url_for('admin_product_delete_get', id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_product_delete_get', item_id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
                                 Delete
                             </a>
                         </div>
@@ -105,13 +105,13 @@
                             <p class="card-text">{{ item.email_address }}</p>
                         </div>
                         <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
-                            <a href="{{ url_for('admin_user_info_get', id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_user_info_get', user_id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
                                 Info
                             </a>
-                            <a href="{{ url_for('admin_user_edit_get', id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_user_edit_get', item_id=item.id) }}" class="btn btn-info" style="text-decoration: none; color: white;">
                                 Edit
                             </a>
-                            <a href="{{ url_for('admin_user_delete_get', id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
+                            <a href="{{ url_for('admin_user_delete_get', item_id=item.id) }}" class="btn btn-danger" style="text-decoration: none; color: white;">
                                 Delete
                             </a>
                         </div>

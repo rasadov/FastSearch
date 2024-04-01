@@ -8,7 +8,7 @@
 
 <div style="padding: 50px;">
     <h1 class="text-center">Edit Product</h1>
-<form class="text-center" method="POST" action="{{ url_for(func, id=item.id) }}">
+<form class="text-center" method="POST" action="{{ url_for(func, item_id=item.id) }}">
 {% for i in item.get_attributes() %}
     <div class="form-group" style="margin: 20px auto;">
         <label for="{{ i }}">{{ i }}:</label><br>

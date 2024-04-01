@@ -153,7 +153,7 @@ def admin_analytics_page_views():
     Returns:
         JSON response containing the data for page views.
     """
-    page_views = list(report_on_page_views())
+    page_views = list(report_on_page_views())[:15]
     return jsonify(page_views)
 
 
@@ -179,7 +179,7 @@ def admin_analytics_active_users():
     Returns:
         JSON response containing the data for active users.
     """
-    active_users = list(report_on_active_users())
+    active_users = list(report_on_active_users())[:10]
     return jsonify(active_users)
 
 @app.get("/admin/analysis")
