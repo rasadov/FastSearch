@@ -46,7 +46,7 @@
                             <a class="nav-link" href="{{ url_for('admin_analytics_get') }}">Analytics</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_messages_get') }}">Messages</a>
+                            <a class="nav-link" href="{{ url_for('admin_messages_get') }}" id="messages">Messages</a>
                         </li>
                     </ul>
                     <ul class="nav flex-column" style="margin-top: 30px;">
@@ -91,6 +91,23 @@
     {% block scripts %}
     {% endblock %}
     <script type="text/javascript" src="../../static/js/base.js"></script>
+    <script>
+        var messages = document.getElementById('messages');
+        var xmr = new XMLHttpRequest();
+        xmr.open("GET", "/admin/messages/unread", true);
+        xmr.onload = function() {
+            if (xmr.status === 200) {
+                var data = JSON.parse(xmr.responseText);
+                if (data.unread > 0) {
+                    messages.innerHTML = "Messages (" + data.unread + ")";
+                }
+            } else {
+                console.error('Request failed. Status:', xmr.status);
+            }
+        };
+
+        xmr.send(); 
+    </script>
 </body>
 </html>
 

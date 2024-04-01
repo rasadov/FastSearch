@@ -29,7 +29,7 @@ def bad_request(e):
 
 
 @app.errorhandler(403)
-def forbidden():
+def forbidden(e):
     """
     Error handler for 403 Forbidden error.
 
@@ -43,7 +43,7 @@ def forbidden():
 
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(e):
     """
     Error handler for 404 Not Found error.
 

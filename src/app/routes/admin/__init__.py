@@ -63,3 +63,15 @@ def admin_get():
         count_of_products=count_of_products,
         count_of_users=count_of_users,
     )
+
+
+@app.get("/admin/messages/unread")
+@admin_required
+def get_count_of_messages():
+    """
+    Retrieves the count of messages in the database.
+
+    Returns:
+        int: The count of messages in the database.
+    """
+    return jsonify({'unread': Message.query.filter_by(read=False).count()})

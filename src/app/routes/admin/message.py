@@ -17,7 +17,7 @@ def admin_messages_get():
     Returns:
         A rendered template of the admin message page with the list of messages.
     """
-    items = Message.query.paginate(page=1, per_page=9)
+    items = Message.query.order_by(Message.read).paginate(page=1, per_page=9)
     function = 'admin_messages_get'
 
     return render_template("Admin/search.html", items=items, variables={}, function=function)
@@ -77,6 +77,7 @@ def admin_message_mark_as_read():
         message_id = int(data.get("message_id"))
     except ValueError:
         flash("Invalid message ID", "error")
+        return redirect(url_for("admin_messages_get"))
     if message_id is None:
         flash("Message ID is required", "error")
         return redirect(url_for("admin_messages_get"))
