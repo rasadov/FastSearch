@@ -55,12 +55,12 @@ class Product(db.Model):
     title: Mapped[str] = mapped_column(nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
     price_currency: Mapped[str] = mapped_column(default="USD")
-    item_class: Mapped[str] = mapped_column(default=None)
-    producer: Mapped[str] = mapped_column(default=None)
-    amount_of_ratings: Mapped[int] = mapped_column(default=None)
-    rating: Mapped[float] = mapped_column(default=None)
-    image_url: Mapped[str] = mapped_column(default=None)
-    availability: Mapped[str] = mapped_column(default=None)
+    item_class: Mapped[str] = mapped_column(default=None, nullable=True)
+    producer: Mapped[str] = mapped_column(default=None, nullable=True)
+    amount_of_ratings: Mapped[int] = mapped_column(default=None, nullable=True)
+    rating: Mapped[float] = mapped_column(default=None, nullable=True)
+    image_url: Mapped[str] = mapped_column(default=None, nullable=True)
+    availability: Mapped[str] = mapped_column(default=None, nullable=True)
 
     tsvector_title: Mapped[TSVector] = mapped_column(
         TSVector(),

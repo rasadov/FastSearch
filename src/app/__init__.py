@@ -82,7 +82,7 @@ DB_PORT = os.environ.get("DB_PORT")
 SERVER_STARTED_ON = datetime.now()
 
 
-conn_url = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@postgresCont/{DB_NAME}'
+conn_url = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
 app = Flask(__name__)
 
@@ -91,8 +91,8 @@ SECRET_KEY = os.urandom(32)
 app.config["SECRET_KEY"] = SECRET_KEY
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    # f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    conn_url
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    # conn_url
 )
 db = SQLAlchemy(app)
 

@@ -26,6 +26,7 @@ def save_product_to_database(
     item_class: str=None,
     producer: str=None,
     image_url: str=None,
+    availability: str='In stock'
 ):
     """
     Saves a product to the database or updates an existing product if it already exists.
@@ -101,10 +102,10 @@ def save_product_to_database(
                 f"""
                 UPDATE product
                 SET price = %s, price_currency=%s, title = %s, item_class = %s, producer = %s,
-                    amount_of_ratings = %s, rating = %s, image_url = %s, availability = 'In stock'
+                    amount_of_ratings = %s, rating = %s, image_url = %s, availability = %s
                 WHERE url = %s;
             """,
-                (price, price_currency, title, item_class, producer, amount_of_ratings, rating, image_url, url),
+                (price, price_currency, title, item_class, producer, amount_of_ratings, rating, image_url,availability, url),
             )
     else:
         # This product does not exist, insert a new record into the database
@@ -113,9 +114,9 @@ def save_product_to_database(
                 """
                 INSERT INTO product (url, title, price, price_currency, item_class,
                 producer, amount_of_ratings, rating, image_url, availability)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'In stock');
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """,
-                (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url),
+                (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url, availability),
             )
         except Exception as e:
             print(f"An error occurred: {e}")

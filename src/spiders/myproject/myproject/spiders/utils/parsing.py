@@ -110,7 +110,7 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
         parsed_data = json.loads(script_content)
         title = parsed_data.get("name")
         price = float(parsed_data.get("offers").get("price"))
-        price_currency = parsed_data.get("offers").get("price_currency")
+        price_currency = parsed_data.get("offers").get("priceCurrency")
 
         try:
             image = parsed_data.get("image")
@@ -126,26 +126,32 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
             item_class = None
 
         try:
-            rating = response.css(
-                'div.x-rating-details span[data-testid="review--start--rating"] span.ux-textspans::text'
-            ).get()
-            amount_of_ratings = response.css(
-                "div.x-rating-details span.ux-summary__count::text"
-            ).get()
-            amount_of_ratings = (
-                int(amount_of_ratings.split(" ")[0].replace(",", "").strip())
-                if amount_of_ratings
-                else 0
-            )
+            rating = float(response.css("div[data-testid='ux-summary'] span[class='ux-textspans']::text").get())
         except Exception:
             rating = None
+        try:
+            amount_of_ratings = response.css(
+            "div[data-testid='ux-summary'] span[class='ux-summary__count'] span::text"
+            ).get()
+            print(amount_of_ratings)
+            amount_of_ratings = int(amount_of_ratings.split(" ")[0].replace(",", ""))
+        except Exception:
             amount_of_ratings = 0
+
+        try:
+            print(parsed_data.get("offers").get("availability"))
+            if "InStock" in parsed_data.get("offers").get("availability"):
+                availability = "In stock"
+            else:
+                availability = "Out of stock"
+        except Exception:
+            availability = None
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
             url, title, price, price_currency,
             rating, amount_of_ratings,
-            item_class, producer, image
+            item_class, producer, image, availability
         )
     except Exception as e:
         print(f"Error: {e}", "danger")
@@ -183,7 +189,7 @@ def scrape_newegg_item(response, url: None | str = None):
 
         price = float(parsed_data.get("offers").get("price"))
         title = parsed_data.get("name")
-        price_currency = parsed_data.get("offers").get("price_currency")
+        price_currency = parsed_data.get("offers").get("priceCurrency")
 
         try:
             image = parsed_data.get("image")
@@ -195,8 +201,14 @@ def scrape_newegg_item(response, url: None | str = None):
         except Exception:
             producer = None
         try:
-            rating = parsed_data.get("aggregateRating").get("ratingValue")
-            amount_of_ratings = parsed_data.get("aggregateRating").get("reviewCount")
+            rating = float(
+                response.css(
+                    "div[data-testid='ux-summary'] span[class='ux-textspans']::text"
+                    ).get()
+                )
+
+            amount_of_ratings = response.css("div[data-testid='ux-summary'] span[class='ux-textspans']::text").get()
+            amount_of_ratings = int(amount_of_ratings.split(" ")[0].replace(",", ""))
         except Exception:
             rating = None
             amount_of_ratings = 0
@@ -234,7 +246,7 @@ def scrape_gamestop_item(response, url: None | str = None):
 
         title = parsed_data.get("name")
         price = float(parsed_data.get("offers")[0].get("price"))
-        price_currency =  parsed_data.get("offers")[0].get("price_currency") 
+        price_currency =  parsed_data.get("offers")[0].get("priceCurrency") 
 
         producer = parsed_data.get("brand")
         item_class = parsed_data.get("category")
@@ -254,11 +266,30 @@ def scrape_gamestop_item(response, url: None | str = None):
         except Exception:
             amount_of_ratings = 0
 
+        try:
+            print(parsed_data.get("offers").get("availability"))
+            availability = "In stock" if parsed_data.get("offers").get("availability") == "http://schema.org/InStock" else "Out of stock" 
+        except Exception:
+            availability = None
+             
+
+        print(url)
+        print(title)
+        print(price)
+        print(price_currency)
+        print(rating)
+        print(amount_of_ratings)
+        print(item_class)
+        print(producer)
+        print(image)
+        print(availability)
+
+
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
             url, title, price, price_currency,
             rating, amount_of_ratings,
-            item_class, producer, image
+            item_class, producer, image, availability
         )
     except Exception as e:
         print(f"Error: {e}", "danger")
@@ -280,7 +311,7 @@ def scrape_excaliberpc_item(response, url: None | str = None):
     """
     try:
         price = float(response.css('meta[property="price"]::attr(content)').get())
-        price_currency = response.css('meta[property="price_currency"]::attr(content)').get()            
+        price_currency = response.css('meta[property="priceCurrency"]::attr(content)').get()            
 
         title = response.css("h1.product-head_name::text").get().strip()
 
