@@ -5,11 +5,13 @@ WORKDIR /src
 
 # Copy the current directory 
 
-COPY . .
+COPY requirements.txt /src
 
 # Install the dependencies
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /src
 
 # Run the application
 

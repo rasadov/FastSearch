@@ -50,10 +50,10 @@ class User(UserMixin, db.Model):
     __table_args__ = {'extend_existing': True}
 
     id : Mapped[int] = mapped_column(primary_key=True)
-    username : Mapped[str] = mapped_column(String(length=30), unique=True, default=None)
-    name : Mapped[str] = mapped_column(String(length=30), default=None)
+    username : Mapped[str] = mapped_column(String(length=30), unique=True, default=None, nullable=True)
+    name : Mapped[str] = mapped_column(String(length=30), default=None, nullable=True)
     email_address : Mapped[str] = mapped_column(nullable=False, unique=True)
-    password_hash : Mapped[str] = mapped_column(String(length=100), default=None)
+    password_hash : Mapped[str] = mapped_column(String(length=100), default=None, nullable=True)
     created_on : Mapped[datetime] = mapped_column(nullable=False, default=datetime.now().date())
     role : Mapped[str] = mapped_column(nullable=False, default="user")
     confirmed_on : Mapped[datetime] = mapped_column(nullable=True)

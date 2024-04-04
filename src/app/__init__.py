@@ -70,6 +70,7 @@ from flask import (Flask, flash, redirect, render_template, request,
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
 dotenv.load_dotenv()
@@ -79,8 +80,12 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
+print(DB_USER, DB_NAME, DB_PASSWORD, DB_HOST, DB_PORT)
 SERVER_STARTED_ON = datetime.now()
 
+OWNER_EMAIL = os.environ.get("OWNER_EMAIL")
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME")
+print(OWNER_EMAIL, OWNER_USERNAME)
 
 conn_url = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
@@ -98,6 +103,10 @@ db = SQLAlchemy(app)
 
 
 oauth = OAuth(app)
+
+print(os.environ.get("GOOGLE_CLIENT_ID"))
+print(os.environ.get("GOOGLE_CLIENT_SECRET"))
+
 google = oauth.register(
     name="google",
     client_id=os.environ.get("GOOGLE_CLIENT_ID"),
@@ -112,6 +121,9 @@ google = oauth.register(
     client_kwargs={"scope": "email profile"},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )
+
+print(os.environ.get("MICROSOFT_CLIENT_ID"))
+print(os.environ.get("MICROSOFT_CLIENT_SECRET"))
 
 microsft = oauth.register(
     name="microsoft",
@@ -178,6 +190,8 @@ def logout_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_authenticated:
+            print(os.environ.get("MICROSOFT_CLIENT_ID"))
+            print(os.environ.get("MICROSOFT_CLIENT_SECRET"))
             flash("You are already authenticated.", "info")
             return redirect(url_for("home_get"))
         return f(*args, **kwargs)
