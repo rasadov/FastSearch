@@ -6,19 +6,40 @@ It initializes the routes and configures the application.
 
 Routes are defined in the folder `routes`.
 The routes are divided into different files based on their functionality.:
-    Main.py: The main routes of the application. It contains the home page and the search page.
-    Account.py: The routes related to the user account. 
-    It contains the login, register, logout and account management routes.
-    Admin.py: The routes related to the admin panel.
-    It contains the admin panel and the admin login routes.
-    Other.py: The routes related to other pages.
-    It contains the contact and donate pages.
-    Errors.py: The routes related to error handling.
-    It contains the error handling routes.
+    - '/routes/__init__.py': Imports all the routes.
 
-Database Models are defined in the `models.py` file.
+    Account:
+    - '/account/__init__.py': imports other account routes.
+    - '/account/authentication.py': Contains the routes related to the user's authentication.
+    - '/account/profile.py': Contains the routes related to the user's profile.
 
-The web application is initialized in the `web.py` file.
+    Admin:
+    - '/admin/__init__.py': Contains main admin page and imports other admin routes.
+    - '/admin/analytics.py': Contains the routes related to the analytics page.
+    - '/admin/message.py': Contains the routes related to the messages page.
+    - '/admin/product.py': Contains the routes related to the products page.
+    - '/admin/user.py': Contains the routes related to the users page.
+    - '/admin/scrape.py': Contains the routes related to the scraping functionality.
+
+    Main:
+    - 'main.py': Contains the main routes of the application.
+    - 'error.py': Contains the error handling routes.
+    - 'other.py': Contains other routes of the application.
+
+
+
+Database Models are defined in the folder `models`.
+The models are divided into different files based on their functionality.:
+    - '/models/__init__.py': Imports all the models.
+
+    - '/models/user.py': Contains the user model.
+    - '/models/product.py': Contains the product model.
+    - '/models/message.py': Contains the message model.
+    - '/models/cart.py': Contains the cart model.
+
+
+
+The web application is initialized in the `__init__.py` file.
 
 The main function runs the application in debug mode. 
 THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
@@ -28,7 +49,6 @@ Roadmap:
 - Implement anti-scraping measures in the web application.
   Use AJAX to load the search results like in analytics.py.
 - Fix the pagination in the search page for mobile.
-- Use Docker to containerize the application.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:
@@ -85,5 +105,6 @@ from app.routes import *
 
 # Main function
 
-# if __name__ == "__main__":
+print("SDAD")
+
 app.run(debug=True, host='0.0.0.0',port=5000)

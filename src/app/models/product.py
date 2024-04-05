@@ -178,13 +178,13 @@ class Product(db.Model):
         return query.filter(Product.tsvector_title.match(search))
 
     @staticmethod
-    def get_filters():
+    def get_filters(src):
         """
-        Returns a dictionary of filters based on the request arguments.
+        Returns a dictionary of filters based on the source.
 
         The dictionary contains filter names as keys and a list as values.
         Each list contains two elements:
-        - The first element is the value obtained from the request arguments.
+        - The first element is the value obtained from the source.
         - The second element is a lambda function that takes the filter value
           and a query object as arguments, and applies the filter to the query.
 
@@ -201,30 +201,30 @@ class Product(db.Model):
         """
         return {
             "search": [
-                request.args.get("search", ""),
+                src.get("search", ""),
                 Product.search
             ],
             "min_price": [
-                request.args.get("min_price", None, type=int),
+                src.get("min_price", None, type=int),
                 lambda min_price, query: query.filter(Product.price >= min_price),
             ],
             "max_price": [
-                request.args.get("max_price", None, type=int),
+                src.get("max_price", None, type=int),
                 lambda max_price, query: query.filter(Product.price <= max_price),
             ],
             "brand": [
-                request.args.get("brand", None),
+                src.get("brand", None),
                 lambda brand, query: query.filter(
                     Product.producer.ilike(f"{brand}")
                     | Product.producer.ilike(f"%{brand}%")
                 ),
             ],
             "min_rating": [
-                request.args.get("min_rating", None, type=float),
+                src.get("min_rating", None, type=float),
                 lambda rating, query: query.filter(Product.rating >= rating),
             ],
             "max_rating": [
-                request.args.get("max_rating", None, type=float),
+                src.get("max_rating", None, type=float),
                 lambda rating, query: query.filter(Product.rating <= rating),
             ],
         }

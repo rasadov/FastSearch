@@ -3,26 +3,16 @@
 {% block title %}
 <title>Search</title>
 <link rel="stylesheet" href="../../static/css/search.css">
-
 {% endblock %}
 
 {% block content %}
-
-{% set params = request.args.copy() %}
-{% set page = params.pop('page', None) %}
-{% set params_copy = params.copy() %}
-{% for key, value in params_copy.items() %}
-    {% if not value %}
-        {{ params.pop(key) }}
-    {% endif %}
-{% endfor %}
 
 <div>
     <form method="GET" action="{{ url_for('search_get') }}">
         <div class="search-container">
             <div class="search-div" style="width: 50%; margin: 40px auto 20px;">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" id="search" placeholder="Search..." value="{{search}}">
+                    <input type="text" name="search" class="form-control" id="search" placeholder="Search...">
                     <button type="submit" class="btn btn-primary" style="border: 2px solid #0d6efd ;">
                         <i class="fa fa-search"></i>
                     </button>
@@ -32,16 +22,16 @@
         <div class="filters-container">
             <div class="hidden" id="args" style="justify-content: space-between; width: 50%; margin: auto;">
                 <div class="row" style="margin: 10px auto;">
-                    <input class="form-control" type="number" name="min_price" id="min_price" value="{% if min_price %}{{min_price}}{% endif %}" placeholder="Min price" style="width: 45%; margin: 9px;">
-                    <input class="form-control" type="number" name="max_price" id="max_price" value="{% if max_price %}{{ max_price }}{% endif %}" placeholder="Max price" style="width: 45%; margin: 9px;">
+                    <input class="form-control" type="number" name="min_price" id="min_price" placeholder="Min price" style="width: 45%; margin: 9px;">
+                    <input class="form-control" type="number" name="max_price" id="max_price" placeholder="Max price" style="width: 45%; margin: 9px;">
                 </div>
                 <div class="row" style="margin: 10px auto;">
-                    <input class="form-control" type="text" name="brand" id="brand" value="{% if brand %}{{ brand }}{% endif %}" placeholder="Brand" style="width: 30%;margin: 5px;">
-                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" value="{% if min_rating %}{{ min_rating }}{% endif %}" placeholder="Min rating" style="width: 30%;margin: 5px;">
-                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" value="{% if max_rating %}{{max_rating}}{% endif %}" placeholder="Max rating" style="width: 30%;margin: 5px;">
+                    <input class="form-control" type="text" name="brand" id="brand" placeholder="Brand" style="width: 30%;margin: 5px;">
+                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="min_rating" id="min_rating" placeholder="Min rating" style="width: 30%;margin: 5px;">
+                    <input class="form-control" type="number" min="0" max="5" step="0.1" name="max_rating" id="max_rating" placeholder="Max rating" style="width: 30%;margin: 5px;">
                 </div>
                 <div class="row" style="margin: 10px auto;">
-                    <a href="{{ url_for('search_get') }}" class="clear-filters">
+                    <a href="/search" class="clear-filters">
                         <button type="menu" class="btn btn-primary">
                             Clear filters
                         </button>
@@ -61,44 +51,14 @@
     </div>
 </div>
 
-<div class="flex-container" style="display: flex">    
-{% for product in products %}
-    <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
-        <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
-            <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
-            <div class="card-body">
-                <h1 class="card-title product-title">
-                    {% if product.title|length < 101 %}
-                        {{ product.title }}
-                    {% else %}
-                        {{ product.title[:100] }}... 
-                    {% endif %}
-                </h1>
-                <p class="card-text" style="padding: 10px; ">Price: {{product.price}}</p>
-                <p class="card-text" style="padding: 10px; ">Domain: {{product.get_domain()}}</p>
-                <p class="card-text" style="padding: 10px;">Rating: {{product.rating}}</p>
-                <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
-            </a>
-            {% if current_user.is_authenticated %}
-            <div style="margin-top: 10px;">
-                <form>
-                    <button type="button" class="btn track-button" id="{{product.id}}" data-tracked="{{in_cart(current_user.id, product.id)}}" onclick="track('{{ product.id }}')">Tracked</button>
-                </form>
-            </div>
-            {% else %}
-            <div style="margin-top: 10px;">
-                <a href="{{ url_for('login_get') }}" class="btn btn-light btn-sm">Login to track</a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-        {% if (loop.index) % 3 == 0 %}
-        </div>
-        <div class="flex-container" style="display: flex">
-        {% endif %}
-{% endfor %}
+
+<div id="products">
 </div>
 
+
+
+
+{% if products %}
 <div style="text-align: center; margin: 20px auto 40px;">
     <div class="pagination">
         <ul class="pagination justify-content-center mx-auto mt-5">
@@ -134,12 +94,22 @@
         </ul>
     </div>
 </div>
+{% endif %}
 
 {% endblock %}
 
 
 {% block scripts %}
+<script type="text/javascript">
+    var is_authenticated = "{{ current_user.is_authenticated }}";
+    if (is_authenticated == 'True') {
+        is_authenticated = true;
+    } else {
+        is_authenticated = false;
+    }
+</script>
+
 <script type="text/javascript" src="../../static/js/image.js"></script>
 <script type="text/javascript" src="../../static/js/track.js"></script>
-
+<script type="text/javascript" src="../../static/js/products.js"></script>
 {% endblock %}

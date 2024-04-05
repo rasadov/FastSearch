@@ -2,7 +2,6 @@
 This module defines the routes for the user profile and account management.
 
 The following routes are defined:
-- `/profile`: Renders the profile management page.
 - `/profile/password/change`: Allows the user to change their password.
 - `/profile/password/set`: Allows the user to set a new password.
 - `/profile/username/change`: Handles the functionality to change the username
@@ -18,24 +17,10 @@ from app import (app, login_required, render_template,
                 flash, redirect, url_for, login_user,
                 request, db, current_user,
                 datetime, SignatureExpired)
-from app.models import User, Cart
+from app.models import User
 from app.__forms__ import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm,
                 DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
 from app.__email__sender__ import send_email
-
-
-@app.get("/profile")
-@login_required
-def profile_get():
-    """
-    Retrieve the user's profile and render the profile page.
-
-    Returns:
-        The rendered profile page with the user's cart items.
-    """
-    cart = Cart.items(current_user.id)
-    return render_template("Account/profile.html", cart=cart)
-
 
 @app.get("/profile/password/change")
 @login_required

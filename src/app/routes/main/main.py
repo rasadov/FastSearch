@@ -42,6 +42,90 @@ def home_get():
     print(User.query)
     return render_template("Main/index.html")
 
+
+def convert(key, val):
+    """
+    Convert the query parameter to the correct type.
+
+    This function converts the query parameter to the correct type based on the key.
+
+    Args:
+    - key (str): The key of the query parameter.
+    - val (str): The value of the query parameter.
+
+    Returns:
+    - The converted value of the query parameter.
+    """
+    if key == "min_price" or key == "max_price":
+        return float(val)
+    if key == "min_rating" or key == "max_rating":
+        return float(val)
+    return val
+
+@app.get("/api/products")
+def products_api():
+    """
+    Get the search results based on the query parameters.
+
+    This function is called using AJAX to get the search results based on the query parameters.
+    It retrieves the query parameters from the request and filters the products based on the parameters.
+    The filtered products are paginated and returned as a JSON response.
+
+    Query Parameters:
+    - search (str): The search keyword to filter products by title.
+    - min_price (int): The minimum price to filter products by.
+    - max_price (int): The maximum price to filter products by.
+    - brand (str): The brand name to filter products by.
+    - min_rating (float): The minimum rating to filter products by.
+    - max_rating (float): The maximum rating to filter products by.
+    - page (int): The page number to paginate the results.
+
+    Returns:
+    - JSON response with the filtered products and pagination information.
+    """
+
+    if len(request.args) == 0:
+        return jsonify({"content": "message"})
+
+    products = Product.query
+
+    filters = Product.get_filters(request.args)
+
+    variables = {}
+    for key, value in filters.items():
+        val = request.args.get(key)
+        if val not in [None, "null", ""]:
+            val = convert(key, val)
+            products = value[1](val, products)
+            variables[key] = val
+
+    page = request.args.get("page", 1, type=int)
+    products = products.paginate(page=page, per_page=9)
+
+    total_pages = products.pages
+    return jsonify(
+        {
+            "content": "products",
+            "products": [
+                {
+                    "id": product.id,
+                    "url": product.url,
+                    "domain": product.get_domain(),
+                    "title": product.title,
+                    "price": product.price,
+                    "rating": product.rating,
+                    "amount_of_ratings": product.amount_of_ratings,
+                    "item_class": product.item_class,
+                    "producer": product.producer,
+                    "image": product.get_image(),
+                    "tracked": Cart.in_cart(current_user.id, product.id) if current_user.is_authenticated else "Logged out",
+                }
+                for product in products.items
+            ],
+            "total_pages": total_pages,
+        }
+    )
+
 @app.get("/search")
 def search_get():
     """
@@ -62,24 +146,8 @@ def search_get():
     Returns:
         - Rendered template for the search page with filtered products.
     """
-    products = Product.query
-
-    filters = Product.get_filters()
-
-    variables = {}
-    for key, value in filters.items():
-        val = value[0]
-        if val:
-            products = value[1](val, products)
-            variables[key] = val
-
-    page = request.args.get("page", 1, type=int)
-    products = products.paginate(page=page, per_page=9)
-
-    total_pages = products.pages
     return render_template(
-        "Main/search.html", products=products, total_pages=total_pages,
-        **variables, in_cart=Cart.in_cart
+        "Main/search.html", products=[], in_cart=Cart.in_cart, authenticated=current_user.is_authenticated
     )
 
 @app.post('/cart/add')

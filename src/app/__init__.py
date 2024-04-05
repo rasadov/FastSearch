@@ -73,7 +73,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
-dotenv.load_dotenv()
+dotenv.load_dotenv('envs\\flask\\.env')
+dotenv.load_dotenv('envs\\postgresql\\.env')
 
 DB_USER = os.environ.get("DB_USER")
 DB_NAME = os.environ.get("DB_NAME")
@@ -85,9 +86,6 @@ SERVER_STARTED_ON = datetime.now()
 
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL")
 OWNER_USERNAME = os.environ.get("OWNER_USERNAME")
-print(OWNER_EMAIL, OWNER_USERNAME)
-
-conn_url = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
 app = Flask(__name__)
 
@@ -97,15 +95,10 @@ app.config["SECRET_KEY"] = SECRET_KEY
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    # conn_url
 )
 db = SQLAlchemy(app)
 
-
 oauth = OAuth(app)
-
-print(os.environ.get("GOOGLE_CLIENT_ID"))
-print(os.environ.get("GOOGLE_CLIENT_SECRET"))
 
 google = oauth.register(
     name="google",
@@ -121,9 +114,6 @@ google = oauth.register(
     client_kwargs={"scope": "email profile"},
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
 )
-
-print(os.environ.get("MICROSOFT_CLIENT_ID"))
-print(os.environ.get("MICROSOFT_CLIENT_SECRET"))
 
 microsft = oauth.register(
     name="microsoft",
