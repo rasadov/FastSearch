@@ -39,7 +39,8 @@ var data = {
         'max_price': maxPrice,
         'min_rating': minRating,
         'max_rating': maxRating,
-        'brand': brand
+        'brand': brand,
+        'page': urlParams.get('page') ? urlParams.get('page') : '1'
     }
 }
 
@@ -60,29 +61,28 @@ xmr.onload = function() {
         console.log(response);
 
         if (response.content == "products") {
-        total_pages = response.total_pages;
-        products = response.products;
-        html = '<div style="display:flex;">';
-        for (i = 0; i < products.length; i++) {
-            product = products[i];
-            console.log(product);
-            productsHTML = `
-            <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
-            <a href="${products[i].url}" style="text-decoration: none; color: black; ">
-                <img src="${products[i].image}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
-                <div class="card-body">
-                    <h1 class="card-title product-title">
-                        ${products[i].title.length > 100 ? products[i].title.substring(0, 100) + '...' : products[i].title}
-                    </h1>
-                    <p class="card-text" style="padding: 10px; ">Price: ${products[i].price}</p>
-                    <p class="card-text" style="padding: 10px; ">Domain: ${products[i].domain}</p>
-                    <p class="card-text" style="padding: 10px;">Rating: ${products[i].rating} (${products[i].amount_of_ratings})</p>
-                    <p class="card-text" style="padding: 10px;">Category: ${products[i].item_class}</p>
-                </a>
+            total_pages = response.total_pages;
+            products = response.products;
+            html = '<div class="flex-container" style="display:flex;">';
+            for (i = 0; i < products.length; i++) {
+                product = products[i];
+                productsHTML = `
+                <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
+                <a href="${product.url}" style="text-decoration: none; color: black; ">
+                    <img src="${product.image}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
+                    <div class="card-body">
+                        <h1 class="card-title product-title">
+                            ${product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title}
+                        </h1>
+                        <p class="card-text" style="padding: 10px; ">Price: ${product.price} ${product.currency}</p>
+                        <p class="card-text" style="padding: 10px; ">Domain: ${product.domain}</p>
+                        <p class="card-text" style="padding: 10px;">Rating: ${product.rating} (${product.amount_of_ratings})</p>
+                        <p class="card-text" style="padding: 10px;">Category: ${product.item_class}</p>
+                    </a>
                         ${ is_authenticated ? `
                         <div style="margin-top: 10px;">
                             <form>
-                                <button type="button" class="btn track-button" id="${products[i].id}" data-tracked="${products[i].tracked}" onclick="track('${products[i].id}')">Tracked</button>
+                                <button type="button" class="btn track-button" id="${product.id}" data-tracked="${product.tracked}" onclick="track('${product.id}')">Tracked</button>
                             </form>
                         </div>
                         ` : `
@@ -94,11 +94,75 @@ xmr.onload = function() {
                 </div>`
                 html += productsHTML;
                 if (i % 3 == 2 || i == products.length - 1) {
-                    html += `</div><div style="display:flex;">`;
+                    html += `</div><div class="flex-container" style="display:flex;">`;
                 }
             }
-        document.getElementById('products').innerHTML = html;
+            document.getElementById('products').innerHTML = html;
+
+            // Pagination                        
+            var total_pages = response.total_pages; 
+            var current_page = response.current_page;  
+
+            var pagination = document.getElementById('pagination');
+
+            var ul = document.createElement('ul');
+            ul.className = 'pagination justify-content-center mx-auto mt-5';
+
+            if (current_page > 1) {
+                var li = document.createElement('li');
+                li.className = 'page-item';
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.style.background = '#ffffff';
+                a.href = '/search?page=' + (current_page - 1) + "&" + newQueryString;
+                a.textContent = 'Previous';
+                li.appendChild(a);
+                ul.appendChild(li);
+            }
+
+            for (var i = 1; i <= total_pages; i++) {
+                var li = document.createElement('li');
+                li.className = 'page-item';
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                if (i === current_page) {
+                    a.className += ' current-page';
+                }
+                a.href = '/search?page=' + i + "&" + newQueryString;
+                a.textContent = i;
+                li.appendChild(a);
+                ul.appendChild(li);
+            }
+
+            if (current_page < total_pages) {
+                var li = document.createElement('li');
+                li.className = 'page-item';
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.style.background = '#ffffff';
+                a.href = '/search?page=' + (current_page + 1) + "&" + newQueryString; 
+                a.textContent = 'Next';
+                li.appendChild(a);
+                ul.appendChild(li);
+            }
+
+            pagination.appendChild(ul);
         }
+
+        else {
+            donation_link = response.donation_link;
+            document.getElementById('products').innerHTML = `
+            <div style="text-align:center; margin: 5% auto;">
+                <h3 style="text-align:center; max-width:50%; margin: auto">Your contribution to the development and improvement of our project will be highly appreciated!</h3> 
+                <a href=${donation_link}>
+                    <div class="btn btn-primary" style="margin-top: 20px;">Buy me a coffee</div>      
+                </a>
+            </div>
+            `;
+        }
+
     }
 }
 xmr.send();
+
+

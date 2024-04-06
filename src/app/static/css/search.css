@@ -70,17 +70,6 @@
             width: 95% !important;
             margin: 20px auto !important;
         }
-
-        .pagination {
-            max-width: 200px !important;
-            display: block !important;
-            justify-content:baseline !important;
-            margin: 20px auto !important;
-        }
-
-        .pagination a {
-            margin: 5px !important;
-        }
     }
 
 

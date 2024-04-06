@@ -2,6 +2,13 @@
 
 {% block title %}
 <title>Donate</title>
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -15,8 +22,8 @@
             <p class="card-text">Our website is free to use and will always be free to use. However, if you would like to support the development of this website, you can donate to us. 
                 Your donation will be used to pay for the server and the domain name. We will also use the donation to improve the website and add new features to the website.
             </p>
-            <a href="https://www.buymeacoffee.com/abyssara">
-                <img src="../../static/images/bmc-button.png" alt="Donate" style="scale: 0.5;">
+            <a href="{{donation_link}}">
+                <div class="btn btn-primary" style="margin-top: 20px;">Buy me a coffee</div>      
             </a>
             <p class="card-text">We highly appreciate your donation and we will make sure that your donation will be used to improve the website. 
                 Thank you for your support!</p>

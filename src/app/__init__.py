@@ -87,6 +87,8 @@ SERVER_STARTED_ON = datetime.now()
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL")
 OWNER_USERNAME = os.environ.get("OWNER_USERNAME")
 
+DONATION_LINK = "https://www.buymeacoffee.com/abyssara"
+
 app = Flask(__name__)
 
 

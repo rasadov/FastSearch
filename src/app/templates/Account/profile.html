@@ -8,6 +8,7 @@
         display: none;
     }
 </style>
+<script type="text/javascript" src="../../static/js/image.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -62,7 +63,7 @@
     {% for product in cart %}
         <div class="card shadow-lg" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
             <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
-                <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
+                <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
                 <div class="card-body">
                     <h1 class="card-title product-title" style="font-size: 15px;">
                         {% if product.title|length < 101 %}
@@ -98,5 +99,4 @@
 
 {% block scripts %}
 <script type="text/javascript" src="../../static/js/profile.js"></script>
-<script type="text/javascript" src="../../static/js/image.js"></script>
 {% endblock %}

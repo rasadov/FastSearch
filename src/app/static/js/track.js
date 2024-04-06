@@ -13,6 +13,7 @@ var trackButtons = document.querySelectorAll('.track-button');
     function track(id) {
         
         var button = document.querySelector('.track-button[id="' + id + '"]');
+        console.log(button);
         
         if (button.getAttribute('data-tracked') == 'True') {
             action = 'untrack';

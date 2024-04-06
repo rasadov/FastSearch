@@ -90,7 +90,7 @@ def admin_products_search_get():
     """
     page = request.args.get("page", 1, type=int)
 
-    filters = Product.get_filters()
+    filters = Product.get_filters(request.args)
 
     products = Product.query
     variables = {}

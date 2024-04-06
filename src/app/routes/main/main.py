@@ -23,9 +23,10 @@ Functions:
 from flask import jsonify
 from app.models import Product, Cart, User, Message
 from app import (app, render_template, login_required,
-            request, redirect, current_user,
+            request, redirect, current_user, DONATION_LINK,
             flash, url_for, db, login_user)
 from app.__email__sender__ import send_email
+from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
 
 @app.get("/")
@@ -68,7 +69,8 @@ def products_api():
     Get the search results based on the query parameters.
 
     This function is called using AJAX to get the search results based on the query parameters.
-    It retrieves the query parameters from the request and filters the products based on the parameters.
+    It retrieves the query parameters from the request and 
+    filters the products based on the parameters.
     The filtered products are paginated and returned as a JSON response.
 
     Query Parameters:
@@ -83,9 +85,11 @@ def products_api():
     Returns:
     - JSON response with the filtered products and pagination information.
     """
+    if len(request.args) < 2:
+        return jsonify({"content": "message", "donation_link": DONATION_LINK})
 
-    if len(request.args) == 0:
-        return jsonify({"content": "message"})
+
+    page = request.args.get("page", 1, type=int)
 
     products = Product.query
 
@@ -99,7 +103,6 @@ def products_api():
             products = value[1](val, products)
             variables[key] = val
 
-    page = request.args.get("page", 1, type=int)
     products = products.paginate(page=page, per_page=9)
 
     total_pages = products.pages
@@ -113,16 +116,20 @@ def products_api():
                     "domain": product.get_domain(),
                     "title": product.title,
                     "price": product.price,
+                    "currency": SignsConverter.convert_to_currency_sign(product.price_currency),
                     "rating": product.rating,
                     "amount_of_ratings": product.amount_of_ratings,
                     "item_class": product.item_class,
                     "producer": product.producer,
                     "image": product.get_image(),
-                    "tracked": Cart.in_cart(current_user.id, product.id) if current_user.is_authenticated else "Logged out",
+                    "tracked": 
+                    Cart.in_cart(current_user.id, product.id) if current_user.is_authenticated
+                    else "Logged out",
                 }
                 for product in products.items
             ],
             "total_pages": total_pages,
+            "current_page": page,
         }
     )
 
@@ -147,7 +154,7 @@ def search_get():
         - Rendered template for the search page with filtered products.
     """
     return render_template(
-        "Main/search.html", products=[], in_cart=Cart.in_cart, authenticated=current_user.is_authenticated
+        "Main/search.html", authenticated=current_user.is_authenticated
     )
 
 @app.post('/cart/add')
@@ -198,7 +205,7 @@ def donation_get():
     Returns:
         The rendered template 'Main/donate.html'.
     """
-    return render_template("Main/donate.html")
+    return render_template("Main/donate.html", donation_link=DONATION_LINK)
 
 
 @app.get("/contact")

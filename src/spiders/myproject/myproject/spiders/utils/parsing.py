@@ -40,7 +40,7 @@ def scrape_amazon_item(response, url: None | str = None):
         price = float(f'{response.css("span.a-price-whole::text").get().replace(",","")}.{response.css("span.a-price-fraction::text").get()}'.strip())
 
         price_currency = response.css("span.a-price-symbol::text").get().strip()
-        price_currency = SignsConverter.convert_signs(price_currency)
+        price_currency = SignsConverter.convert_to_country_code(price_currency)
 
         try:
             image = response.css("div#imgTagWrapperId img::attr(src)").get()
@@ -364,9 +364,9 @@ def parsing_method(response):
     """
     url = response.meta.get("url", "")
 
-    html_content = response.body.decode(response.encoding)
-    with open(".html", "w", encoding=response.encoding) as f:
-        f.write(html_content)
+    # html_content = response.body.decode(response.encoding)
+    # with open(".html", "w", encoding=response.encoding) as f:
+    #     f.write(html_content)
 
     print(response.meta.get('download_slot'))
 
