@@ -105,6 +105,4 @@ from app.routes import *
 
 # Main function
 
-print("SDAD")
-
 app.run(debug=True, host='0.0.0.0',port=5000)

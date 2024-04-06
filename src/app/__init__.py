@@ -81,7 +81,6 @@ DB_NAME = os.environ.get("DB_NAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
-print(DB_USER, DB_NAME, DB_PASSWORD, DB_HOST, DB_PORT)
 SERVER_STARTED_ON = datetime.now()
 
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL")
@@ -182,8 +181,6 @@ def logout_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if current_user.is_authenticated:
-            print(os.environ.get("MICROSOFT_CLIENT_ID"))
-            print(os.environ.get("MICROSOFT_CLIENT_SECRET"))
             flash("You are already authenticated.", "info")
             return redirect(url_for("home_get"))
         return f(*args, **kwargs)

@@ -56,15 +56,13 @@ xmr.setRequestHeader('Content-Type', 'application/json');
 
 xmr.onload = function() {
     if (xmr.status == 200) {
-        console.log("success")
         var response = JSON.parse(xmr.responseText);
-        console.log(response);
-
         if (response.content == "products") {
             total_pages = response.total_pages;
             products = response.products;
             html = '<div class="flex-container" style="display:flex;">';
-            for (i = 0; i < products.length; i++) {
+            len = products.length;
+            for (i = 0; i < len; i++) {
                 product = products[i];
                 productsHTML = `
                 <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
@@ -81,9 +79,11 @@ xmr.onload = function() {
                     </a>
                         ${ is_authenticated ? `
                         <div style="margin-top: 10px;">
-                            <form>
-                                <button type="button" class="btn track-button" id="${product.id}" data-tracked="${product.tracked}" onclick="track('${product.id}')">Tracked</button>
-                            </form>
+                            ${ product.tracked ? `
+                            <button type="button" class="btn track-button tracked" id="${product.id}" data-tracked="True" onclick="track('${product.id}')">Tracked</button>
+                            ` : `
+                            <button type="button" class="btn track-button track" id="${product.id}" data-tracked="False" onclick="track('${product.id}')">Track</button>
+                            ` }
                         </div>
                         ` : `
                         <div style="margin-top: 10px;">
@@ -93,7 +93,7 @@ xmr.onload = function() {
                     </div>
                 </div>`
                 html += productsHTML;
-                if (i % 3 == 2 || i == products.length - 1) {
+                if (i % 3 == 2 || i == len - 1) {
                     html += `</div><div class="flex-container" style="display:flex;">`;
                 }
             }
@@ -108,42 +108,141 @@ xmr.onload = function() {
             var ul = document.createElement('ul');
             ul.className = 'pagination justify-content-center mx-auto mt-5';
 
-            if (current_page > 1) {
-                var li = document.createElement('li');
-                li.className = 'page-item';
-                var a = document.createElement('a');
-                a.className = 'page-link';
-                a.style.background = '#ffffff';
-                a.href = '/search?page=' + (current_page - 1) + "&" + newQueryString;
-                a.textContent = 'Previous';
-                li.appendChild(a);
-                ul.appendChild(li);
-            }
+            if (total_pages > 1) {
+                if (total_pages > 8) {
+                    if (current_page < 4) {
+                        for (i = 1; i <= 5; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            if (i == current_page) {
+                                li.classList.add('active');
+                            }
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                        var li = document.createElement('li');
+                        li.className = 'page-item';
+                        var a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.disabled = true;
+                        a.innerHTML = '...';
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                        for (i = total_pages - 1; i <= total_pages; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                    }
+                    else if (current_page > total_pages - 3) {
+                        for (i = 1; i <= 2; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                        var li = document.createElement('li');
+                        li.className = 'page-item';
+                        var a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.disabled = true;
+                        a.innerHTML = '...';
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                        for (i = total_pages - 4; i <= total_pages; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            if (i == current_page) {
+                                li.classList.add('active');
+                            }
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                    }
+                    else {
+                        for (i = 1; i <= 2; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                        var li = document.createElement('li');
+                        li.className = 'page-item';
+                        var a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.disabled = true;
+                        a.innerHTML = '...';
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                        for (i = current_page - 1; i <= current_page + 1; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            if (i == current_page) {
+                                li.classList.add('active');
+                            }
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                        var li = document.createElement('li');
+                        li.className = 'page-item';
+                        var a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.disabled = true;
+                        a.innerHTML = '...';
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                        for (i = total_pages - 1; i <= total_pages; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString;
+                            a.innerHTML = i;
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                        }
+                    }
 
-            for (var i = 1; i <= total_pages; i++) {
-                var li = document.createElement('li');
-                li.className = 'page-item';
-                var a = document.createElement('a');
-                a.className = 'page-link';
-                if (i === current_page) {
-                    a.className += ' current-page';
                 }
-                a.href = '/search?page=' + i + "&" + newQueryString;
-                a.textContent = i;
-                li.appendChild(a);
-                ul.appendChild(li);
-            }
-
-            if (current_page < total_pages) {
-                var li = document.createElement('li');
-                li.className = 'page-item';
-                var a = document.createElement('a');
-                a.className = 'page-link';
-                a.style.background = '#ffffff';
-                a.href = '/search?page=' + (current_page + 1) + "&" + newQueryString; 
-                a.textContent = 'Next';
-                li.appendChild(a);
-                ul.appendChild(li);
+                else {
+                    for (i = 1; i <= total_pages; i++) {
+                        var li = document.createElement('li');
+                        li.className = 'page-item';
+                        var a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.href = '/search?page=' + i + '&' + newQueryString; 
+                        a.innerHTML = i;
+                        if (i == current_page) {
+                            li.classList.add('active');
+                        }
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                }
             }
 
             pagination.appendChild(ul);
@@ -160,9 +259,7 @@ xmr.onload = function() {
             </div>
             `;
         }
-
+        }
     }
 }
 xmr.send();
-
-

@@ -37,10 +37,8 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    # if current_user.is_anonymous:
-    #     login_user(User.query.get(1))
-    print(current_user.is_authenticated)
-    print(User.query)
+    if current_user.is_anonymous:
+        login_user(User.query.get(1))
     return render_template("Main/index.html")
 
 
@@ -90,6 +88,8 @@ def products_api():
 
 
     page = request.args.get("page", 1, type=int)
+    print(request.args)
+    print(page)
 
     products = Product.query
 

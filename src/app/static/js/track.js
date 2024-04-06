@@ -13,14 +13,17 @@ var trackButtons = document.querySelectorAll('.track-button');
     function track(id) {
         
         var button = document.querySelector('.track-button[id="' + id + '"]');
-        console.log(button);
         
         if (button.getAttribute('data-tracked') == 'True') {
             action = 'untrack';
             button.setAttribute('data-tracked', 'False');
+            button.classList.remove('tracked');
+            button.classList.add('track');
         } else {
             action = 'track';
             button.setAttribute('data-tracked', 'True');
+            button.classList.remove('track');
+            button.classList.add('tracked');
         } 
         // Make an AJAX request to the backend
         var xhr = new XMLHttpRequest();
