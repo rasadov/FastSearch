@@ -225,29 +225,27 @@ xmr.onload = function() {
                             a.innerHTML = i;
                             li.appendChild(a);
                             ul.appendChild(li);
+                            }
                         }
                     }
-
+                    else {
+                        for (i = 1; i <= total_pages; i++) {
+                            var li = document.createElement('li');
+                            li.className = 'page-item';
+                            var a = document.createElement('a');
+                            a.className = 'page-link';
+                            a.href = '/search?page=' + i + '&' + newQueryString; 
+                            a.innerHTML = i;
+                            if (i == current_page) {
+                                li.classList.add('active');
+                            }
+                            li.appendChild(a);
+                            ul.appendChild(li);
+                    }
                 }
-                else {
-                    for (i = 1; i <= total_pages; i++) {
-                        var li = document.createElement('li');
-                        li.className = 'page-item';
-                        var a = document.createElement('a');
-                        a.className = 'page-link';
-                        a.href = '/search?page=' + i + '&' + newQueryString; 
-                        a.innerHTML = i;
-                        if (i == current_page) {
-                            li.classList.add('active');
-                        }
-                        li.appendChild(a);
-                        ul.appendChild(li);
-                }
+                pagination.appendChild(ul);
             }
-
-            pagination.appendChild(ul);
         }
-
         else {
             donation_link = response.donation_link;
             document.getElementById('products').innerHTML = `
@@ -258,7 +256,6 @@ xmr.onload = function() {
                 </a>
             </div>
             `;
-        }
         }
     }
 }

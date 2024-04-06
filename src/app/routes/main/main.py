@@ -84,6 +84,7 @@ def products_api():
     - JSON response with the filtered products and pagination information.
     """
     if len(request.args) < 2:
+        print("No query parameters")
         return jsonify({"content": "message", "donation_link": DONATION_LINK})
 
 

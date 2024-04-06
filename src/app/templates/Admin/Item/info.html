@@ -2,7 +2,9 @@
 
 {% block title %}
 <title>User Info</title>
-
+{% if item.__tablename__ in ['product', 'user'] %}
+<script type="text/javascript" src="../../../static/js/image.js"></script>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +13,7 @@
         {% if item.__tablename__ == 'product' %}
         <div>
             <div>
-                <img src="{{item.get_image()}}" alt="Photo of product-{{item.id}}" class="card-img-top">
+                <img src="{{item.get_image()}}" alt="Photo of product-{{item.id}}" class="card-img-top" onload="scaleImage(this);">
             </div>
         <div>
         {% endif %}
@@ -30,7 +32,7 @@
             {% for product in cart %}
                 <div class="card shadow-lg border-frame" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
                     <a href="{{ product.url }}" style="text-decoration: none; color: black; ">
-                        <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;">
+                        <img src="{{ product.get_image() }}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
                         <div class="card-body">
                             <h1 class="card-title product-title" style="font-size: 15px;">
                                 {% if product.title|length < 101 %}
@@ -62,9 +64,6 @@
             </div>
         {% endif %}
 </div>
-{% if item.__tablename__ in ['product', 'user'] %}
-<script type="text/javascript" src="../../../static/js/image.js"></script>
-{% endif %}
 {% if item.__tablename__ == 'message' %}
 <p id="message_id" style="display: none;">{{item.id}}</p>
 <script type="text/javascript" src="../../../static/js/message.js"></script>

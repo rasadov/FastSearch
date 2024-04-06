@@ -32,60 +32,59 @@
 
 
 @media (max-width: 767px) {
-        .flex-container {
-            display: block !important;
-        }
-
-        .card {
-            width: 90% !important;
-        }
-
-        .search-div {
-            width: 90% !important;
-        }
-        .filters {
-            width: 90% !important;
-            display: block !important;
-            justify-content: space-around;
-            margin: 20px auto 40px !important;
-        }
-        
-        .filters-container .form-control {
-            display: block;
-            width: 90% !important;
-            margin: 10px auto !important;
-
-        
-        }
-        .filters-container{
-            margin-bottom: 20px;
-        }
-
-        #args {
-            width: 100% !important;
-            justify-content: center;
-        }
-        
-        .clear-filters {
-            width: 95% !important;
-            margin: 20px auto !important;
-        }
-
-        #pagination {
-            width: 100% !important;
-            justify-content: center;
-        }
+    .flex-container {
+        display: block !important;
     }
 
+    .card {
+        width: 90% !important;
+    }
 
-    footer {
-        display: none;
+    .search-div {
+        width: 90% !important;
+    }
+    .filters {
+        width: 90% !important;
+        display: block !important;
+        justify-content: space-around;
+        margin: 20px auto 40px !important;
     }
     
-    .product-title {
-        font-size: large; 
-        max-width: 80%; 
-        margin: auto; 
-        padding: 20px; 
-        max-lines: 3 !important;
+    .filters-container .form-control {
+        display: block;
+        width: 90% !important;
+        margin: 10px auto !important;
+
+    
     }
+    .filters-container{
+        margin-bottom: 20px;
+    }
+
+    #args {
+        width: 100% !important;
+        justify-content: center;
+    }
+    
+    .clear-filters {
+        width: 95% !important;
+        margin: 20px auto !important;
+    }
+
+    #pagination {
+        width: 100% !important;
+        justify-content: center;
+    }
+}
+
+footer {
+    display: none;
+}
+
+.product-title {
+    font-size: large; 
+    max-width: 80%; 
+    margin: auto; 
+    padding: 20px; 
+    max-lines: 3 !important;
+}

@@ -46,9 +46,10 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
-- Implement anti-scraping measures in the web application.
-  Use AJAX to load the search results like in analytics.py.
-- Fix the pagination in the search page for mobile.
+- Test the application.
+- Bugs:
+  - In products card view, if the title is less than 100 characters, the card is not displayed properly.
+- Test scraping functionality in all websites.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:
