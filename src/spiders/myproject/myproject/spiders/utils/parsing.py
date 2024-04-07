@@ -133,13 +133,11 @@ def scrape_ebay_item(response, url: str, method: str = "add"):
             amount_of_ratings = response.css(
             "div[data-testid='ux-summary'] span[class='ux-summary__count'] span::text"
             ).get()
-            print(amount_of_ratings)
             amount_of_ratings = int(amount_of_ratings.split(" ")[0].replace(",", ""))
         except Exception:
             amount_of_ratings = 0
 
         try:
-            print(parsed_data.get("offers").get("availability"))
             if "InStock" in parsed_data.get("offers").get("availability"):
                 availability = "In stock"
             else:
@@ -267,23 +265,9 @@ def scrape_gamestop_item(response, url: None | str = None):
             amount_of_ratings = 0
 
         try:
-            print(parsed_data.get("offers").get("availability"))
             availability = "In stock" if parsed_data.get("offers").get("availability") == "http://schema.org/InStock" else "Out of stock" 
         except Exception:
             availability = None
-             
-
-        print(url)
-        print(title)
-        print(price)
-        print(price_currency)
-        print(rating)
-        print(amount_of_ratings)
-        print(item_class)
-        print(producer)
-        print(image)
-        print(availability)
-
 
         # ------------------------- Processing and saving data from response -------------------------
         save_product_to_database(
@@ -368,13 +352,10 @@ def parsing_method(response):
     with open(".html", "w", encoding=response.encoding) as f:
         f.write(html_content)
 
-    print(response.meta.get('download_slot'))
-
     if response.meta.get('download_slot') == "www.ebay.com":
         scrape_ebay_item(response, url)
 
     elif response.meta.get('download_slot') == "www.amazon.com":
-        print("Amazon")
         scrape_amazon_item(response, url)
 
     elif response.meta.get('download_slot') == "www.amazon.co.uk":

@@ -9,7 +9,6 @@ var btn = document.querySelectorAll('.remove');
 
 
 function is_empty() {
-    console.log(document.querySelectorAll('.product').length);
     if (document.querySelectorAll('.product').length === 0) {
         document.querySelector('#empty').classList.remove('hidden');
     }

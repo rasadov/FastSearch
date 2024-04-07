@@ -37,7 +37,7 @@ def change_password_get():
         return redirect("/profile/password/set")
     form = ChangePasswordForm()
 
-    return render_template("form_base.html",h1="Change passwrod", form=form)
+    return render_template("Base/form_base.html",h1="Change passwrod", form=form)
 
 @app.post("/profile/password/change")
 @login_required
@@ -87,7 +87,7 @@ def set_password_get():
         return redirect("/profile/password/change")
     form = SetPasswordForm()
 
-    return render_template("form_base.html", form=form)
+    return render_template("Base/form_base.html", form=form)
 
 @app.post("/profile/password/set")
 def set_password_post():
@@ -124,7 +124,7 @@ def change_username_get():
     - POST: Updates the username and name of the current user in the database.
 
     Returns:
-    - GET: Renders the 'form_base.html' template with the form object.
+    - GET: Renders the 'Base/form_base.html' template with the form object.
     - POST: Redirects the user to the '/profile' route after updating the username and name.
 
     """
@@ -132,7 +132,7 @@ def change_username_get():
     form.username.data = current_user.username
     form.name.data = current_user.name
 
-    return render_template("form_base.html", h1="Change Username", form=form)
+    return render_template("Base/form_base.html", h1="Change Username", form=form)
 
 @app.post("/profile/username/change")
 @login_required
@@ -196,7 +196,7 @@ def reset_password_get(token):
         flash("Token is invalid or has expired", "warning")
         return redirect(url_for("forgot_password_get"))
 
-    return render_template("form_base.html", h1='Reset Password' ,form=form)
+    return render_template("Base/form_base.html", h1='Reset Password' ,form=form)
 
 
 @app.post("/password/reset/<token>")
@@ -321,11 +321,11 @@ def forgot_password_get():
     it displays a flash message indicating that the email was not found.
 
     Returns:
-        A rendered template 'form_base.html' with the form object.
+        A rendered template 'Base/form_base.html' with the form object.
 
     """
     form = ForgotPasswordForm()
-    return render_template("form_base.html", form=form)
+    return render_template("Base/form_base.html", form=form)
 
 
 @app.post("/password/forgot")
@@ -372,7 +372,7 @@ def delete_account_get():
     """
     form = DeleteAccountForm()
     h1 = "Are you sure you want to delete your account?"
-    return render_template("form_base.html", form=form, h1=h1)
+    return render_template("Base/form_base.html", form=form, h1=h1)
 
 @app.post("/profile/delete")
 @login_required

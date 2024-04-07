@@ -35,8 +35,6 @@ function showFields(source) {
 function send_request() {
     var form = document.getElementById('scrape-form');
     var formData = new FormData(form);
-    console.log(form);
-    console.log(formData);
     var xml = new XMLHttpRequest();
     xml.open('POST', '/admin/product/scrape', true);
     xml.setRequestHeader('Content-Type', 'application/json');
@@ -46,7 +44,6 @@ function send_request() {
         'pages': formData.get('pages'),
         'results_per_page': formData.get('results_per_page')
     };
-    console.log(data)
 
     formhtml = document.getElementById('fields').parentElement.innerHTML
     
@@ -65,13 +62,10 @@ function send_request() {
 
     xml.onload = function() {
         if (this.status == 200) {
-            console.log(this.responseText);
             var response = JSON.parse(this.responseText);
-            console.log(response);
             alertmessage = document.getElementById('alert-messages');
             document.querySelector('.loader').parentElement.innerHTML = formhtml;
             if (response['status'] == 'success') {
-                console.log('Scraping successful');
                 alertmessage.innerHTML
                     = `<div class="alert alert-success flash-close">
                     <div style="display: flex;">
@@ -86,7 +80,6 @@ function send_request() {
                         >&times;</button>
                 </div>`;
                 } else {
-                    console.log('Scraping failed');
                     alertmessage.innerHTML 
                     = `<div class="alert alert-danger flash-close">
                     <div style="display: flex;">

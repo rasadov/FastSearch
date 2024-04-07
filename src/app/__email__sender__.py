@@ -56,7 +56,7 @@ def send_email(reciever, message, subject, title):
     # Load the HTML template
     html_template = Template(
         Path(
-            os.path.join(os.path.dirname(__file__), "templates", "email.html"),
+            os.path.join(os.path.dirname(__file__), "templates", "Base/email.html"),
         ).read_text(encoding="utf-8")
     )
 

@@ -6,7 +6,33 @@
     .hidden {
         display: none;
     }
+    .flex-container {
+        display: flex;
+    }
+    @media screen and (max-width: 767px){
+        .flex-container {
+            flex-direction: column;
+        }
+        .flex-container a {
+            width: 100%;
+        }
+        .card {
+            max-width: 100% !important;
+            margin-right: auto !important;
+            margin-left: auto !important;
+        }
+        .pagination {
+            margin: 10px auto;
+        }
+        .filters-container {
+            width: 100%;
+        }
+        .filters {
+            width: 100%;
+        }
+    }
 </style>
+<link rel="stylesheet" href="../../static/css/search.css">
 {% endblock %}
 
 {% block content %} 
@@ -60,7 +86,7 @@
             {% else %}
                 <p>{{ items.total }} results found by this query</p>
             {% endif %}
-            <div style="display: flex;">
+            <div class="flex-container">
             {% for item in items %}
                 {% if item.__tablename__ == 'product' %}
                 <a href="{{item.url}}" style="text-decoration: none; color: white;">
@@ -75,7 +101,7 @@
                             </h6>
                         </div>
                         <div class="mb-2"> 
-                            <p class="card-text">{{ item.price }}</p>
+                            <p class="card-text">{{ item.price }} {{item.price_currency}}</p>
                         </div>
                         <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
                             <a href="{{ url_for('admin_product_info_get', product_id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
@@ -118,7 +144,7 @@
                     </div>
                 {% endif %}
                 {% if item.__tablename__ == 'message' %}                    
-                    <div class="card  bg-dark mx-auto mb-4 col-md-3" style=" max-height: 50%; padding: 20px;">
+                    <div class="card bg-dark mx-auto mb-4 col-md-3" style=" max-height: 50%; padding: 20px;">
                         <div style="height: 65px; color: white;">
                             <div>
                                 <p>{{ item.sender_id }} {% if not item.read %}(unread){%endif%}</p>
@@ -145,7 +171,7 @@
                 {% endif %}
                 {% if (loop.index) % 3 == 0 %}
                     </div>
-                    <div style="display: flex;">
+                    <div class="flex-container">
                 {% endif %}
                 
             {% endfor %}

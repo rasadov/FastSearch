@@ -22,5 +22,4 @@ navbarToggle.addEventListener('click', () => {
 
 function close(element) {
     element.parentElement.style.display = 'none';
-    console.log('close');
 }

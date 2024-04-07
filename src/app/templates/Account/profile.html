@@ -1,8 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'Base/base.html' %}
 
 {% block title %}
 <title>Profile</title>
 <link rel="stylesheet" href="../../static/css/colors.css">
+<link rel="stylesheet" href="../../static/css/search.css">
 <style>
     .hidden {
         display: none;
@@ -14,6 +15,19 @@
         .flex-container a {
             width: 100%;
         }
+        .card {
+            margin-right: auto !important;
+            margin-left: auto !important;
+        }
+        .remove-btn {
+            width: 100%;
+            border-radius: 25px;
+            margin: 10px auto !important;
+        }
+        .cart-h1 {
+            margin-top: auto; 
+            margin-bottom: auto;
+        }
     }
 </style>
 <script type="text/javascript" src="../../static/js/image.js"></script>
@@ -21,7 +35,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card  shadow-lg">
+    <div class="card shadow-lg">
         <div class="card-body">
             <div class="text-center">
                 <div class="m-3">
@@ -65,7 +79,9 @@
 
 <div class="container mt-5 mb-5 ">
     <div class=" text-center">
-        <h1>Cart</h1>
+        <div style="display: flex; justify-content: center;">
+            <h3><h1 class="cart-h1">Cart</h1><p style="margin-top: auto; margin-bottom: auto; font-size: 25px !important; margin-left: 5px;">({{cart|length}} items)</p></h3>
+        </div>
     </div>
     <div id="cart">
         <div class="flex-container" style="display: flex">
@@ -87,7 +103,7 @@
                         <p class="card-text" style="padding: 10px;">Category: {{product.item_class}}</p>
                     </a>
                     <div style="margin-top: 10px;">
-                        <button type="button" class="btn btn-danger" id="{{product.id}}" onclick="track('{{ product.id }}')">Remove</button>
+                        <button type="button" class="btn btn-danger remove-btn" id="{{product.id}}" onclick="track('{{ product.id }}')">Remove</button>
                     </div>
                 </div>
             </div>

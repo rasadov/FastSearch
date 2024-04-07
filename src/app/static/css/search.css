@@ -75,6 +75,17 @@
         width: 100% !important;
         justify-content: center;
     }
+
+    .track-button {
+        width: 90% !important;
+        margin: 20px auto !important;
+        border-radius: 25px;
+    }
+    .tracked:hover {
+        background-color: #6c757d;
+        color: white;
+
+    }
 }
 
 footer {

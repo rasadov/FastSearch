@@ -68,7 +68,7 @@ xmr.onload = function() {
             <a href="${product.url}" style="text-decoration: none; color: black; ">
                 <img src="${product.image}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
                 <div class="card-body">
-                    <h1 class="card-title product-title">
+                    <h1 class="card-title product-title" style="height: 30%">
                         ${product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title}
                     </h1>
                     <p class="card-text" style="padding: 10px; ">Price: ${product.price} ${product.currency}</p>
@@ -86,7 +86,7 @@ xmr.onload = function() {
                     </div>
                     ` : `
                     <div style="margin-top: 10px;">
-                        <a href="/login" class="btn btn-light btn-sm">Login to track</a>
+                        <a href="/login" class="btn track-button btn-light btn-sm">Login to track</a>
                     </div>
                     ` }
                 </div>
@@ -260,7 +260,7 @@ xmr.onload = function() {
     }
 }
 
-if (urlParams.length > 0) {
+if (urlParams.size > 0) {
     xmr.send();
 }
 else {

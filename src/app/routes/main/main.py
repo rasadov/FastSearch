@@ -85,8 +85,6 @@ def products_api():
     """
 
     page = request.args.get("page", 1, type=int)
-    print(request.args)
-    print(page)
 
     products = Product.query
 
@@ -240,7 +238,6 @@ def contact_post():
     if name and message:
         users = User.query.filter(User.role=="admin" or User.role=="owner").all()
         for user in users:
-            print(user.email_address)
             send_email(
                 user.email_address,
                 f"""{name} ({current_user.email_address} | {number if number else 'No number'})

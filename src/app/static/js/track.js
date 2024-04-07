@@ -45,15 +45,11 @@ var trackButtons = document.querySelectorAll('.track-button');
                 // Request was successful
                 var response = JSON.parse(xhr.responseText);
                 if (response['status'] == 'success') {
-                    console.log('successfully');
-                    console.log(response['action']);
                     if (response['action'] == 'track') {
-                        console.log('track');
                         button.classList.remove('track');
                         button.classList.add('tracked');
                         button.innerHTML = 'Tracked';
                     } else {
-                        console.log('untrack');
                         button.classList.remove('tracked');
                         button.classList.add('track');
                         button.innerHTML = 'Track';

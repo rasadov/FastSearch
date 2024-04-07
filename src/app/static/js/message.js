@@ -13,9 +13,6 @@ xmr.onload = function() {
     }
 };
 
-
-console.log(message_id);
-
 var data = {
     'message_id': message_id
     };
