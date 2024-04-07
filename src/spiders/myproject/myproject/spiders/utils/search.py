@@ -3,7 +3,8 @@ This file contains the implementation of a Search class that provides
 methods for searching and retrieving links based on a query and method.
 
 The Search class has the following methods:
-- `google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)`: Searches Google using the Custom Search API.
+- `google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX)`: 
+Searches Google using the Custom Search API.
 - `search(query, method, total_pages=None)`: Returns links for the given query and method.
 
 The Search class does not have any attributes.

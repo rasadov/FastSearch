@@ -24,10 +24,12 @@ Functions:
 6. admin_user_delete_post(user_id): Deletes a user with the given ID.
 
 """
+from datetime import datetime
 
-# Import necessary modules and classes
-from app import (app, admin_required, render_template, request,
-                redirect, flash, db, current_user, datetime)
+from flask import request, render_template, redirect, flash
+from flask_login import current_user
+
+from app import app, db, admin_required 
 
 from app.models import User, Cart
 

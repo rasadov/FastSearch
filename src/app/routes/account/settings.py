@@ -13,14 +13,17 @@ The following routes are defined:
 - `/email/verify/<token>`: Handles the email verification functionality using the provided token.
 """
 
-from app import (app, login_required, render_template,
-                flash, redirect, url_for, login_user,
-                request, db, current_user,
-                datetime, SignatureExpired)
+from datetime import datetime
+
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, current_user
+from itsdangerous import SignatureExpired
+
+from app import app, login_required, db
 from app.models import User
-from app.__forms__ import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm,
+from app.utils.forms import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm,
                 DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
-from app.__email__sender__ import send_email
+from app.utils.email import send_email
 
 @app.get("/profile/password/change")
 @login_required

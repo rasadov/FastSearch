@@ -3,12 +3,13 @@ This module contains the User class, which represents a user in the application.
 """
 
 from datetime import datetime
+
 from flask_login import UserMixin
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped
+from itsdangerous import SignatureExpired
 
-
-from app import SignatureExpired, bcrypt, db, s
+from app import bcrypt, db, s
 
 class User(UserMixin, db.Model):
     """

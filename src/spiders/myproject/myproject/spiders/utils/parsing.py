@@ -15,8 +15,9 @@ import re
 from urllib.parse import urlparse
 from scrapy.http import Response
 
-from .db import save_product_to_database, deactivate_record
-from .converter import SignsConverter
+from spiders.myproject.myproject.spiders.utils.db import (save_product_to_database,
+                                                          deactivate_record)
+from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
 
 def scrape_amazon_item(response: Response, url: None | str = None):
@@ -167,7 +168,8 @@ def scrape_newegg_item(response: Response, url: None | str = None):
 
     Notes:
         - This function works only with `newegg.com`.
-        - The scraped data includes the title, price, rating, amount of ratings, producer, and class of the item.
+        - The scraped data includes the title, price, rating, amount of ratings, 
+        producer, and class of the item.
 
     Raises:
         Exception: If there is an error during the scraping process.
@@ -207,7 +209,9 @@ def scrape_newegg_item(response: Response, url: None | str = None):
             amount_of_ratings = 0
 
         try:
-            if parsed_data.get("offers").get("availability") in ["https://schema.org/InStock","http://schema.org/InStock"]:
+            if parsed_data.get("offers").get("availability") in [
+                "https://schema.org/InStock","http://schema.org/InStock"
+                ]:
                 availability = "In stock"
             else:
                 availability = "Out of stock"
@@ -265,7 +269,8 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
             amount_of_ratings = 0
 
         try:
-            availability = "In stock" if parsed_data.get("offers").get("availability") in ["https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock" 
+            availability = "In stock" if parsed_data.get("offers").get("availability") in [
+                "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock" 
         except Exception:
             availability = None
 
@@ -324,7 +329,8 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
         ).get()
 
         availability = response.css('link[property="availability"]::attr(href)').get()
-        availability = "In stock" if availability in ["https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock"
+        availability = "In stock" if availability in [
+            "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock"
 
         save_product_to_database(
             url, title, price, price_currency,
@@ -340,7 +346,8 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
 
 def parsing_method(response: Response):
     """
-    Parses the response object and determines the appropriate scraping method based on the URL domain.
+    Parses the response object and determines the appropriate scraping method
+    based on the URL domain.
 
     Args:
         response: The response object obtained from making a request.

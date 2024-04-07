@@ -2,9 +2,9 @@
 This file contains routes for admin inbox
 """
 
-from app import (db, admin_required,
-                render_template, request,
-                redirect, url_for, app, flash)
+from flask import request, render_template, redirect, url_for, flash
+
+from app import app, db, admin_required
 
 from app.models import Message, User
 

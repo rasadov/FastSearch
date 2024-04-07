@@ -47,9 +47,11 @@ Note:
 - Flash messages are used to provide feedback to the user after
   successful editing or deletion of a product.
 """
+from datetime import datetime
 
-from app import (app, admin_required, render_template,
-                request, redirect, flash, db, datetime)
+from flask import request, render_template, redirect, flash
+
+from app import app, db, admin_required
 from app.models import Product, PriceHistory
 
 

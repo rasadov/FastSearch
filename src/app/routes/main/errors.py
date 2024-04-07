@@ -11,7 +11,9 @@ The following error handling routes are defined:
 - 404 Not Found: Returns the rendered template for the `404.html` error page.
 """
 
-from app import app, render_template
+from flask import render_template
+
+from app import app
 
 
 @app.errorhandler(400)

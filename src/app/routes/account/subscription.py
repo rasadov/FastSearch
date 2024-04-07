@@ -10,8 +10,13 @@ Routes:
 - `/subcribe/<int:period>`: Subscribes the user for 1 month.
 """
 
+from datetime import datetime, timedelta
+
+from flask import redirect, url_for, flash, request
+from flask_login import current_user
+
 from app.models import User
-from app import app, db, current_user, redirect, url_for, flash, request, datetime, timedelta
+from app import app, db
 
 
 def subscribe(days: int = 0, user: User = current_user):

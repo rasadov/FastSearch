@@ -7,7 +7,7 @@ Functions:
 """
 
 from app.models import Product, Cart, User
-from app.__email__sender__ import send_email
+from app.utils.email import send_email
 
 def notify_price_change(url):
     """

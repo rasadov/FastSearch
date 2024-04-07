@@ -20,12 +20,11 @@ Functions:
 - `contact_post()`: Process the contact form submission and send an email to the admin users.
 """
 
-from flask import jsonify
+from flask import request, jsonify, flash, redirect, url_for, render_template
+from flask_login import current_user, login_user
 from app.models import Product, Cart, User, Message
-from app import (app, render_template, login_required,
-            request, redirect, current_user, DONATION_LINK,
-            flash, url_for, db, login_user)
-from app.__email__sender__ import send_email
+from app import app, db, login_required, DONATION_LINK
+from app.utils.email import send_email
 from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
 

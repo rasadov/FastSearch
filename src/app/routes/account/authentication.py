@@ -13,12 +13,15 @@ Profile pages:
 
 """
 
-from app import (app, db, session, oauth, render_template,
-                url_for, redirect, flash, login_user,
-                logout_user, login_required,
-                logout_required, datetime)
+from datetime import datetime
+
+from flask import session, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user
+
+
+from app import app, db, oauth, login_required, logout_required
 from app.models import User
-from app.__forms__ import RegisterForm, LoginForm
+from app.utils.forms import RegisterForm, LoginForm
 
 # login and registration routes
 

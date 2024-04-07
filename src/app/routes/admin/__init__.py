@@ -38,8 +38,11 @@ Note:
 """
 
 
+from flask import jsonify, render_template
+
+from app import app
+
 from app.models import User, Product
-from app import app, admin_required, render_template
 
 from app.routes.admin.analytics import *
 from app.routes.admin.scrape import *

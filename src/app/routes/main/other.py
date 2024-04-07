@@ -7,7 +7,11 @@ Routes:
 - `favicon.ico` : Serves the favicon.ico file for the website
 """
 
-from app import app, send_from_directory, os
+import os
+
+from flask import send_from_directory
+
+from app import app
 
 @app.get("/favicon.ico")
 def favicon():

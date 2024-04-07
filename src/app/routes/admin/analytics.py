@@ -33,6 +33,9 @@ Routes:
 - GET '/admin/analysis': Renders the admin analytics page.
 """
 
+import os
+
+from flask import jsonify, flash, render_template
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
     DateRange,
@@ -40,9 +43,8 @@ from google.analytics.data_v1beta.types import (
     Metric,
     RunReportRequest,
 )
-from flask import jsonify
 
-from app import app, admin_required, render_template, flash, os
+from app import app, admin_required
 
 def run_report(
         dimensions,

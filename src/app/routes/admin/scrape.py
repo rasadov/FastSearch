@@ -41,11 +41,12 @@ such as 'models', 'web', 'spiders', etc., which are not included in this code sn
 from urllib.parse import urlparse
 from multiprocessing import Process
 import atexit
-from apscheduler.schedulers.background import BackgroundScheduler
-from flask import jsonify
 
-from app import (app, admin_required, render_template,
-                request, current_user)
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask import request, jsonify, render_template
+from flask_login import current_user
+
+from app import app, admin_required
 from app.models import Product
 from spiders import MySpider
 

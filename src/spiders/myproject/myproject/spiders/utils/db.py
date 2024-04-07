@@ -1,13 +1,14 @@
 """
 This module contains functions for interacting with the database.
 
-The functions in this module are used to save products to the database or update existing products if they already exist.
+The functions in this module are used to save products to the database or 
+update existing products if they already exist.
 """
 
 import os
 import psycopg2
 
-from app.__notifications__ import notify_price_change
+from app.utils.notifications import notify_price_change
 
 
 DB_USER = os.environ.get("DB_USER")
@@ -41,10 +42,13 @@ def save_product_to_database(
     - item_class (str, optional): The class/category of the product. Defaults to None.
     - producer (str, optional): The producer/manufacturer of the product. Defaults to None.
 
-    If the product already exists in the database, the function checks for changes in price, rating, and amount of ratings.
-    If the price has changed, it updates the data in the `product` table and saves the price change in the `price_history` table.
+    If the product already exists in the database, the function checks for changes in 
+    price, rating, and amount of ratings.
+    If the price has changed, it updates the data in the `product` table 
+    and saves the price change in the `price_history` table.
     If the rating has changed, it updates the record in the `product` table.
-    If the product does not exist in the database, it adds a new record to the `product` table and starts tracking the price in the `price_history` table.
+    If the product does not exist in the database, it adds a new record to the `product` table
+    and starts tracking the price in the `price_history` table.
     """
     conn = psycopg2.connect(
         database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
@@ -104,7 +108,8 @@ def save_product_to_database(
                     amount_of_ratings = %s, rating = %s, image_url = %s, availability = %s
                 WHERE url = %s;
             """,
-                (price, price_currency, title, item_class, producer, amount_of_ratings, rating, image_url,availability, url),
+                (price, price_currency, title, item_class, producer,
+                 amount_of_ratings, rating, image_url,availability, url),
             )
     else:
         # This product does not exist, insert a new record into the database
@@ -115,7 +120,8 @@ def save_product_to_database(
                 producer, amount_of_ratings, rating, image_url, availability)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                 """,
-                (url, title, price, price_currency, item_class, producer, amount_of_ratings, rating, image_url, availability),
+                (url, title, price, price_currency, item_class, producer,
+                 amount_of_ratings, rating, image_url, availability),
             )
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -147,7 +153,8 @@ def deactivate_record(url: str):
     Parameters:
     - url (str): The URL of the product to deactivate.
 
-    This function deactivates a record in the `product` table by setting the `active` column to False.
+    This function deactivates a record in the `product` table by 
+    setting the `active` column to False.
     """
     conn = psycopg2.connect(
         database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT

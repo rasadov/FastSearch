@@ -6,7 +6,7 @@ import re
 from sqlalchemy import Index, Computed, func
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app import db, request
+from app import db
 from app.models.pricehistory import PriceHistory
 from app.models.ts_vector import TSVector
 

@@ -10,36 +10,58 @@ rendering templates, and managing user authentication.
 
 The following libraries are imported in this file:
 ----------------
-- Flask: The main Flask module for creating the web application.
-- flash: A module for displaying flash messages to the user.
-- redirect: A function for redirecting the user to a different URL.
-- render_template: A function for rendering HTML templates.
-- request: A module for handling HTTP requests.
-- url_for: A function for generating URLs for specific routes.
-- send_from_directory: A function for sending files from a directory.
-- session: A module for managing user sessions.
+- os: A module for interacting with the operating system.
+- datetime: A module for working with dates and times.
+- wraps: A function for creating well-behaved decorators.
 
+- dotenv: A module for loading environment variables from a .env file.
+- Flask: The main Flask module for creating the web application.
 - Flask_Bcrypt: A module for encrypting and verifying passwords using bcrypt.
 - Flask_Login: A module for managing user authentication and sessions.
 - Flask_SQLAlchemy: A module for integrating SQLAlchemy, 
 an Object-Relational Mapping (ORM) library, with Flask.
 - OAuth: A module for integrating OAuth authentication with Flask.
+- authlib: A module for integrating OAuth with Flask.
 - URLSafeTimedSerializer: A module for generating and verifying URL-safe timed signatures.
+- itsdangerous: A module for generating and verifying cryptographically signed tokens.
 
-- dotenv: A module for loading environment variables from a .env file.
-- os: A module for interacting with the operating system.
-- datetime: A module for working with dates and times.
-- timedelta: A module for representing time intervals.
-- randint: A function for generating random integers.
-- sys: A module for interacting with the Python interpreter.
-- wraps: A function for creating well-behaved decorators.
-- json: A module for working with JSON data.
+
 
 The web application uses a PostgreSQL database for storing user data. 
 The database connection details are read from environment variables using the dotenv module.
 
 The web application also integrates with Google OAuth for user authentication. 
 The client ID and client secret are read from environment variables.
+
+The Bcrypt module is used for encrypting and verifying user passwords.
+
+The LoginManager module is used for managing user authentication and sessions.
+
+The SQLAlchemy module is used for integrating SQLAlchemy with Flask.
+
+The URLSafeTimedSerializer module is used for generating and verifying URL-safe timed signatures.
+
+The web application defines several variables for configuration:
+----------------
+- app: The main Flask application.
+- SECRET_KEY: A secret key used for encrypting session data.
+- SQLALCHEMY_DATABASE_URI: The URI for connecting to the PostgreSQL database.
+- db: The SQLAlchemy database instance.
+- oauth: The OAuth instance for integrating OAuth with Flask.
+- google: The OAuth provider for Google authentication.
+- microsoft: The OAuth provider for Microsoft authentication.
+- bcrypt: The Bcrypt instance for encrypting and verifying passwords.
+- login_manager: The LoginManager instance for managing user authentication and sessions.
+- s: The URLSafeTimedSerializer instance for generating and verifying URL-safe timed signatures.
+- DB_USER: The username for connecting to the PostgreSQL database.
+- DB_NAME: The name of the PostgreSQL database.
+- DB_PASSWORD: The password for connecting to the PostgreSQL database.
+- DB_HOST: The host address of the PostgreSQL database.
+- DB_PORT: The port number of the PostgreSQL database.
+- SERVER_STARTED_ON: The date and time when the server was started.
+- OWNER_EMAIL: The email address of the owner of the web application.
+- OWNER_USERNAME: The username of the owner of the web application.
+- DONATION_LINK: A link to donate to the web application.
 
 The web application defines several decorators for handling user authentication and authorization:
 ----------------
@@ -58,20 +80,17 @@ Overall, this file serves as the central configuration file for the web applicat
 importing all necessary modules and defining important variables and decorators.
 """
 
-import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import wraps
-from random import randint
+
 import dotenv
 from authlib.integrations.flask_client import OAuth
-from flask import (Flask, flash, redirect, render_template, request,
-                   send_from_directory, session, url_for)
+from flask import Flask, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer
 
 dotenv.load_dotenv('envs\\flask\\.env')
 dotenv.load_dotenv('envs\\postgresql\\.env')

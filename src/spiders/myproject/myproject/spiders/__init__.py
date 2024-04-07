@@ -2,7 +2,9 @@
 This module contains the spider class for web scraping.
 ~~~~~~~~~~~~~~~~~~~~~
 
-The spider class, MySpider, is responsible for receiving and processing requests to scrape data from web pages. It utilizes the Scrapy framework to perform the scraping operation.
+The spider class, MySpider, is responsible for receiving and processing requests
+to scrape data from web pages.
+It utilizes the Scrapy framework to perform the scraping operation.
 
 Example usage:
     spider = MySpider(query='scrapy', method='url', pages=5, results_per_page=10)
@@ -41,7 +43,8 @@ class MySpider(scrapy.Spider):
     Spider class for web scraping.
     ~~~~~~~~~~~~~~~~~~~~~
 
-    This class receives and processes requests to scrape data from web pages. It inherits from the Scrapy Spider class.
+    This class receives and processes requests to scrape data from web pages.
+    It inherits from the Scrapy Spider class.
 
     Attributes:
     ----------
@@ -89,7 +92,8 @@ class MySpider(scrapy.Spider):
         Parses the response and extracts data from the web page.
 
         Args:
-            response (scrapy.http.Response): The response object containing the HTML content of the page.
+            response (scrapy.http.Response): The response object containing the
+            HTML content of the page.
 
         """
         try:
