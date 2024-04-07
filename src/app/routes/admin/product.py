@@ -108,7 +108,7 @@ def admin_products_search_get():
         total_pages=total_pages,
         variables=variables,
         function="admin_products_search_get",
-        page=page
+        page=page,
     )
 
 

@@ -46,7 +46,6 @@ def save_product_to_database(
     If the rating has changed, it updates the record in the `product` table.
     If the product does not exist in the database, it adds a new record to the `product` table and starts tracking the price in the `price_history` table.
     """
-
     conn = psycopg2.connect(
         database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
     )
@@ -136,6 +135,26 @@ def save_product_to_database(
             (product_id, price, price_currency),
         )
 
+
+    conn.commit()
+    curr.close()
+    conn.close()
+
+def deactivate_record(url: str):
+    """
+    Deactivates a record in the database.
+
+    Parameters:
+    - url (str): The URL of the product to deactivate.
+
+    This function deactivates a record in the `product` table by setting the `active` column to False.
+    """
+    conn = psycopg2.connect(
+        database=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
+    )
+    curr = conn.cursor()
+
+    curr.execute(f"""UPDATE product SET availability = 'Out of stock' WHERE url = '{url}';""")
 
     conn.commit()
     curr.close()

@@ -49,14 +49,17 @@ __all__ = ["User", "Product", "PriceHistory", "Cart", "Message"]
 
 # Code below used to create the database tables
 
-# from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
 
-# with app.app_context():
-#     db.create_all()
-#     if not User.query.filter_by(email_address=OWNER_EMAIL).count():
-#         print("Creating owner account...")
-#         print(f"Email: {OWNER_EMAIL}")
-#         print(f"Username: {OWNER_USERNAME}")
-#         owner = User(email_address=OWNER_EMAIL, username=OWNER_USERNAME, role="owner", confirmed_on=SERVER_STARTED_ON)
-#         db.session.add(owner)
-#     db.session.commit()
+
+from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
+
+with app.app_context():
+    db.create_all()
+    if not User.query.filter_by(email_address=OWNER_EMAIL).count():
+        print("Creating owner account...")
+        print(f"Email: {OWNER_EMAIL}")
+        print(f"Username: {OWNER_USERNAME}")
+        owner = User(email_address=OWNER_EMAIL, username=OWNER_USERNAME, role="owner", confirmed_on=SERVER_STARTED_ON)
+        db.session.add(owner)
+        
+    db.session.commit()

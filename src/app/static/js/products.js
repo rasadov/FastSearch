@@ -265,11 +265,8 @@ if (urlParams.size > 0) {
 }
 else {
     document.getElementById('products').innerHTML = `
-    <div style="text-align:center; margin: 5% auto;">
-        <h3 style="text-align:center; max-width:50%; margin: auto">Please use the search bar to find products</h3>
-    </div>
-    <div style="text-align:center; margin: 5% auto;">
-        <h3 style="text-align:center; max-width:50%; margin: auto">Your contribution to the development and improvement of our project will be highly appreciated!</h3> 
+    <div class="donate-div">
+        <h3>Your contribution to the development and improvement of our project will be highly appreciated!</h3> 
         <a href="${donation_link}">
             <div class="btn btn-primary" style="margin-top: 20px;">Buy me a coffee</div>      
         </a>

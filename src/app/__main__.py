@@ -22,22 +22,19 @@ The routes are divided into different files based on their functionality.:
     - '/admin/scrape.py': Contains the routes related to the scraping functionality.
 
     Main:
-    - 'main.py': Contains the main routes of the application.
-    - 'error.py': Contains the error handling routes.
-    - 'other.py': Contains other routes of the application.
+    - '/main/main.py': Contains the main routes of the application.
+    - '/main/error.py': Contains the error handling routes.
+    - '/main/other.py': Contains other routes of the application.
 
 
 
 Database Models are defined in the folder `models`.
 The models are divided into different files based on their functionality.:
     - '/models/__init__.py': Imports all the models.
-
     - '/models/user.py': Contains the user model.
     - '/models/product.py': Contains the product model.
     - '/models/message.py': Contains the message model.
     - '/models/cart.py': Contains the cart model.
-
-
 
 The web application is initialized in the `__init__.py` file.
 
@@ -46,10 +43,7 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
-- Test the application.
-- Bugs:
-  - In products card view, if the title is less than 100 characters, the card is not displayed properly.
-- Test scraping functionality in all websites.
+- Test settings for account.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:

@@ -54,7 +54,7 @@ class Product(db.Model):
     url: Mapped[str] = mapped_column(nullable=False)
     title: Mapped[str] = mapped_column(nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
-    price_currency: Mapped[str] = mapped_column(default="USD")
+    price_currency: Mapped[str] = mapped_column(default="USD", nullable=False)
     item_class: Mapped[str] = mapped_column(default=None, nullable=True)
     producer: Mapped[str] = mapped_column(default=None, nullable=True)
     amount_of_ratings: Mapped[int] = mapped_column(default=None, nullable=True)

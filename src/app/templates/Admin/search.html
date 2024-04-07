@@ -9,6 +9,11 @@
     .flex-container {
         display: flex;
     }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+    }
     @media screen and (max-width: 767px){
         .flex-container {
             flex-direction: column;
@@ -30,9 +35,19 @@
         .filters {
             width: 100%;
         }
+        .card-footer {
+            flex-direction: column;
+        }
+        .card-footer a {
+            width: 100%;
+            margin: 10px auto;
+        }
     }
+
+
 </style>
 <link rel="stylesheet" href="../../static/css/search.css">
+<script type="text/javascript" src="../../static/js/image.js"></script>
 {% endblock %}
 
 {% block content %} 
@@ -91,8 +106,9 @@
                 {% if item.__tablename__ == 'product' %}
                 <a href="{{item.url}}" style="text-decoration: none; color: white;">
                     <div class="card bg-dark mx-auto mb-4" style="max-width: 30%; max-height: 50%; padding: 20px;">
-                        <div style="height: 65px;">
-                            <h6 class="card-title">
+                        <img src="{{ item.get_image() }}" class="card-img-top" alt="..." onload="scaleImage(this)" style="margin: 20px auto;">
+                        <div>
+                            <h6 class="card-title" style="height: 10% !important;">
                                 {% if item.title|length > 100 %}
                                 {{ item.title[:100] }}...
                                 {% else %}
@@ -103,7 +119,7 @@
                         <div class="mb-2"> 
                             <p class="card-text">{{ item.price }} {{item.price_currency}}</p>
                         </div>
-                        <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
+                        <div class="card-footer p-3">
                             <a href="{{ url_for('admin_product_info_get', product_id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
                                 Info
                             </a>
@@ -130,7 +146,7 @@
                         <div class="mb-2 p-3" style="color: white;"> 
                             <p class="card-text">{{ item.email_address }}</p>
                         </div>
-                        <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
+                        <div class="card-footer p-3">
                             <a href="{{ url_for('admin_user_info_get', user_id=item.id )}}" class="btn btn-primary" style="text-decoration: none; color: white;">
                                 Info
                             </a>
@@ -159,7 +175,7 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="card-footer p-3" style="display: flex; justify-content: space-between;">
+                        <div class="card-footer p-3">
                             <a href="/admin/message/{{item.id}}" class="btn btn-primary" style="text-decoration: none; color: white;">
                                 Info
                             </a>
@@ -182,7 +198,7 @@
     </div>
     <div style="text-align: center;">
         <div class="pagination mb-5">
-            <ul class="pagination justify-content-center mx-auto">
+            <ul class="pagination flex-container justify-content-center mx-auto">
                 {% if items.has_prev %}
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for(function, page=items.prev_num, **variables) }}">Previous</a>

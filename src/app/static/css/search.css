@@ -11,8 +11,16 @@
     width: 100%;
 }
 
-.pag-loop {
-    display: none;
+
+.donate-div {
+    text-align:center;
+    margin: 5% auto;
+}
+
+.donate-div h3 {
+    text-align: center;
+    max-width: 50%;
+    margin: auto
 }
 
 .track {
@@ -85,6 +93,16 @@
         background-color: #6c757d;
         color: white;
 
+    }
+
+    .donate-div h3 {
+        max-width: 90% !important;
+        margin: 20px auto !important;
+    }
+
+    .donate-div div.btn {
+        width: 90% !important;
+        margin: 20px auto !important;
     }
 }
 
