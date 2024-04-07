@@ -83,10 +83,6 @@ def products_api():
     Returns:
     - JSON response with the filtered products and pagination information.
     """
-    if len(request.args) < 2:
-        print("No query parameters")
-        return jsonify({"content": "message", "donation_link": DONATION_LINK})
-
 
     page = request.args.get("page", 1, type=int)
     print(request.args)
@@ -109,7 +105,6 @@ def products_api():
     total_pages = products.pages
     return jsonify(
         {
-            "content": "products",
             "products": [
                 {
                     "id": product.id,
@@ -155,7 +150,7 @@ def search_get():
         - Rendered template for the search page with filtered products.
     """
     return render_template(
-        "Main/search.html", authenticated=current_user.is_authenticated
+        "Main/search.html", authenticated=current_user.is_authenticated, donation_link=DONATION_LINK
     )
 
 @app.post('/cart/add')

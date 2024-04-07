@@ -1,3 +1,9 @@
+@media (max-width: 767px) {
+    div.input-group {
+        width: 90% !important;
+    }
+}
+
 .buy-sections {
     display: inline-flex;;
     width: 90%;

@@ -31,7 +31,7 @@
                 </div>
                 <div class="row" style="margin: 10px auto;">
                     <a href="/search" class="clear-filters">
-                        <button type="menu" class="btn btn-primary">
+                        <button type="menu" class="btn btn-primary" onclick="">
                             Clear filters
                         </button>
                     </a>
@@ -55,6 +55,7 @@
 
 
 {% block scripts %}
+<script type="text/javascript" src="../../static/js/form.js"></script>
 <script type="text/javascript">
     var is_authenticated = "{{ current_user.is_authenticated }}";
     if (is_authenticated == 'True') {
@@ -62,6 +63,7 @@
     } else {
         is_authenticated = false;
     }
+    var donation_link = "{{ donation_link }}";
 </script>
 
 <script type="text/javascript" src="../../static/js/image.js"></script>
