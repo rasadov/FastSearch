@@ -47,9 +47,7 @@ Base = declarative_base()
 
 __all__ = ["User", "Product", "PriceHistory", "Cart", "Message"]
 
-# Code below used to create the database tables
-
-
+# Code below used to create the database tables and the owner account
 
 from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
 

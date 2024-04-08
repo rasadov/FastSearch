@@ -36,8 +36,8 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    if current_user.is_anonymous:
-        login_user(User.query.get(1))
+    # if current_user.is_anonymous:
+    #     login_user(User.query.get(1))
     return render_template("Main/index.html")
 
 
@@ -60,8 +60,8 @@ def convert(key, val):
         return float(val)
     return val
 
-@app.get("/api/products")
-def products_api():
+@app.get("/api/search")
+def search_api():
     """
     Get the search results based on the query parameters.
 

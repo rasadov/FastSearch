@@ -1,6 +1,4 @@
 // This file is used to handle the profile page
-document.querySelector('footer').remove()
-
 if (cart.children.length === 0) {
     document.querySelector('#empty').classList.remove('hidden');
 }

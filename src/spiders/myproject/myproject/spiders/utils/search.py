@@ -124,5 +124,3 @@ class Search():
 
         else:
             raise ValueError(f"Invalid method: {method}")
-    
-        

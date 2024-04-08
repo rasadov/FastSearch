@@ -50,7 +50,6 @@ from app import app, admin_required
 from app.models import Product
 from spiders import MySpider
 
-
 # Manual scraping
 
 def run_spider(url, method=None, pages=None, results_per_page=None):
@@ -124,64 +123,69 @@ def admin_scrape_post():
             }
         )
 
-    data = request.get_json()
+    data: dict = request.get_json()
 
     method = data.get("source")
 
     url = data.get("query")
+    pages = data.get("pages")
+    results_per_page = data.get("results_per_page")
     if url:
         if method == "custom":
-            parsed_url = urlparse(url)
-            url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-
-            product = Product.query.filter_by(url=url)
-            if product.count():
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "Product already exists"
-                    }
-                )
-
-            p = Process(
-                target=run_spider,
-                args=(url, "url")
-                )
-            p.start()
-            p.join()
-
-            product = Product.query.filter_by(url=url)
-            if product.count():
-                product = product.first()
-                return jsonify(
-                    {
-                        "status": "success",
-                        "message": "Product added successfully"
-                    }
-                )
+            scrape_url(url)
 
         if method == "google":
-            pages = data.get("pages")
-            results_per_page = data.get("results_per_page")
-
-            p = Process(
-                target=run_spider,
-                args=(url, "google", int(pages), int(results_per_page))
-            )
-            p.start()
-            p.join()
-
-            return jsonify(
-                {
-                    "status": "success",
-                    "message": "Products added to database successfully",
-                }
-            )
+            scrape_google_query(url, pages, results_per_page)
 
     return jsonify(
         {
             "status": "error",
             "message": "There was some error, make sure you have entered correct parameters."
+        }
+    )
+
+def scrape_url(url: str):
+    parsed_url = urlparse(url)
+    url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+    product = Product.query.filter_by(url=url)
+    if product.count():
+        return jsonify(
+            {
+                "status": "error",
+                "message": "Product already exists"
+            }
+        )
+
+    p = Process(
+        target=run_spider,
+        args=(url, "url")
+        )
+    p.start()
+    p.join()
+
+    product = Product.query.filter_by(url=url)
+    if product.count():
+        product = product.first()
+        return jsonify(
+            {
+                "status": "success",
+                "message": "Product added successfully"
+            }
+        )
+
+def scrape_google_query(query: str, pages: int, results_per_page: int):
+    p = Process(
+        target=run_spider,
+        args=(query, "google", int(pages), int(results_per_page))
+    )
+    p.start()
+    p.join()
+
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Products added to database successfully",
         }
     )
 

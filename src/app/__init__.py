@@ -26,7 +26,6 @@ an Object-Relational Mapping (ORM) library, with Flask.
 - itsdangerous: A module for generating and verifying cryptographically signed tokens.
 
 
-
 The web application uses a PostgreSQL database for storing user data. 
 The database connection details are read from environment variables using the dotenv module.
 

@@ -51,7 +51,7 @@ var newQueryString = Object.keys(data.filters)
 
 var xmr = new XMLHttpRequest();
 
-xmr.open('GET', '/api/products?' + newQueryString, true);
+xmr.open('GET', '/api/search?' + newQueryString, true);
 xmr.setRequestHeader('Content-Type', 'application/json');
 
 xmr.onload = function() {

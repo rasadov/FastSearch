@@ -43,7 +43,6 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
-- Test settings for account.
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:

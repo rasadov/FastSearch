@@ -84,7 +84,9 @@ def run_report(
             yield (row.dimension_values[0].value, row.metric_values[0].value)
 
     except IndexError as e:
-        flash(f"An error occurred: {e}")
+        app.logger.error(f"No data available: {e}")
+    except Exception as e:
+        app.logger.error(f"An error occurred: {e}")
 
 def report_on_user_countries():
     """
@@ -142,8 +144,7 @@ def admin_analytics_country_sessions():
     Returns:
         JSON response containing the data for country sessions.
     """
-    country_sessions = list(report_on_user_countries())
-    return jsonify(country_sessions)
+    return jsonify(list(report_on_user_countries()))
 
 
 @app.get("/admin/analytics/page_views")
@@ -155,8 +156,11 @@ def admin_analytics_page_views():
     Returns:
         JSON response containing the data for page views.
     """
-    page_views = list(report_on_page_views())[:15]
-    return jsonify(page_views)
+    report = list(report_on_page_views())
+    try:
+        return jsonify(report[:15])
+    except IndexError:
+        return jsonify(report)
 
 
 @app.get("/admin/analytics/user_devices")
@@ -168,8 +172,7 @@ def admin_analytics_user_devices():
     Returns:
         JSON response containing the data for user devices.
     """
-    user_devices = list(report_on_user_devices())
-    return jsonify(user_devices)
+    return jsonify(list(report_on_user_devices()))
 
 
 @app.get("/admin/analytics/active_users")
@@ -181,8 +184,11 @@ def admin_analytics_active_users():
     Returns:
         JSON response containing the data for active users.
     """
-    active_users = list(report_on_active_users())[:10]
-    return jsonify(active_users)
+    active_users = list(report_on_active_users())
+    try:
+        return jsonify(active_users[:10])
+    except IndexError:
+        return jsonify(active_users)
 
 @app.get("/admin/analysis")
 @admin_required

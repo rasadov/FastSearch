@@ -50,7 +50,7 @@ class Message(db.Model):
         """
         self.read = True
 
-    def items(self):
+    def items(self) -> dict:
         # Method implementation goes here
         """
         Returns a list of all messages.
@@ -64,7 +64,7 @@ class Message(db.Model):
             "sender_id": self.sender_id,
             "recipient_id": self.recipient_id,
             "read": self.read
-        }.items()
+        }
 
     def __repr__(self):
         # Method implementation goes here

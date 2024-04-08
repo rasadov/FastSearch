@@ -20,7 +20,7 @@ class SignsConverter:
         if currency_sign in SignsConverter.currency:
             return SignsConverter.currency[currency_sign]
         return currency_sign
-    
+
     @staticmethod
     def convert_to_currency_sign(country_code: str):
         for sign, code in SignsConverter.currency.items():

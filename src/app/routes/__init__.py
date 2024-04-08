@@ -7,4 +7,3 @@ from app.routes.main import *
 from app.routes.account import *
 
 from app.routes.admin import *
-

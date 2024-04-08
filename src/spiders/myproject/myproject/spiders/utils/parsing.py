@@ -60,14 +60,14 @@ def scrape_amazon_item(response: Response, url: None | str = None):
                 .replace(",", "")
                 .split(" ")[0]
             )
-        except Exception:
+        except (AttributeError, IndexError, ValueError):
             rating = None
             amount_of_ratings = 0
         try:
             producer = (
                 response.css("tr.po-brand span.po-break-word::text").get().strip()
             )
-        except Exception:
+        except AttributeError:
             producer = None
         try:
             item_class = (
@@ -76,7 +76,7 @@ def scrape_amazon_item(response: Response, url: None | str = None):
                 .get()
                 .strip()
             )
-        except Exception:
+        except (IndexError, AttributeError):
             item_class = None
 
         availability = "In stock"
@@ -87,7 +87,7 @@ def scrape_amazon_item(response: Response, url: None | str = None):
                 item_class, producer, image, availability
             )
 
-    except Exception as e:
+    except (AttributeError, ValueError) as e:
         print(f"Error: {e}")
         deactivate_record(url)
 
@@ -122,12 +122,12 @@ def scrape_ebay_item(response: Response, url: str):
         try:
             image = parsed_data.get('mainEntity', {}).get('offers', {}).get(
                 'itemOffered', [{}])[0].get('image')
-        except Exception:
+        except (IndexError, AttributeError):
             image = None
         try:
             producer = parsed_data.get('mainEntity', {}).get('offers', {}).get(
                 'itemOffered', [{}])[0].get('brand')
-        except Exception:
+        except (IndexError, AttributeError):
             producer = None
         
         item_class = parsed_data.get("category")
@@ -138,14 +138,14 @@ def scrape_ebay_item(response: Response, url: str):
                 'itemOffered', [{}])[0].get('aggregateRating', {})
             rating = float(rating_info.get('ratingValue'))
             amount_of_ratings = int(rating_info.get('reviewCount'))
-        except Exception:
+        except (ValueError, AttributeError, IndexError):
             rating = None
             amount_of_ratings = 0
 
         try:
             availability = "In stock" if "InStock" in parsed_data.get(
                 'mainEntity', {}).get('offers', {}).get('availability', "") else "Out of stock"
-        except Exception:
+        except AttributeError:
             availability = None
 
         save_product_to_database(
@@ -153,7 +153,7 @@ def scrape_ebay_item(response: Response, url: str):
             rating, amount_of_ratings,
             item_class, producer, image, availability
         )
-    except Exception as e:
+    except (ValueError, AttributeError, IndexError) as e:
         print(f"Error: {e}")
         deactivate_record(url)
 
@@ -181,7 +181,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
         try:
             item_elements = response.css("ol.breadcrumb li a::text").getall()
             item_class = item_elements[-2] if len(item_elements) >= 2 else None
-        except Exception:
+        except IndexError:
             item_class = None
         script_content = response.css(
             'script[type="application/ld+json"]::text'
@@ -204,7 +204,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
             amount_of_ratings = int(
                 parsed_data.get("aggregateRating").get("reviewCount")
             )
-        except Exception:
+        except (ValueError, AttributeError):
             rating = None
             amount_of_ratings = 0
 
@@ -215,7 +215,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
                 availability = "In stock"
             else:
                 availability = "Out of stock"
-        except Exception:
+        except AttributeError:
             availability = None        
 
         save_product_to_database(
@@ -223,7 +223,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
             rating, amount_of_ratings,
             item_class, producer, image, availability
         )
-    except Exception as e:
+    except (AttributeError, ValueError) as e:
         print(f"Error: {e}")
         deactivate_record(url)
 
@@ -260,18 +260,18 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
 
         try:
             rating = parsed_data.get("aggregateRating").get("ratingValue")
-        except Exception:
+        except AttributeError:
             rating = None
 
         try:
             amount_of_ratings = parsed_data.get("aggregateRating").get("reviewCount")
-        except Exception:
+        except AttributeError:
             amount_of_ratings = 0
 
         try:
             availability = "In stock" if parsed_data.get("offers").get("availability") in [
                 "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock" 
-        except Exception:
+        except AttributeError:
             availability = None
 
         save_product_to_database(
@@ -279,7 +279,7 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
             rating, amount_of_ratings,
             item_class, producer, image, availability
         )
-    except Exception as e:
+    except (AttributeError, IndexError, ValueError) as e:
         print(f"Error: {e}", "danger")
         deactivate_record(url)
 
@@ -337,7 +337,7 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
             rating, amount_of_ratings,
             item_class, producer, image, availability
         )
-    except Exception as e:
+    except (AttributeError, ValueError) as e:
         print(f"Error: {e}", "danger")
         deactivate_record(url)
 

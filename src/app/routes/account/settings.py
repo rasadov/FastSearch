@@ -18,6 +18,7 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user
 from itsdangerous import SignatureExpired
+from sqlalchemy import or_
 
 from app import app, login_required, db
 from app.models import User
@@ -65,7 +66,7 @@ def change_password_post():
                 category="danger",
             )
             return redirect("/profile/password/change")
-        if current_user.check_password_correction(
+        if current_user.chech_password_correction(
             attempted_password=form.old_password.data
         ):
             current_user.password = form.password.data
@@ -188,45 +189,6 @@ def change_username_post():
             return redirect("/profile")
     return redirect("/profile/username/change")
 
-@app.get("/password/reset/<token>")
-def reset_password_get(token):
-    """
-    Renders the reset password page.
-    """
-    form = ResetPasswordForm()
-    user = User.verify_reset_token(token)
-    if not user:
-        flash("Token is invalid or has expired", "warning")
-        return redirect(url_for("forgot_password_get"))
-
-    return render_template("Base/form_base.html", h1='Reset Password' ,form=form)
-
-
-@app.post("/password/reset/<token>")
-def reset_password_post(token):
-    """
-    Handles the reset password form submission.
-
-    Validates the reset password form data.
-    If the form is valid, the user's password is updated in the database and
-    a success message is flashed.
-    If there are form validation errors, the error messages are flashed.
-
-    Returns:
-        If the form is submitted successfully, redirects to the login page.
-        If there are form validation errors, renders the reset password page
-        with the error messages.
-    """
-    form = ResetPasswordForm()
-    user = User.verify_reset_token(token)
-    if form.validate_on_submit():
-        user.password = form.password.data
-        db.session.commit()
-        flash("Your password has been updated!", "success")
-        return redirect(url_for("login_get"))
-    return redirect(url_for("reset_password_get", token=token))
-
-
 @app.get("/verification")
 @login_required
 def ask_of_verification():
@@ -346,7 +308,9 @@ def forgot_password_post():
     """
     form = ForgotPasswordForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email_address=form.email_address.data).first()
+        user: User = User.query.filter(or_(
+            User.email_address == form.input.data,
+            User.username == form.input.data)).first()
         if user:
             token = user.get_reset_token()
             url = f"127.0.0.1:5000/password/reset/{token}"
@@ -359,7 +323,48 @@ def forgot_password_post():
             flash("Check your email for instructions to reset your password", "info")
         else:
             flash("Email not found", "warning")
+    return redirect(url_for("forgot_password_get"))
 
+@app.get("/password/reset/<token>")
+def reset_password_get(token):
+    """
+    Renders the reset password page.
+    """
+    form = ResetPasswordForm()
+    user = User.verify_reset_token(token)
+    if not user:
+        flash("Token is invalid or has expired", "warning")
+        return redirect(url_for("forgot_password_get"))
+
+    return render_template("Base/form_base.html", h1='Reset Password' ,form=form)
+
+
+@app.post("/password/reset/<token>")
+def reset_password_post(token):
+    """
+    Handles the reset password form submission.
+
+    Validates the reset password form data.
+    If the form is valid, the user's password is updated in the database and
+    a success message is flashed.
+    If there are form validation errors, the error messages are flashed.
+
+    Returns:
+        If the form is submitted successfully, redirects to the login page.
+        If there are form validation errors, renders the reset password page
+        with the error messages.
+    """
+    form = ResetPasswordForm()
+    user: User = User.verify_reset_token(token)
+    if form.validate_on_submit():
+        if user.chech_password_correction(form.password.data):
+            flash("New password can't be the same as the old password", "danger")
+            return redirect(url_for("reset_password_get", token=token))
+        user.password = form.password.data
+        db.session.commit()
+        flash("Your password has been updated!", "success")
+        return redirect(url_for("login_get"))
+    return redirect(url_for("reset_password_get", token=token))
 
 @app.get("/profile/delete")
 @login_required

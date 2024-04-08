@@ -34,9 +34,3 @@ background: linear-gradient(to 45deg, rgba(213, 15, 61, 0.6), rgba(13, 17, 198, 
 .border-frame {
     border: 2px solid #333;
 }
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}

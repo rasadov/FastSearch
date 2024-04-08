@@ -164,12 +164,12 @@ class ForgotPasswordForm(FlaskForm):
     Form for submitting the user's email address to reset the password.
 
     Fields:
-    - email_address: EmailField for entering the user's email address.
+    - input: StringField for entering the user's email address or username.
     - submit: SubmitField for submitting the form.
     """
 
-    email_address = EmailField(
-        label="Email Address", validators=[DataRequired(), Email()]
+    input = StringField(
+        label="Email Address or Username", validators=[DataRequired()]
     )
     submit = SubmitField(label="Submit")
 

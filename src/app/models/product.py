@@ -11,7 +11,6 @@ from app.models.pricehistory import PriceHistory
 from app.models.ts_vector import TSVector
 
 
-
 class Product(db.Model):
     """
     Represents a product in the application.
@@ -95,7 +94,7 @@ class Product(db.Model):
         """
         return re.search(r"(https?://)?(www\.)?([^/]+)", self.url).group(3)
 
-    def items(self):
+    def items(self) -> dict:
         """
         Returns a dictionary of the product's attributes.
 
@@ -112,7 +111,7 @@ class Product(db.Model):
             "rating": self.rating,
             "amount_of_ratings": self.amount_of_ratings,
             "availability": self.is_available(),
-        }.items()
+        }
 
     def get_attributes(self):
         """
@@ -178,7 +177,7 @@ class Product(db.Model):
         return query.filter(Product.tsvector_title.match(search))
 
     @staticmethod
-    def get_filters(src):
+    def get_filters(src: dict):
         """
         Returns a dictionary of filters based on the source.
 

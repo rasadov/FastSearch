@@ -94,7 +94,7 @@ class User(UserMixin, db.Model):
         self.subscribed_till = subscribed_till
         self.role = role
 
-    def get_attributes(self):
+    def get_attributes(self) -> dict:
         """
         Returns a dictionary of the user's attributes for editing.
 
@@ -110,7 +110,7 @@ class User(UserMixin, db.Model):
             "subscribed_till": self.subscribed_till,
         }
 
-    def is_admin(self):
+    def is_admin(self) -> bool:
         """
         Checks if the user has admin privileges.
 
@@ -119,7 +119,7 @@ class User(UserMixin, db.Model):
         """
         return self.role in ["admin", "owner"]
 
-    def is_owner(self):
+    def is_owner(self) -> bool:
         """
         Checks if the user is the owner.
 
@@ -129,7 +129,7 @@ class User(UserMixin, db.Model):
         return self.role == "owner"
 
     @property
-    def password(self):
+    def password(self) -> str:
         """
         Gets the password of the user.
 
@@ -139,7 +139,7 @@ class User(UserMixin, db.Model):
         return self.password
 
     @password.setter
-    def password(self, plain_text_password):
+    def password(self, plain_text_password) -> None:
         """
         Sets the password of the user.
 
@@ -152,7 +152,7 @@ class User(UserMixin, db.Model):
             "utf-8"
         )
 
-    def chech_password_correction(self, attempted_password):
+    def chech_password_correction(self, attempted_password) -> bool:
         """
         Checks if the attempted password is correct.
 
@@ -165,7 +165,7 @@ class User(UserMixin, db.Model):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
     @staticmethod
-    def username_exists(username):
+    def username_exists(username) -> bool:
         """
         Checks if a user with the given username exists.
 
@@ -190,7 +190,7 @@ class User(UserMixin, db.Model):
         """
         return User.query.filter_by(email_address=email_address).count()
 
-    def is_confirmed(self):
+    def is_confirmed(self) -> bool:
         """
         Checks if the user is confirmed.
 
@@ -199,7 +199,7 @@ class User(UserMixin, db.Model):
         """
         return self.confirmed_on is not None
 
-    def is_subscribed(self):
+    def is_subscribed(self) -> bool:
         """
         Checks if the user is subscribed.
 
@@ -210,7 +210,7 @@ class User(UserMixin, db.Model):
             return True
         return self.subscribed_till and self.subscribed_till >= datetime.now().date()
 
-    def get_verification_token(self):
+    def get_verification_token(self) -> str:
         """
         Generates a verification token for the user.
 
@@ -240,7 +240,7 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(user_id)
 
-    def get_reset_token(self):
+    def get_reset_token(self) -> str:
         """
         Generates a reset token for the user.
 
@@ -281,7 +281,7 @@ class User(UserMixin, db.Model):
             "role": self.role,
             "confirmed_on": self.confirmed_on,
             "subscribed_till": self.subscribed_till,
-        }.items()
+        }
 
     def __repr__(self):
         """
