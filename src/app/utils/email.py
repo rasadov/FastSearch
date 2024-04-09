@@ -32,7 +32,7 @@ import dotenv
 dotenv.load_dotenv()
 
 
-def send_email(reciever, message, subject, title):
+def send_email(reciever, message, subject, title) -> None:
     """
     Sends an email to the specified receiver with the given message, subject, and title.
 

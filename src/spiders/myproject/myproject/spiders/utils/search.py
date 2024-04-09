@@ -21,7 +21,6 @@ import os
 from urllib.parse import urlparse
 import dotenv
 
-
 dotenv.load_dotenv()
 
 GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API")
@@ -43,7 +42,7 @@ class Search():
     """
 
     @staticmethod
-    def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX):
+    def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX) -> dict | None:
         """
         Searches Google using the Custom Search API.
 
@@ -107,20 +106,23 @@ class Search():
         if method == "google":
             for page in range(1, total_pages + 1):
                 start_index = (page - 1) * 10
-                results = Search.google_custom_search(
-                    query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX
-                )
-                if results:
-                    for item in results.get("items", []):
-                        link = item.get("link")
-                        parsed_url = urlparse(link)
-                        link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-                        yield link
+                try:
+                    results = Search.google_custom_search(
+                        query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX
+                    )
+                except Exception as e:
+                    print(f"An error occurred: {e}")
+                    continue                    
+                for item in results.get("items", []):
+                    link = item.get("link")
+                    parsed_url = urlparse(link)
+                    link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+                    yield link
 
         elif method == "url":
             parsed_url = urlparse(query)
-            query = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-            yield query
-
+            if not parsed_url.scheme or not parsed_url.netloc:
+                raise ValueError("Invalid URL")
+            yield f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
         else:
             raise ValueError(f"Invalid method: {method}")

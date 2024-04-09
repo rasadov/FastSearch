@@ -9,7 +9,7 @@ Functions:
 from app.models import Product, Cart, User
 from app.utils.email import send_email
 
-def notify_price_change(url):
+def notify_price_change(url) -> None:
     """
     Notifies users about a price change for a specific product.
 

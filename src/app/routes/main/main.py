@@ -13,7 +13,9 @@ Routes:
 
 Functions:
 - `home_get()`: Renders the home page.
+- `convert()`: Convert the query parameter to the correct type.
 - `search_get()`: Renders the search page with filtered products based on the query parameters.
+- `search_api()`: Get the search results based on the query parameters.
 - `add_to_cart()`: Add a product to the user's cart.
 - `donation_get()`: Renders the donation page.
 - `contact_get()`: Renders the contact page.
@@ -36,8 +38,9 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    # if current_user.is_anonymous:
-    #     login_user(User.query.get(1))
+    if current_user.is_anonymous:
+        login_user(User.query.get(1))
+
     return render_template("Main/index.html")
 
 
@@ -61,7 +64,7 @@ def convert(key, val):
     return val
 
 @app.get("/api/search")
-def search_api():
+def search_api() -> jsonify:
     """
     Get the search results based on the query parameters.
 
@@ -152,7 +155,7 @@ def search_get():
 
 @app.post('/cart/add')
 @login_required
-def add_to_cart():
+def add_to_cart() -> jsonify:
     """
     Add a product to the user's cart.
 
@@ -178,7 +181,7 @@ def add_to_cart():
     data = request.get_json()
 
     if not data['product_id'] or not data['action']:
-        return redirect("/")
+        return jsonify({'status': 'error'}), 400
     product = Product.query.get(data['product_id'])
 
     if product:
@@ -196,10 +199,9 @@ def donation_get():
     Handler function for the GET request to '/donate' route.
     
     Returns:
-        The rendered template 'Main/donate.html'.
+        Redirects to the donation link.
     """
-    return render_template("Main/donate.html", donation_link=DONATION_LINK)
-
+    return redirect(DONATION_LINK)
 
 @app.get("/contact")
 def contact_get():

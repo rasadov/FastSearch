@@ -4,6 +4,7 @@ This module contains the Product model for the application.
 
 import re
 from sqlalchemy import Index, Computed, func
+from flask_sqlalchemy.query import Query
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app import db
@@ -76,7 +77,7 @@ class Product(db.Model):
 
     # Methods
 
-    def is_available(self):
+    def is_available(self) -> bool:
         """
         Checks if the product is available.
 
@@ -85,7 +86,7 @@ class Product(db.Model):
         """
         return self.availability == "In stock"
 
-    def get_domain(self):
+    def get_domain(self) -> str:
         """
         Returns the domain of the product's URL.
 
@@ -94,7 +95,7 @@ class Product(db.Model):
         """
         return re.search(r"(https?://)?(www\.)?([^/]+)", self.url).group(3)
 
-    def items(self) -> dict:
+    def to_dict(self) -> dict:
         """
         Returns a dictionary of the product's attributes.
 
@@ -113,7 +114,7 @@ class Product(db.Model):
             "availability": self.is_available(),
         }
 
-    def get_attributes(self):
+    def get_attributes(self) -> dict:
         """
         Returns a dictionary of the product's attributes for editing.
 
@@ -134,7 +135,7 @@ class Product(db.Model):
             "image_url": self.image_url,
         }
 
-    def get_image(self):
+    def get_image(self) -> str:
         """
         Returns the image URL of the product.
 
@@ -144,7 +145,7 @@ class Product(db.Model):
         return self.image_url
 
     @staticmethod
-    def search(search, query):
+    def search(search: str, query: Query) -> Query:
         """
         Perform a search operation on the given query based on the provided search string.
 
@@ -177,7 +178,7 @@ class Product(db.Model):
         return query.filter(Product.tsvector_title.match(search))
 
     @staticmethod
-    def get_filters(src: dict):
+    def get_filters(src: dict) -> dict:
         """
         Returns a dictionary of filters based on the source.
 
@@ -228,7 +229,7 @@ class Product(db.Model):
             ],
         }
 
-    def price_change(self, days=None):
+    def price_change(self, days=None) -> float:
         """
         Returns the price change of the product in the last price history entry.
 
@@ -243,7 +244,13 @@ class Product(db.Model):
             if days:
                 return PriceHistory.price_change(self.id, days)
             return PriceHistory.price_change(self.id)
-        return "No price change recorded."
+        return 0.0
 
     def __repr__(self):
+        """
+        Returns a string representation of the product.
+
+        Returns:
+            str: The string representation of the product.
+        """
         return f"<Product {self.id}>"

@@ -18,7 +18,7 @@
         <div>
         {% endif %}
         <div class="card-body section">
-            {% for key, value in item.items().items() %}
+            {% for key, value in item.to_dict().items() %}
             <p>{{ key }}: {{ value }}</p>
             {% endfor %}
         </div>
@@ -58,7 +58,7 @@
             {% if item.__tablename__ == 'message' %}
             <div class="card user-info">
 
-                {% for key, value in user.items().items() %}
+                {% for key, value in user.to_dict().items() %}
                 <p>{{ key }}: {{ value }}</p>
                 {% endfor %}
             </div>

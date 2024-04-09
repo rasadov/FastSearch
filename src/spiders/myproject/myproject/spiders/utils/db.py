@@ -34,7 +34,7 @@ def save_product_to_database(
     producer: str=None,
     image_url: str=None,
     availability: str='In stock'
-):
+) -> None:
     """
     Saves a product to the database or updates an existing product if it already exists.
 
@@ -116,7 +116,7 @@ def create_product(
     producer: str = None,
     image_url: str = None,
     availability: str = 'In stock'
-):
+) -> None:
     """
     Inserts a new product into the database with the provided information.
 
@@ -180,7 +180,7 @@ def update_record(
     producer: str = None,
     image_url: str = None,
     availability: str = 'In stock'
-):
+) -> None:
     """
     Updates an existing record in the database with the provided information.
 
@@ -244,7 +244,7 @@ def update_record(
         )
 
 
-def deactivate_record(url: str):
+def deactivate_product(url: str) -> None:
     """
     Deactivates a record in the database.
 

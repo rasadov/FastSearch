@@ -50,7 +50,7 @@ class Message(db.Model):
         """
         self.read = True
 
-    def items(self) -> dict:
+    def to_dict(self) -> dict:
         # Method implementation goes here
         """
         Returns a list of all messages.

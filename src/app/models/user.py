@@ -3,6 +3,7 @@ This module contains the User class, which represents a user in the application.
 """
 
 from datetime import datetime
+from typing import Self
 
 from flask_login import UserMixin
 from sqlalchemy import String
@@ -71,7 +72,7 @@ class User(UserMixin, db.Model):
         confirmed_on=None,
         subscribed_till=None,
         role="user",
-    ):
+    ) -> None:
         """
         Initializes a new instance of the User class.
 
@@ -224,7 +225,7 @@ class User(UserMixin, db.Model):
         return s.dumps({"user_id": self.id}, salt="email-confirmation")
 
     @staticmethod
-    def verify_verification_token(token):
+    def verify_verification_token(token) -> Self | None:
         """
         Verify the validity of a verification token.
 
@@ -250,7 +251,7 @@ class User(UserMixin, db.Model):
         return s.dumps({"user_id": self.id}, salt="password-reset")
 
     @staticmethod
-    def verify_reset_token(token):
+    def verify_reset_token(token) -> Self | None:
         """
         Verify the validity of a password reset token.
 
@@ -266,7 +267,7 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(user_id)
 
-    def items(self):
+    def to_dict(self) -> dict:
         """
         Returns a dictionary of the user's attributes.
 
@@ -283,11 +284,11 @@ class User(UserMixin, db.Model):
             "subscribed_till": self.subscribed_till,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the user.
 
         Returns:
             str: A string representation of the user.
         """
-        return f"<User {self.id}>"
+        return f"<User {self.id}:{self.email_address}>"

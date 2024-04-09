@@ -22,6 +22,8 @@ class PriceHistory(db.Model):
     Methods:
         __init__(product_id, price, price_currency, date): 
         Initializes a new instance of the PriceHistory class.
+        date_added(product_id):
+        Returns the date when the product was added to the price history.
         if_price_change(product_id, days):
         Checks if the price of the product has changed in the last n days.
         price_change(product_id, days):
@@ -42,7 +44,7 @@ class PriceHistory(db.Model):
 
     # Methods
 
-    def __init__(self, product_id, price, price_currency, date=datetime.now().date()):
+    def __init__(self, product_id, price, price_currency, date=datetime.now().date()) -> None:
         """
         Initializes a new instance of the PriceHistory class.
 
@@ -59,6 +61,21 @@ class PriceHistory(db.Model):
         self.price = price
         self.price_currency = price_currency
         self.date = date
+
+    @staticmethod
+    def date_added(product_id) -> datetime:
+        """
+        Returns the date when the product was added to the price history.
+
+        Args:
+            product_id (int): The ID of the product to get the date added for.
+
+        Returns:
+            datetime: The date when the product was added to the price history.
+
+        """
+        return PriceHistory.query.filter_by(product_id=product_id).order_by(
+            PriceHistory.change_date).first().change_date.date()
 
     @staticmethod
     def if_price_change(product_id, days=None) -> bool:

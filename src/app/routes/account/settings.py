@@ -41,7 +41,7 @@ def change_password_get():
         return redirect("/profile/password/set")
     form = ChangePasswordForm()
 
-    return render_template("Base/form_base.html",h1="Change passwrod", form=form)
+    return render_template("Base/form_base.html",h1="Change passwrod", form=form, btn_value='Change Password')
 
 @app.post("/profile/password/change")
 @login_required
@@ -91,7 +91,7 @@ def set_password_get():
         return redirect("/profile/password/change")
     form = SetPasswordForm()
 
-    return render_template("Base/form_base.html", form=form)
+    return render_template("Base/form_base.html", form=form, h1="Set Password", btn_value="Set Password")
 
 @app.post("/profile/password/set")
 def set_password_post():
@@ -136,7 +136,7 @@ def change_username_get():
     form.username.data = current_user.username
     form.name.data = current_user.name
 
-    return render_template("Base/form_base.html", h1="Change Username", form=form)
+    return render_template("Base/form_base.html", h1="Change Username", form=form, btn_value="Change Username")
 
 @app.post("/profile/username/change")
 @login_required
@@ -290,7 +290,7 @@ def forgot_password_get():
 
     """
     form = ForgotPasswordForm()
-    return render_template("Base/form_base.html", form=form)
+    return render_template("Base/form_base.html", form=form, h1="Forgot Password", btn_value="Send Email")
 
 
 @app.post("/password/forgot")
@@ -336,7 +336,7 @@ def reset_password_get(token):
         flash("Token is invalid or has expired", "warning")
         return redirect(url_for("forgot_password_get"))
 
-    return render_template("Base/form_base.html", h1='Reset Password' ,form=form)
+    return render_template("Base/form_base.html", h1='Reset Password', form=form, btn_value="Reset Password")
 
 
 @app.post("/password/reset/<token>")
@@ -380,7 +380,7 @@ def delete_account_get():
     """
     form = DeleteAccountForm()
     h1 = "Are you sure you want to delete your account?"
-    return render_template("Base/form_base.html", form=form, h1=h1)
+    return render_template("Base/form_base.html", form=form, h1=h1, btn_value="Delete Account")
 
 @app.post("/profile/delete")
 @login_required

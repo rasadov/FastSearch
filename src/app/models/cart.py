@@ -36,7 +36,7 @@ class Cart(db.Model):
     user: Mapped["User"] = relationship(backref="cart")
     product: Mapped["Product"] = relationship(backref="cart")
 
-    def __init__(self, user_id, product_id):
+    def __init__(self, user_id, product_id) -> None:
         """
         Initializes a new instance of the Cart class.
 
@@ -48,7 +48,7 @@ class Cart(db.Model):
         self.product_id = product_id
 
     @staticmethod
-    def items(user_id):
+    def items(user_id) -> list:
         """
         Retrieves all the items in the cart for the specified user.
 
@@ -61,7 +61,7 @@ class Cart(db.Model):
         return [i.product for i in Cart.query.filter_by(user_id=user_id).all()]
 
     @staticmethod
-    def append(user_id, product_id):
+    def append(user_id, product_id) -> None:
         """
         Adds a new item to the cart for the specified user.
 
@@ -76,7 +76,7 @@ class Cart(db.Model):
         db.session.commit()
 
     @staticmethod
-    def in_cart(user_id, product_id):
+    def in_cart(user_id, product_id) -> bool:
         """
         Checks if a product is in the cart for the specified user.
 
@@ -90,7 +90,7 @@ class Cart(db.Model):
         return Cart.query.filter_by(user_id=user_id, product_id=product_id).first() is not None
 
     @staticmethod
-    def remove(user_id, product_id):
+    def remove(user_id, product_id) -> None:
         """
         Removes an item from the cart for the specified user.
 
@@ -103,7 +103,7 @@ class Cart(db.Model):
         db.session.commit()
 
     @staticmethod
-    def clear(user_id):
+    def clear(user_id) -> None:
         """
         Clears the cart for the specified user.
 

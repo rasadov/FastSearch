@@ -2,12 +2,18 @@
 This module contains functions for scraping and parsing data from various e-commerce websites.
 
 Functions:
-- scrape_amazon_item(response: Response, url=None): Extracts data from the item page in amazon.com.
-- scrape_ebay_item(response: Response, url=None): Extracts data from the item page on ebay.com.
-- scrape_newegg_item(response: Response, url=None): Scrapes data from a Newegg item page and saves it to the database.
-- scrape_gamestop_item(response: Response, url=None): Takes title, price, rating, amount of ratings, producer, and class of the item. Works only with gamestop.com.
-- scrape_excaliberpc_item(response: Response, url=None): Scrapes data from the ExcaliberPC website and saves it to the database.
-- parsing_method(response: Response): Parses the response object and determines the appropriate scraping method based on the URL domain.
+- scrape_amazon_item(response: Response, url=None):
+Extracts data from the item page in amazon.com.
+- scrape_ebay_item(response: Response, url=None):
+Extracts data from the item page on ebay.com.
+- scrape_newegg_item(response: Response, url=None):
+Extracts data from the item page on newegg.com.
+- scrape_gamestop_item(response: Response, url=None):
+Extracts data from the item page on gamestop.com.
+- scrape_excaliberpc_item(response: Response, url=None):
+Extracts data from the item page on excaliberpc.com.
+- parsing_method(response: Response):
+Parses the response object and determines the appropriate scraping method based on the URL domain.
 """
 
 import json
@@ -16,13 +22,13 @@ from urllib.parse import urlparse
 from scrapy.http import Response
 
 from spiders.myproject.myproject.spiders.utils.db import (save_product_to_database,
-                                                          deactivate_record)
+                                                          deactivate_product)
 from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
 
 def scrape_amazon_item(response: Response, url: None | str = None):
     """
-    Extracts data from the item page in amazon.com
+    Extracts data from the item page in amazon.com and saves it to the database.
 
     Args:
         response (obj): The response object from the web scraping request.
@@ -89,13 +95,13 @@ def scrape_amazon_item(response: Response, url: None | str = None):
 
     except (AttributeError, ValueError) as e:
         print(f"Error: {e}")
-        deactivate_record(url)
+        deactivate_product(url)
 
 
 
 def scrape_ebay_item(response: Response, url: str):
     """
-    Extracts data from the item page on `ebay.com`
+    Extracts data from the item page on `ebay.com` and saves it to the database.
 
     Args:
         response: The response object containing the HTML of the item page.
@@ -131,7 +137,7 @@ def scrape_ebay_item(response: Response, url: str):
             producer = None
         
         item_class = parsed_data.get("category")
-        
+
 
         try:
             rating_info = parsed_data.get('mainEntity', {}).get('offers', {}).get(
@@ -155,12 +161,12 @@ def scrape_ebay_item(response: Response, url: str):
         )
     except (ValueError, AttributeError, IndexError) as e:
         print(f"Error: {e}")
-        deactivate_record(url)
+        deactivate_product(url)
 
 
 def scrape_newegg_item(response: Response, url: None | str = None):
     """
-    Scrapes data from a Newegg item page and saves it to the database.
+    Extracts data from the item page on `newegg.com` and saves it to the database.
 
     Args:
         response: The response object containing the HTML of the item page.
@@ -225,7 +231,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
         )
     except (AttributeError, ValueError) as e:
         print(f"Error: {e}")
-        deactivate_record(url)
+        deactivate_product(url)
 
 
 def scrape_gamestop_item(response: Response, url: None | str = None):
@@ -270,7 +276,7 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
 
         try:
             availability = "In stock" if parsed_data.get("offers").get("availability") in [
-                "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock" 
+                "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock"
         except AttributeError:
             availability = None
 
@@ -280,13 +286,13 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
             item_class, producer, image, availability
         )
     except (AttributeError, IndexError, ValueError) as e:
-        print(f"Error: {e}", "danger")
-        deactivate_record(url)
+        print(f"Error: {e}")
+        deactivate_product(url)
 
 
 def scrape_excaliberpc_item(response: Response, url: None | str = None):
     """
-    Scrapes data from the ExcaliberPC website and saves it to the database.
+    Extracts data from the item page on `excaliberpc.com` and saves it to the database.
 
     Args:
         response (scrapy.http.Response): The response object containing the web page data.
@@ -300,7 +306,7 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
     """
     try:
         price = float(response.css('meta[property="price"]::attr(content)').get())
-        price_currency = response.css('meta[property="priceCurrency"]::attr(content)').get()            
+        price_currency = response.css('meta[property="priceCurrency"]::attr(content)').get()
 
         title = response.css("h1.product-head_name::text").get().strip()
 
@@ -338,13 +344,13 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
             item_class, producer, image, availability
         )
     except (AttributeError, ValueError) as e:
-        print(f"Error: {e}", "danger")
-        deactivate_record(url)
+        print(f"Error: {e}")
+        deactivate_product(url)
 
 
 # Main parsing function
 
-def parsing_method(response: Response):
+def parsing_method(response: Response) -> None:
     """
     Parses the response object and determines the appropriate scraping method
     based on the URL domain.

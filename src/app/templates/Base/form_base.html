@@ -2,12 +2,43 @@
 
 {% block title %}
 <title>
-Change Password
+Form Page
 </title>
 <style>
 .muted {
     opacity: 0.5;
 
+}
+.submit-div {
+    width: 30%;
+    margin: 25px auto;
+}
+.form-div {
+    margin: 45px auto;
+}
+.form-control {
+    width: 30%;
+    max-width: 50%;
+    margin: 15px auto;
+
+}
+@media screen and (max-width: 768px){
+    .btn {
+        width: 100% !important;
+        margin: auto 0;
+        text-align: center;
+    }
+    .submit-div {
+        width: 90% !important;
+    }
+    .form-div {
+        width: 90% !important;
+    }
+    .form-control {
+        max-width: 100% !important;
+        width: 100% !important;
+    
+    }
 }
 </style>
 {% endblock %}
@@ -25,12 +56,12 @@ Change Password
             <div class="form-group">
                 {% if field.label.text == 'Submit' %}
                 </div>
-                <div style="width: 30%; margin: 25px auto;">
-                    {{ field(class='btn btn-primary', value='Submit', style='width: 100%;') }}
+                <div class="submit-div">
+                    {{ field(class='btn btn-primary', value=btn_value, style='width: 100%;') }}
                 </div>
                 {% else %}
-                <div style="margin: 45px auto;">
-                    {{ field(class='form-control', placeholder=field.label.text, style='width:30%; max-width:50%; margin: 15px auto;') }}
+                <div class="form-div">
+                    {{ field(class='form-control', placeholder=field.label.text) }}
                 </div>
                 {% endif %}
                 
@@ -57,5 +88,8 @@ Change Password
             
         });
     });
+    if (document.querySelector('.btn').value == 'Delete Account') {
+        document.querySelector('.btn').classList.add('btn-danger');
+    }
 </script>
 {% endblock %}
