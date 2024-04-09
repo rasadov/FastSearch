@@ -29,7 +29,7 @@ from datetime import datetime
 from flask import request, render_template, redirect, flash
 from flask_login import current_user
 
-from app import app, db, admin_required 
+from app import app, db, admin_required
 
 from app.models import User, Cart
 

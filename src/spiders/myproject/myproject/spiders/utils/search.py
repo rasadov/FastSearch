@@ -16,9 +16,10 @@ Example usage:
         print(link)
 """
 
-import requests
 import os
 from urllib.parse import urlparse
+
+import requests
 import dotenv
 
 dotenv.load_dotenv()
@@ -42,7 +43,10 @@ class Search():
     """
 
     @staticmethod
-    def google_custom_search(query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX) -> dict | None:
+    def google_custom_search(query, start_index,
+                            GOOGLE_SEARCH_API=GOOGLE_SEARCH_API,
+                            GOOGLE_CX=GOOGLE_CX
+                            ) -> dict | None:
         """
         Searches Google using the Custom Search API.
 
@@ -72,13 +76,13 @@ class Search():
         }
 
         try:
-            response = requests.get(base_url, params=params)
+            response = requests.get(base_url, params=params, timeout=5)
             response.raise_for_status()
             search_results = response.json()
             return search_results
         except requests.exceptions.RequestException as e:
             return None
-        
+
     @staticmethod
     def search(query: str, method: str, total_pages: int | None = None):
         """
@@ -108,11 +112,11 @@ class Search():
                 start_index = (page - 1) * 10
                 try:
                     results = Search.google_custom_search(
-                        query, start_index, GOOGLE_SEARCH_API, GOOGLE_CX
+                        query, start_index
                     )
                 except Exception as e:
                     print(f"An error occurred: {e}")
-                    continue                    
+                    continue
                 for item in results.get("items", []):
                     link = item.get("link")
                     parsed_url = urlparse(link)

@@ -66,7 +66,7 @@ class Message(db.Model):
             "read": self.read
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # Method implementation goes here
         """
         Returns a string representation of the message.
@@ -74,4 +74,6 @@ class Message(db.Model):
         Returns:
             str: A string representation of the message.
         """
-        return f"Message(id={self.id}, sender_id={self.sender_id}, recipient_id={self.recipient_id})"
+        return f"""Message(id={self.id},
+        sender_id={self.sender_id},
+        recipient_id={self.recipient_id})""".replace('\n', '')

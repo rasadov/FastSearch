@@ -57,9 +57,9 @@ def convert(key, val):
     Returns:
     - The converted value of the query parameter.
     """
-    if key == "min_price" or key == "max_price":
+    if key in ("min_price","max_price"):
         return float(val)
-    if key == "min_rating" or key == "max_rating":
+    if key in ("min_rating","max_rating"):
         return float(val)
     return val
 
@@ -237,14 +237,14 @@ def contact_post():
     subject = request.form["subject"]
     message = request.form["message"]
     if name and message:
-        users = User.query.filter(User.role=="admin" or User.role=="owner").all()
+        users = User.query.filter(User.role in ('admin', 'owner')).all()
         for user in users:
             send_email(
                 user.email_address,
                 f"""{name} ({current_user.email_address} | {number if number else 'No number'})
                 has sent you message: \n\n {message}""",
                 subject=subject,
-                title=f"Abyssara user sent you a message",
+                title="Abyssara user sent you a message",
             )
 
             db.session.add(

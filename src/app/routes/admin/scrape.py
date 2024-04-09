@@ -145,6 +145,16 @@ def admin_scrape_post():
     )
 
 def scrape_url(url: str):
+    """
+    Scrapes the given URL and adds the product to the database if it doesn't already exist.
+
+    Args:
+        url (str): The URL to scrape.
+
+    Returns:
+        dict: A JSON response containing the status and message.
+
+    """
     parsed_url = urlparse(url)
     url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
@@ -173,8 +183,27 @@ def scrape_url(url: str):
                 "message": "Product added successfully"
             }
         )
+    return jsonify(
+        {
+            "status": "error",
+            "message": "Product could not be added"
+        }
+    )
 
 def scrape_google_query(query: str, pages: int, results_per_page: int):
+    """
+    Scrapes Google search results for a given query.
+
+    Args:
+        query (str): The search query to scrape.
+        pages (int): The number of pages to scrape.
+        results_per_page (int): The number of results to scrape per page.
+
+    Returns:
+        dict: A JSON response containing the status and message.
+            - status (str): The status of the scraping process.
+            - message (str): A message indicating the success of the operation.
+    """
     p = Process(
         target=run_spider,
         args=(query, "google", int(pages), int(results_per_page))

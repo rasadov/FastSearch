@@ -70,6 +70,7 @@ class MySpider(scrapy.Spider):
         self.method = method
         self.pages = pages
         self.results_per_page = results_per_page
+        super().__init__()
 
     def start_requests(self):
         """
@@ -79,8 +80,7 @@ class MySpider(scrapy.Spider):
             generator: A generator of scrapy.Request objects.
 
         """
-        self.start_urls = [link for link in Search.search(self.query, self.method, self.pages)]
-        self.estimated = len(self.start_urls)
+        self.start_urls = list(Search.search(self.query, self.method, self.pages))
 
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})

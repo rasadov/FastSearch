@@ -54,7 +54,7 @@ def scrape_amazon_item(response: Response, url: None | str = None):
         price_currency = SignsConverter.convert_to_country_code(price_currency)
 
         image = response.css("div#imgTagWrapperId img::attr(src)").get()
-        
+
         try:
             rating = float(
                 re.findall(r"\d+\.\d+", response.css("span.a-icon-alt::text").get())[0]
@@ -88,9 +88,18 @@ def scrape_amazon_item(response: Response, url: None | str = None):
         availability = "In stock"
 
         save_product_to_database(
-                url, title, price, price_currency,
-                rating, amount_of_ratings,
-                item_class, producer, image, availability
+                {
+                "url": url,
+                "title": title,
+                "price": price,
+                "price_currency": price_currency,
+                "rating": rating,
+                "amount_of_ratings": amount_of_ratings,
+                "item_class": item_class,
+                "producer": producer,
+                "image_url": image,
+                "availability": availability,
+                }
             )
 
     except (AttributeError, ValueError) as e:
@@ -115,10 +124,9 @@ def scrape_ebay_item(response: Response, url: str):
 
     """
     try:
-        script_content = response.css(
+        parsed_data = json.loads(response.css(
             'script[type="application/ld+json"]::text'
-        ).getall()[1]
-        parsed_data = json.loads(script_content)
+        ).getall()[1])
         title = parsed_data.get('name')
         price_info = parsed_data.get('mainEntity', {}).get('offers', {}).get(
             'itemOffered', [{}])[0].get('offers', [None, {}])[1]
@@ -135,7 +143,7 @@ def scrape_ebay_item(response: Response, url: str):
                 'itemOffered', [{}])[0].get('brand')
         except (IndexError, AttributeError):
             producer = None
-        
+
         item_class = parsed_data.get("category")
 
 
@@ -155,9 +163,18 @@ def scrape_ebay_item(response: Response, url: str):
             availability = None
 
         save_product_to_database(
-            url, title, price, price_currency,
-            rating, amount_of_ratings,
-            item_class, producer, image, availability
+            {
+            "url": url,
+            "title": title,
+            "price": price,
+            "price_currency": price_currency,
+            "rating": rating,
+            "amount_of_ratings": amount_of_ratings,
+            "item_class": item_class,
+            "producer": producer,
+            "image_url": image,
+            "availability": availability,
+            }
         )
     except (ValueError, AttributeError, IndexError) as e:
         print(f"Error: {e}")
@@ -222,12 +239,21 @@ def scrape_newegg_item(response: Response, url: None | str = None):
             else:
                 availability = "Out of stock"
         except AttributeError:
-            availability = None        
+            availability = None
 
         save_product_to_database(
-            url, title, price, price_currency,
-            rating, amount_of_ratings,
-            item_class, producer, image, availability
+            {
+            "url": url,
+            "title": title,
+            "price": price,
+            "price_currency": price_currency,
+            "rating": rating,
+            "amount_of_ratings": amount_of_ratings,
+            "item_class": item_class,
+            "producer": producer,
+            "image_url": image,
+            "availability": availability,
+            }
         )
     except (AttributeError, ValueError) as e:
         print(f"Error: {e}")
@@ -256,12 +282,12 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
 
         title = parsed_data.get("name")
         price = float(parsed_data.get("offers")[0].get("price"))
-        price_currency =  parsed_data.get("offers")[0].get("priceCurrency") 
+        price_currency =  parsed_data.get("offers")[0].get("priceCurrency")
 
         producer = parsed_data.get("brand")
 
         item_class = parsed_data.get("category")
-    
+
         image = parsed_data.get("image")
 
         try:
@@ -281,9 +307,18 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
             availability = None
 
         save_product_to_database(
-            url, title, price, price_currency,
-            rating, amount_of_ratings,
-            item_class, producer, image, availability
+            {
+            "url": url,
+            "title": title,
+            "price": price,
+            "price_currency": price_currency,
+            "rating": rating,
+            "amount_of_ratings": amount_of_ratings,
+            "item_class": item_class,
+            "producer": producer,
+            "image_url": image,
+            "availability": availability,
+            }
         )
     except (AttributeError, IndexError, ValueError) as e:
         print(f"Error: {e}")
@@ -316,9 +351,6 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
 
         if image_url:
             parsed_url = urlparse(url)
-            parsed_url.netloc
-
-
             image = parsed_url.scheme + "://" + parsed_url.netloc + image_url
         else:
             image = None
@@ -339,9 +371,18 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
             "https://schema.org/InStock","http://schema.org/InStock"] else "Out of stock"
 
         save_product_to_database(
-            url, title, price, price_currency,
-            rating, amount_of_ratings,
-            item_class, producer, image, availability
+            {
+            "url": url,
+            "title": title,
+            "price": price,
+            "price_currency": price_currency,
+            "rating": rating,
+            "amount_of_ratings": amount_of_ratings,
+            "item_class": item_class,
+            "producer": producer,
+            "image_url": image,
+            "availability": availability,
+            }
         )
     except (AttributeError, ValueError) as e:
         print(f"Error: {e}")

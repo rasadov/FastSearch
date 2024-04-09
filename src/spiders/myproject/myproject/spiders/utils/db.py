@@ -5,48 +5,31 @@ The functions in this module are used to save products to the database or
 update existing products if they already exist.
 
 Functions:
-- save_product_to_database(url, title, price, price_currency, 
-rating=None, amount_of_ratings=None, item_class=None, 
-producer=None, image_url=None, availability='In stock'
-): Saves a product to the database or updates an existing product if it already exists.
-- deactivate_record(url): Deactivates a record in the database.
+- save_product_to_database(params):
+Saves a product to the database or updates an existing product if it already exists.
+- create_product(curr, params): 
+Inserts a new product into the database with the provided information.
+- update_record(curr, result, params): 
+Updates an existing record in the database with the provided information.
+- deactivate_record(url):
+Deactivates a record in the database.
 """
 
-import os
 import psycopg2
 
 from app.utils.notifications import notify_price_change
 
-DB_USER = os.environ.get("DB_USER")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
+from app import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+
 
 def save_product_to_database(
-    url: str,
-    title: str,
-    price: float,
-    price_currency: str,
-    rating: float =None,
-    amount_of_ratings: int =None,
-    item_class: str=None,
-    producer: str=None,
-    image_url: str=None,
-    availability: str='In stock'
+    params: dict
 ) -> None:
     """
     Saves a product to the database or updates an existing product if it already exists.
 
     Parameters:
-    - url (str): The URL of the product.
-    - title (str): The title of the product.
-    - price (float): The price of the product.
-    - price_currency (str): The currency of the price.
-    - rating (float, optional): The rating of the product. Defaults to None.
-    - amount_of_ratings (int, optional): The number of ratings for the product. Defaults to None.
-    - item_class (str, optional): The class/category of the product. Defaults to None.
-    - producer (str, optional): The producer/manufacturer of the product. Defaults to None.
+    - params (dict): A dictionary containing the product information.
 
     If the product already exists in the database, the function checks for changes in 
     price, rating, and amount of ratings.
@@ -57,13 +40,14 @@ def save_product_to_database(
     and starts tracking the price in the `price_history` table.
 
     Raises:
-    - ValueError: If any of the required parameters are missing.
+    - ValueError: If any of the required params are missing.
 
     Returns:
     - None
     """
 
-    if not url or not title or not price or not price_currency:
+    if (not params.get('url') or not params.get('title') or 
+        not params.get('price') or not params.get('price_currency')):
         raise ValueError("Missing required parameters.")
 
     conn = psycopg2.connect(
@@ -71,7 +55,7 @@ def save_product_to_database(
     )
     curr = conn.cursor()
 
-    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
+    curr.execute(f"""SELECT * FROM product WHERE url = '{params.get('url')}';""")
 
     result = curr.fetchone()
 
@@ -91,14 +75,10 @@ def save_product_to_database(
     # Checking if this record already exists in database
     if result:
         # This product already exists, update the record
-        update_record(curr, result, url, title, price, price_currency,
-                      rating, amount_of_ratings, item_class,
-                      producer, image_url, availability)
+        update_record(curr, result, params)
     else:
         # This product does not exist, insert a new record into the database
-        create_product(curr, url, title, price, price_currency,
-                       rating, amount_of_ratings, item_class,
-                       producer, image_url, availability)
+        create_product(curr, params)
 
     conn.commit()
     curr.close()
@@ -106,16 +86,7 @@ def save_product_to_database(
 
 def create_product(
     curr: psycopg2.extensions.cursor,
-    url: str,
-    title: str,
-    price: float,
-    price_currency: str,
-    rating: float = None,
-    amount_of_ratings: int = None,
-    item_class: str = None,
-    producer: str = None,
-    image_url: str = None,
-    availability: str = 'In stock'
+    params: dict
 ) -> None:
     """
     Inserts a new product into the database with the provided information.
@@ -147,13 +118,16 @@ def create_product(
             producer, amount_of_ratings, rating, image_url, availability)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """,
-            (url, title, price, price_currency, item_class, producer,
-                amount_of_ratings, rating, image_url, availability),
+            (params.get('url'), params.get('title'),
+             params.get('price'), params.get('price_currency'),
+             params.get('item_class'), params.get('producer'),
+             params.get('amount_of_ratings)'), params.get('rating'),
+             params.get('image_url'), params.get('availability')),
         )
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    curr.execute(f"""SELECT * FROM product WHERE url = '{url}';""")
+    curr.execute(f"""SELECT * FROM product WHERE url = '{params.get('url')}';""")
 
     result = curr.fetchone()
 
@@ -164,22 +138,13 @@ def create_product(
         INSERT INTO price_history (product_id, price, price_currency, change_date)
         VALUES (%s, %s, %s, CURRENT_DATE);
     """,
-        (product_id, price, price_currency),
+        (product_id, params.get('price'), params.get('price_currency')),
     )
 
 def update_record(
-    curr: psycopg2.extensions.cursor,     
+    curr: psycopg2.extensions.cursor,
     result: tuple,
-    url: str,
-    title: str,
-    price: float,
-    price_currency: str,
-    rating: float = None,
-    amount_of_ratings: int = None,
-    item_class: str = None,
-    producer: str = None,
-    image_url: str = None,
-    availability: str = 'In stock'
+    params: dict
 ) -> None:
     """
     Updates an existing record in the database with the provided information.
@@ -210,16 +175,16 @@ def update_record(
     rating_in_db = result[7]
 
     if (
-        price_in_db != price
-        or rating_in_db != rating
-        or amount_of_rating_in_db != amount_of_ratings
+        price_in_db != params.get('price')
+        or rating_in_db != params.get('rating')
+        or amount_of_rating_in_db != params.get('amount_of_ratings')
     ):
 
         # Checking if price of product has changed
-        if price_in_db != price:
+        if price_in_db != params.get('price'):
 
-            if price_in_db > price:
-                notify_price_change(url)
+            if price_in_db > params.get('price'):
+                notify_price_change(params.get('url'))
 
             product_id = result[0]
 
@@ -229,18 +194,28 @@ def update_record(
                 INSERT INTO price_history (product_id, price, price_currency, change_date)
                 VALUES (%s, %s, %s, CURRENT_DATE);
             """,
-                (product_id, price, price_currency),
+                (product_id, params.get('price'), params.get('price_currency')),
             )
 
         curr.execute(
-            f"""
+            """
             UPDATE product
-            SET price = %s, price_currency=%s, title = %s, item_class = %s, producer = %s,
-                amount_of_ratings = %s, rating = %s, image_url = %s, availability = %s
+            SET price = %s, price_currency = %s, title = %s, item_class = %s, producer = %s,
+            amount_of_ratings = %s, rating = %s, image_url = %s, availability = %s
             WHERE url = %s;
         """,
-            (price, price_currency, title, item_class, producer,
-                amount_of_ratings, rating, image_url,availability, url),
+            (
+            params.get('price'),
+            params.get('price_currency'),
+            params.get('title'),
+            params.get('item_class'),
+            params.get('producer'),
+            params.get('amount_of_ratings'),
+            params.get('rating'),
+            params.get('image_url'),
+            params.get('availability'),
+            params.get('url'),
+            ),
         )
 
 
@@ -259,7 +234,9 @@ def deactivate_product(url: str) -> None:
     )
     curr = conn.cursor()
 
-    curr.execute(f"""UPDATE product SET availability = 'Out of stock' WHERE url = '{url}';""")
+    curr.execute(f"""
+                 UPDATE product SET availability = 'Out of stock' WHERE url = '{url}';
+                 """)
 
     conn.commit()
     curr.close()

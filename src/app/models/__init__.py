@@ -37,6 +37,7 @@ and Flask-Login for user authentication.
 
 from sqlalchemy.ext.declarative import declarative_base
 
+from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
 from app.models.user import User
 from app.models.product import Product
 from app.models.pricehistory import PriceHistory
@@ -49,8 +50,6 @@ __all__ = ["User", "Product", "PriceHistory", "Cart", "Message"]
 
 # Code below used to create the database tables and the owner account
 
-from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
-
 def create_tables():
     """
     Create the database tables if they do not exist.
@@ -58,7 +57,10 @@ def create_tables():
     with app.app_context():
         db.create_all()
         if not User.query.filter_by(email_address=OWNER_EMAIL).count():
-            owner = User(email_address=OWNER_EMAIL, username=OWNER_USERNAME, role="owner", confirmed_on=SERVER_STARTED_ON)
+            owner = User(email_address=OWNER_EMAIL,
+                         username=OWNER_USERNAME,
+                         role="owner",
+                         confirmed_on=SERVER_STARTED_ON)
             db.session.add(owner)
         db.session.commit()
 

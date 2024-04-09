@@ -41,7 +41,7 @@ def forbidden(e):
     Returns:
     - The rendered template for the 403.html error page.
     """
-    return render_template("Error/403.html"), 403
+    return render_template("Error/error.html", num=403, e=e), 403
 
 
 @app.errorhandler(404)
@@ -55,4 +55,4 @@ def page_not_found(e):
     Returns:
     - The rendered template for the 404.html error page.
     """
-    return render_template("Error/404.html"), 404
+    return render_template("Error/error.html", num=404, e=e), 404

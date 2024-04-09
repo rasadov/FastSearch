@@ -35,7 +35,7 @@ Routes:
 
 import os
 
-from flask import jsonify, flash, render_template
+from flask import jsonify, render_template
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
     DateRange,
@@ -84,9 +84,9 @@ def run_report(
             yield (row.dimension_values[0].value, row.metric_values[0].value)
 
     except IndexError as e:
-        app.logger.error(f"No data available: {e}")
+        app.logger.error("No data available: %s", e)
     except Exception as e:
-        app.logger.error(f"An error occurred: {e}")
+        app.logger.error("An error occurred: %s", e)
 
 def report_on_user_countries():
     """

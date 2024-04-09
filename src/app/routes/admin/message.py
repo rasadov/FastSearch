@@ -72,7 +72,7 @@ def admin_message_mark_as_read():
         A redirect to the admin message page after marking the message as read.
     """
     data = request.get_json()
-    
+
     try:
         message_id = int(data.get("message_id"))
     except ValueError:
