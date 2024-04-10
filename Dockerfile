@@ -13,6 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /src
 
-# Run the application
+ENV PYTHONPATH=/src
 
-CMD ["python", "src/app"]
+ENTRYPOINT [ "gunicorn" ]
+
+CMD ["--workers=2", "src.app.__main__:app", "--bind=0.0.0.0:5000"]

@@ -1,6 +1,7 @@
 __title__ = "FastSearch"
 __description__ = "Price tracking and comparison tool for online shopping"
 __url__ = "https://github.com/rasadov/fastsearch"
+__version__ = "0.0.1"
 __author__ = "Rauf Asadov"
 __author_email__ = "raufasadov23@gmail.com"
 __license__ = "MIT"

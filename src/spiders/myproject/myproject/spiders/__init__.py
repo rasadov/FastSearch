@@ -85,7 +85,7 @@ class MySpider(scrapy.Spider):
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
 
-    def parse(self, response) -> None:
+    def parse(self, response, **kwargs) -> None:
         """
         Parses the response and extracts data from the web page.
 

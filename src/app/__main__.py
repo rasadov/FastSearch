@@ -26,8 +26,6 @@ The routes are divided into different files based on their functionality.:
     - '/main/error.py': Contains the error handling routes.
     - '/main/other.py': Contains other routes of the application.
 
-
-
 Database Models are defined in the folder `models`.
 The models are divided into different files based on their functionality.:
     - '/models/__init__.py': Imports all the models.
@@ -43,7 +41,6 @@ THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
 
 Roadmap:
-- Change the view of products in search route
 - Deploy the application to a cloud platform Microsoft Azure or AWS.
 
 Extra:
@@ -60,24 +57,18 @@ Notes:
 - Probably during development proccess, the roadmap will change.
 - function `scrape_amazon_uk` was removed. amazon.co.uk
   can be scraped using the `scrape_amazon` function.
-
 """
 
 # Import the necessary modules
-
 import sys
 
-# Add the project directory to the system path
+sys.path.append("src/")
 
-sys.path.append("src")
-
-# Import the app module
-
-from app import app, db, login_manager
 from app.models import User
+from app import app, db, login_manager
+
 
 # Configure the login manager to load the user
-
 @login_manager.user_loader
 def load_user(user_id):
     """
@@ -91,13 +82,12 @@ def load_user(user_id):
     """
     try:
         return db.session.get(User, int(user_id))  # noqa: F405
-    except (ValueError, TypeError):
+    except Exception:
         return None
-
 # Import routes
 
 from app.routes import *
 
 # Main function
-
-app.run(debug=True, host='0.0.0.0',port=5000)
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5000)

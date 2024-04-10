@@ -104,6 +104,11 @@
         width: 90% !important;
         margin: 20px auto !important;
     }
+    
+    .btn {
+        padding: 10px;
+        font-size: 18px;
+    }
 }
 
 .product-title {

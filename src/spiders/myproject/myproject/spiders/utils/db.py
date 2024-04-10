@@ -46,7 +46,7 @@ def save_product_to_database(
     - None
     """
 
-    if (not params.get('url') or not params.get('title') or 
+    if (not params.get('url') or not params.get('title') or
         not params.get('price') or not params.get('price_currency')):
         raise ValueError("Missing required parameters.")
 

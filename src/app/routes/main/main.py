@@ -29,7 +29,6 @@ from app import app, db, login_required, DONATION_LINK
 from app.utils.email import send_email
 from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
-
 @app.get("/")
 def home_get():
     """
@@ -39,10 +38,10 @@ def home_get():
     - Rendered template for the home page.
     """
     if current_user.is_anonymous:
-        login_user(User.query.get(1))
-
+        user = User.query.get(1)
+        if user:
+            login_user(user)
     return render_template("Main/index.html")
-
 
 def convert(key, val):
     """
@@ -100,7 +99,7 @@ def search_api() -> jsonify:
             products = value[1](val, products)
             variables[key] = val
 
-    products = products.paginate(page=page, per_page=9)
+    products = products.paginate(page=page, per_page=18)
 
     total_pages = products.pages
     return jsonify(

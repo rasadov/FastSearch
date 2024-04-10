@@ -39,8 +39,8 @@ class SignsConverter:
             currency_sign (str): The currency sign to be converted.
 
         Returns:
-            str: The corresponding country code if the currency sign is found in the currency dictionary,
-                 otherwise returns the original currency sign.
+            str: The corresponding country code if the currency sign is found in the
+            currency dictionary, otherwise returns the original currency sign.
         """
         if currency_sign in SignsConverter.currency:
             return SignsConverter.currency[currency_sign]
@@ -55,8 +55,8 @@ class SignsConverter:
             country_code (str): The country code to be converted.
 
         Returns:
-            str: The corresponding currency sign if the country code is found in the currency dictionary,
-                 otherwise returns the original country code.
+            str: The corresponding currency sign if the country code is found in 
+            the currency dictionary, otherwise returns the original country code.
         """
         for sign, code in SignsConverter.currency.items():
             if country_code == code:

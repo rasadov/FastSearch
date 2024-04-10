@@ -12,6 +12,7 @@ from itsdangerous import SignatureExpired
 
 from app import bcrypt, db, s
 
+
 class User(UserMixin, db.Model):
     """
     Represents a user in the application.

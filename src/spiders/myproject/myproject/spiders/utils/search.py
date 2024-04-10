@@ -24,9 +24,6 @@ import dotenv
 
 dotenv.load_dotenv()
 
-GOOGLE_SEARCH_API = os.environ.get("GOOGLE_SEARCH_ENGINE_API")
-GOOGLE_CX = os.environ.get("GOOGLE_CX")
-
 class Search():
     """
     A class that provides methods for searching and retrieving links based on a query and method.
@@ -44,8 +41,8 @@ class Search():
 
     @staticmethod
     def google_custom_search(query, start_index,
-                            GOOGLE_SEARCH_API=GOOGLE_SEARCH_API,
-                            GOOGLE_CX=GOOGLE_CX
+                            GOOGLE_SEARCH_API=os.environ.get("GOOGLE_SEARCH_ENGINE_API"),
+                            GOOGLE_CX=os.environ.get("GOOGLE_CX")
                             ) -> dict | None:
         """
         Searches Google using the Custom Search API.
@@ -81,6 +78,7 @@ class Search():
             search_results = response.json()
             return search_results
         except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
             return None
 
     @staticmethod

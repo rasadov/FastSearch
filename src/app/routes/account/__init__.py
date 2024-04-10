@@ -6,13 +6,13 @@ Routes:
 - GET `/profile`: Retrieve the user's profile and render the profile page.
 """
 
+from app.models import Cart
+
 from .authentication import *
 
 from .settings import *
 
 from .subscription import *
-
-from app.models import Cart
 
 
 @app.get("/profile")

@@ -5,7 +5,7 @@ This module contains the Product model for the application.
 import re
 from sqlalchemy import Index, Computed, func
 from flask_sqlalchemy.query import Query
-from sqlalchemy.orm import relationship, mapped_column, Mapped
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from app import db
 from app.models.pricehistory import PriceHistory
@@ -170,11 +170,13 @@ class Product(db.Model):
             Query: The filtered query object based on the search string.
 
         """
-        if len(search) < 10 or len(search.split()) < 4:
+        if len(search) < 10 or len(search.split()) < 3:
             return query.filter((func.similarity(Product.title, search) > 0.1)
                                 | (func.similarity(Product.producer, search) > 0.1)
                                 | (func.similarity(Product.item_class, search) > 0.1)
-                                | Product.title.ilike(f"%{search}%"))
+                                | Product.title.ilike(f"%{search}%")).order_by(
+                func.similarity(Product.title, search).desc()
+            )
         return query.filter(Product.tsvector_title.match(search))
 
     @staticmethod
