@@ -37,10 +37,10 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    if current_user.is_anonymous:
-        user = User.query.get(1)
-        if user:
-            login_user(user)
+    # if current_user.is_anonymous:
+    #     user = User.query.get(1)
+    #     if user:
+    #         login_user(user)
     return render_template("Main/index.html")
 
 def convert(key, val):

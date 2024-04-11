@@ -231,13 +231,12 @@ def update_records():
     Returns:
         None
     """
-    products = Product.query.all()
-    for product in products:
-        try:
-            spider = MySpider(product.url, "url")
-            spider.run()
-        except ValueError:
-            continue
+    urls = list(Product.query.values("url"))
+    try:
+        spider = MySpider(urls, "list")
+        spider.run()
+    except ValueError:
+        return
 
 
 scheduler = BackgroundScheduler()

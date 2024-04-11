@@ -24,7 +24,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
-class Search():
+class Search:
     """
     A class that provides methods for searching and retrieving links based on a query and method.
 
@@ -126,5 +126,6 @@ class Search():
             if not parsed_url.scheme or not parsed_url.netloc:
                 raise ValueError("Invalid URL")
             yield f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
         else:
             raise ValueError(f"Invalid method: {method}")

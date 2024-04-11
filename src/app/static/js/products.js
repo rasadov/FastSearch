@@ -65,18 +65,20 @@ xmr.onload = function() {
             product = products[i];
             productsHTML = `
             <div class="card shadow" style="width: 30%; margin: 10px auto; border-radius: 25px; text-align: center;">
-            <a href="${product.url}" style="text-decoration: none; color: black; ">
-                <img src="${product.image}" class="card-img-top" alt="..." style="border-radius: 25px 25px 0px 0px; padding-top: 25px;" onload="scaleImage(this);">
-                <div class="card-body">
-                    <h1 class="card-title product-title" style="height: 30%">
-                        ${product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title}
-                    </h1>
-                    <p class="card-text" style="padding: 10px; ">Price: ${product.price} ${product.currency}</p>
-                    <p class="card-text" style="padding: 10px; ">Domain: ${product.domain}</p>
-                    <p class="card-text" style="padding: 10px;">Rating: ${product.rating} (${product.amount_of_ratings})</p>
-                    <p class="card-text" style="padding: 10px;">Category: ${product.item_class}</p>
-                </a>
-                    ${ is_authenticated ? `
+                <div class="card-body" style="height: auto !important;">
+                    <div>
+                        <a href="${product.url}" style="text-decoration: none; color: black; ">
+                            <img src="${product.image}" class="card-img-top" alt="..." onload="scaleImage(this);">
+                            <h2 class="card-title product-title">
+                                ${product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title}
+                            </h2>
+                            <p class="card-text" style="padding: 10px; ">Price: ${product.price} ${product.currency}</p>
+                            <p class="card-text" style="padding: 10px; ">Domain: ${product.domain}</p>
+                            <p class="card-text" style="padding: 10px;">Rating: ${product.rating} (${product.amount_of_ratings})</p>
+                            <p class="card-text" style="padding: 10px;">Category: ${product.item_class}</p>
+                        </a>
+                    </div>
+                        ${ is_authenticated ? `
                     <div style="margin-top: 10px;">
                         ${ product.tracked ? `
                         <button type="button" class="btn track-button tracked" id="${product.id}" data-tracked="True" onclick="track('${product.id}')">Tracked</button>
@@ -85,7 +87,7 @@ xmr.onload = function() {
                         ` }
                     </div>
                     ` : `
-                    <div style="margin-top: 10px;">
+                    <div style="margin-top: 10px; padding: 5px">
                         <a href="/login" class="btn track-button btn-light btn-sm">Login to track</a>
                     </div>
                     ` }
@@ -97,6 +99,7 @@ xmr.onload = function() {
             }
         }
         document.getElementById('products').innerHTML = html;
+        scaleText();
 
         // Pagination                        
         var total_pages = response.total_pages; 
@@ -272,4 +275,17 @@ else {
         </a>
     </div>
     `;
+}
+
+function scaleText() {
+    titles = document.querySelectorAll(".product-title");
+    var containerHeight = 105;
+    titles.forEach(element => {
+        var elementHeight = element.offsetHeight;
+        if (elementHeight < containerHeight) {
+            console.log(elementHeight);
+            element.style.marginTop = (containerHeight - elementHeight) / 2 + "px";
+            element.style.marginBottom = (containerHeight - elementHeight) / 2 + "px";
+        }
+    });
 }

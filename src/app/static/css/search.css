@@ -113,8 +113,13 @@
 
 .product-title {
     font-size: large; 
-    max-width: 80%; 
     margin: auto; 
     padding: 20px; 
     max-lines: 3 !important;
+    height: 20%;
+}
+
+.card-img-top {
+    border-radius: 25px 25px 0px 0px; 
+    padding-top: 25px;
 }

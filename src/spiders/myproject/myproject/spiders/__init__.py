@@ -80,7 +80,10 @@ class MySpider(scrapy.Spider):
             generator: A generator of scrapy.Request objects.
 
         """
-        self.start_urls = list(Search.search(self.query, self.method, self.pages))
+        if self.method == "list":
+            self.start_urls = self.query
+        else:
+            self.start_urls = list(Search.search(self.query, self.method, self.pages))
 
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
