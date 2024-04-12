@@ -248,7 +248,7 @@ class Product(db.Model):
             return PriceHistory.price_change(self.id)
         return 0.0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the product.
 

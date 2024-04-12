@@ -2,6 +2,8 @@
 This module imports all the main routes for the application.
 """
 
+from app.routes.main.api import *
+
 from app.routes.main.main import *
 
 from app.routes.main.other import *
