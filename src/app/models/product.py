@@ -170,15 +170,17 @@ class Product(db.Model):
             Query: The filtered query object based on the search string.
 
         """
-        if len(search) < 10 or len(search.split()) < 3:
-            return query.filter((func.similarity(Product.title, search) > 0.1)
-                                | (func.similarity(Product.producer, search) > 0.1)
-                                | (func.similarity(Product.item_class, search) > 0.1)
-                                | Product.title.ilike(f"%{search}%")).order_by(
-                func.similarity(Product.title, search).desc()
-            )
-        return query.filter(Product.tsvector_title.match(search))
-
+        try:
+            if len(search) < 10 or len(search.split()) < 3:
+                return query.filter((func.similarity(Product.title, search) > 0.1)
+                                    | (func.similarity(Product.producer, search) > 0.1)
+                                    | (func.similarity(Product.item_class, search) > 0.1)
+                                    | Product.title.ilike(f"%{search}%")).order_by(
+                    func.similarity(Product.title, search).desc()
+                )
+            return query.filter(Product.tsvector_title.match(search))
+        except Exception as e:
+            raise func.__dir__()
     @staticmethod
     def get_filters(src: dict) -> dict:
         """

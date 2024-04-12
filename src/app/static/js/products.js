@@ -57,6 +57,7 @@ xmr.setRequestHeader('Content-Type', 'application/json');
 xmr.onload = function() {
     if (xmr.status == 200) {
         var response = JSON.parse(xmr.responseText);
+        console.log(response);
         total_pages = response.total_pages;
         products = response.products;
         html = '<div class="flex-container" style="display:flex;">';
