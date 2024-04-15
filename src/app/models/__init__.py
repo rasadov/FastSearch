@@ -61,7 +61,10 @@ def create_tables():
     Create the database tables if they do not exist.
     """
     with app.app_context():
-        db.session.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
+        try:
+            db.session.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
+        except Exception as e:
+            pass
         db.create_all()
         if not User.query.filter_by(email_address=OWNER_EMAIL).count():
             owner = User(email_address=OWNER_EMAIL,
