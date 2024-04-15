@@ -38,10 +38,10 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    # if current_user.is_anonymous:
-    #     user = User.query.get(1)
-    #     if user:
-    #         login_user(user)
+    if current_user.is_anonymous:
+        user = User.query.get(1)
+        if user:
+            login_user(user)
     return render_template("Main/index.html")
 
 @app.get("/search")
@@ -149,6 +149,7 @@ def search_api() -> jsonify:
             ],
             "total_pages": total_pages,
             "current_page": page,
+            "total_results": products.total,
         }
     )
 

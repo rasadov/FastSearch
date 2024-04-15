@@ -11,6 +11,7 @@ Classes:
 - Product: Represents a product in the application.
 - PriceHistory: Represents the price history of a product.
 - Cart: Represents a cart in the application.
+- Message: Represents a message in the application.
 
 The User class represents a user in the application. 
 It contains attributes such as username, email address, and password.
@@ -30,6 +31,10 @@ The Cart class represents a cart in the application.
 It contains attributes such as user ID and product ID.
 The class provides methods for managing items in the cart,
 such as adding and removing items.
+
+The Message class represents a message in the application.
+It contains attributes such as sender ID, recipient ID, and content.
+The class provides methods for sending and receiving messages.
 
 Note: This module uses SQLAlchemy for database operations
 and Flask-Login for user authentication.

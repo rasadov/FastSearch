@@ -5,6 +5,7 @@ const urlParams = new URLSearchParams(queryString);
 
 // Search query
 var search = urlParams.get('search');
+
 document.getElementById('search').value = search;
 
 // Min and max price
@@ -30,6 +31,8 @@ var brand = urlParams.get('brand');
 if (brand) {
 document.getElementById('brand').value = brand;
 }
+
+console.log(urlParams.size);
 
 // Function to send AJAX request to get products list
 var data = {
@@ -57,7 +60,6 @@ xmr.setRequestHeader('Content-Type', 'application/json');
 xmr.onload = function() {
     if (xmr.status == 200) {
         var response = JSON.parse(xmr.responseText);
-        console.log(response);
         total_pages = response.total_pages;
         products = response.products;
         html = '<div class="flex-container" style="display:flex;">';
@@ -110,6 +112,8 @@ xmr.onload = function() {
 
         var ul = document.createElement('ul');
         ul.className = 'pagination justify-content-center mx-auto mt-5';
+
+        newQueryString = newQueryString.replace('page=' + current_page, '');
 
         if (total_pages > 1) {
             if (total_pages > 8) {
@@ -284,7 +288,6 @@ function scaleText() {
     titles.forEach(element => {
         var elementHeight = element.offsetHeight;
         if (elementHeight < containerHeight) {
-            console.log(elementHeight);
             element.style.marginTop = (containerHeight - elementHeight) / 2 + "px";
             element.style.marginBottom = (containerHeight - elementHeight) / 2 + "px";
         }

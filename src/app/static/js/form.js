@@ -6,7 +6,11 @@ document.querySelector('form').addEventListener('submit', function(e) {
     var brand = document.getElementById('brand').value;
     var min_rating = document.getElementById('min_rating').value;
     var max_rating = document.getElementById('max_rating').value;
-    var url = '/search?search=' + search;
+    
+    var url = '/search?';
+    if (search) {
+        url += 'search=' + search;
+    }
     if (min_price) {
         url += '&min_price=' + min_price;
     }
