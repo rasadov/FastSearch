@@ -38,10 +38,10 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    if current_user.is_anonymous:
-        user = User.query.get(1)
-        if user:
-            login_user(user)
+    # if current_user.is_anonymous:
+    #     user = User.query.get(1)
+    #     if user:
+    #         login_user(user)
     return render_template("Main/index.html")
 
 @app.get("/search")
@@ -193,15 +193,15 @@ def add_to_cart() -> jsonify:
     return jsonify({'status': 'error'}), 400
 
 
-@app.get("/donate")
-def donation_get():
-    """
-    Handler function for the GET request to '/donate' route.
+# @app.get("/donate")
+# def donation_get():
+#     """
+#     Handler function for the GET request to '/donate' route.
     
-    Returns:
-        Redirects to the donation link.
-    """
-    return redirect(DONATION_LINK)
+#     Returns:
+#         Redirects to the donation link.
+#     """
+#     return redirect(DONATION_LINK)
 
 @app.get("/contact")
 def contact_get():

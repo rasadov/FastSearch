@@ -272,14 +272,9 @@ if (urlParams.size > 0) {
     xmr.send();
 }
 else {
-    document.getElementById('products').innerHTML = `
-    <div class="donate-div">
-        <h3>Your contribution to the development and improvement of our project will be highly appreciated!</h3> 
-        <a href="${donation_link}">
-            <div class="btn btn-primary" style="margin-top: 20px;">Buy me a coffee</div>      
-        </a>
-    </div>
-    `;
+    // document.getElementById('products').innerHTML = `
+
+    // `
 }
 
 function scaleText() {

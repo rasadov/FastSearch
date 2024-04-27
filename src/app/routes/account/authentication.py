@@ -15,7 +15,7 @@ Profile pages:
 
 from datetime import datetime
 
-from flask import session, render_template, redirect, url_for, flash
+from flask import session, render_template, redirect, flash
 from flask_login import login_user, logout_user
 
 
@@ -114,10 +114,13 @@ def login_post():
     """
     form = LoginForm()
     if form.validate_on_submit():
-        attempted_user = User.query.filter_by(
+        attempted_user: User = User.query.filter_by(
             email_address=form.email_address.data
         ).first()
-        if attempted_user and attempted_user.chech_password_correction(
+        if not attempted_user or not attempted_user.password_hash:
+            flash("Email is not registered", category="danger")
+            return redirect("/login")
+        if attempted_user.chech_password_correction(
             attempted_password=form.password.data
         ):
             login_user(attempted_user, remember=form.remember.data)
@@ -139,7 +142,7 @@ def login_with_google():
         The redirect response to the Google login page.
     """
     google = oauth.create_client("google")  # create the google oauth client
-    redirect_uri = url_for("authorize_google", _external=True)
+    redirect_uri = 'https://abyssara.tech/authorize/google'
     return google.authorize_redirect(redirect_uri)
 
 
@@ -201,7 +204,7 @@ def login_with_microsoft():
         The redirect response to the Microsoft login page.
     """
     microsoft = oauth.create_client("microsoft")
-    redirect_uri = url_for("authorize_microsoft", _external=True)
+    redirect_uri = 'https://abyssara.tech/authorize/microsoft'
     return microsoft.authorize_redirect(redirect_uri)
 
 
