@@ -217,30 +217,3 @@ def scrape_google_query(query: str, pages: int, results_per_page: int):
             "message": "Products added to database successfully",
         }
     )
-
-# Automatic scraping
-
-def update_records():
-    """
-    Updates the records in the database by scraping products from the web.
-
-    This function retrieves all the products from the database and updates their information
-    by scraping the web using a spider. If an exception occurs during the scraping process,
-    the function continues to the next product.
-
-    Returns:
-        None
-    """
-    urls = list(Product.query.values("url"))
-    try:
-        spider = MySpider(urls, "list")
-        spider.run()
-    except ValueError:
-        return
-
-
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=update_records, trigger="interval", hours=24)
-scheduler.start()
-
-atexit.register(scheduler.shutdown)

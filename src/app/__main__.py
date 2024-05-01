@@ -39,24 +39,6 @@ The web application is initialized in the `__init__.py` file.
 The main function runs the application in debug mode. 
 THIS RUNS THE APPLICATION IN DEVELOPMENT MODE. DO NOT USE IN PRODUCTION.
 USE A WSGI SERVER LIKE GUNICORN OR UWSGI TO RUN THE APPLICATION IN PRODUCTION.
-
-Roadmap:
-- Deploy the application to a cloud platform Microsoft Azure or AWS.
-
-Extra:
-- Implement recommendation system in the web application side.
-- Add the chatbot functionality to the web application.
-
-Future Work (After the Roadmap):
-- Add new functions in the `spiders/myproject/myproject/spiders/utils.py`
-  file to scrape products from other websites.
-- Implement the subscription functionality in the `app/routes/subscription.py` file.
-
-Notes:
-- The `app/routes/subscriptions.py` file is not implemented. It is a placeholder for future work.
-- Probably during development proccess, the roadmap will change.
-- function `scrape_amazon_uk` was removed. amazon.co.uk
-  can be scraped using the `scrape_amazon` function.
 """
 
 # Import the necessary modules

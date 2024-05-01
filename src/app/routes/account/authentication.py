@@ -154,9 +154,7 @@ def authorize_google():
     It uses Google OAuth to authenticate the user and retrieve their information.
 
     Returns:
-        redirect: If the user is already subscribed,
-        it redirects them to the '/search' page.
-        Otherwise, it redirects them to the '/#subscription' page.
+        redirects to the '/search' page.
     """
     google = oauth.create_client("google")  # create the google oauth client
     token = (

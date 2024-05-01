@@ -1,6 +1,10 @@
 """
 This module contains utility functions for database control.
 
+Main purpose of this file is to perform some of operations on local machine, not on the web server.
+In case if web server is not powerful enough to handle the operations,
+we can perform the operations on local machine.
+
 The functions in this module are used to perform various operations on the database,
 such as creating tables, executing SQL statements, and granting privileges.
 
@@ -25,6 +29,7 @@ import time
 
 from sqlalchemy import text
 
+from spiders.myproject.myproject.spiders import MySpider
 from src.app.__init__ import app, db, OWNER_EMAIL, SERVER_STARTED_ON
 from src.app.models import User, Product, PriceHistory, Cart, Message
 
@@ -92,3 +97,23 @@ def create_extension(extension_name="pg_trgm"):
         extension_name (str, optional): The name of the extension. Defaults to "pg_trgm".
     """
     execute_sql_statement(f"CREATE EXTENSION IF NOT EXISTS {extension_name};")
+
+# Automatic scraping
+
+def update_records():
+    """
+    Updates the records in the database by scraping products from the web.
+
+    This function retrieves all the products from the database and updates their information
+    by scraping the web using a spider. If an exception occurs during the scraping process,
+    the function continues to the next product.
+
+    Returns:
+        None
+    """
+    urls = list(Product.query.values("url"))
+    try:
+        spider = MySpider(urls, "list")
+        spider.run()
+    except ValueError:
+        return

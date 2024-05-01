@@ -12,8 +12,6 @@ from .authentication import *
 
 from .settings import *
 
-from .subscription import *
-
 
 @app.get("/profile")
 @login_required

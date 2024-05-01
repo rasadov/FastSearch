@@ -8,7 +8,9 @@ def print_options():
     print("Create owner account [2]")
     print("Grant privileges [3]")
     print("Create extension [4]")
-    print("Exit [5]")
+    print("Update database [5]")
+    print("Exit [6]")
+
 
 choice = input("Enter your choice: ")
 
@@ -30,6 +32,7 @@ while True:
             create_extension(ans)
         else:
             create_extension()
+
     elif choice == "5":
         break
     clear()

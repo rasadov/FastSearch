@@ -300,27 +300,3 @@ def unconfirmed_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
-
-
-def subscribed_required(f):
-    """
-    Decorator function to require subscription for accessing a page.
-
-    This decorator checks if the current user is subscribed. If not, it displays a flash message
-    indicating that the user needs to subscribe and redirects them to the home page.
-
-    Args:
-        f (function): The function to be decorated.
-
-    Returns:
-        function: The decorated function.
-
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_subscribed():
-            flash("You need to subscribe to access this page.", "info")
-            return redirect(url_for("home_get"))
-        return f(*args, **kwargs)
-
-    return decorated_function
