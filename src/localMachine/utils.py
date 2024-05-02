@@ -29,9 +29,13 @@ import time
 
 from sqlalchemy import text
 
+print(sys.path)
+
+sys.path.append("src")
+
 from spiders.myproject.myproject.spiders import MySpider
-from src.app.__init__ import app, db, OWNER_EMAIL, SERVER_STARTED_ON
-from src.app.models import User, Product, PriceHistory, Cart, Message
+from app.__init__ import app, db, OWNER_EMAIL, SERVER_STARTED_ON
+from app.models import User, Product, PriceHistory, Cart, Message
 
 def clear():
     """
@@ -98,7 +102,7 @@ def create_extension(extension_name="pg_trgm"):
     """
     execute_sql_statement(f"CREATE EXTENSION IF NOT EXISTS {extension_name};")
 
-# Automatic scraping
+# Scraping
 
 def update_records():
     """
@@ -117,3 +121,49 @@ def update_records():
         spider.run()
     except ValueError:
         return
+
+def google_search():
+    """
+    Searches for products on Google and adds them to the database.
+
+    This function prompts the user to enter a search query and then searches for the
+    products on Google using a spider. The products found are then added to the database.
+
+    Returns:
+        None
+    """
+    while True:
+        query = input("Enter the search query (enter blank to exit): ")
+        if not query:
+            break
+        if '\n' in query:
+            query_list = query.split('\n')
+        else:
+            query_list = [query]
+        for q in query_list:
+            try:
+                spider = MySpider(q, "google")
+                spider.run()
+            except ValueError:
+                return
+
+def url_search():
+    """
+    Searches for products using a list of URLs and adds them to the database.
+
+    This function prompts the user to enter a list of URLs and then searches for the
+    products using the URLs provided. The products found are then added to the database.
+
+    Returns:
+        None
+    """
+    while True:
+        urls = input("Enter the list of URLs (separated by commas, enter blank to exit): ")
+        if not urls:
+            break
+        urls = urls.split(",")
+        try:
+            spider = MySpider(urls, "list")
+            spider.run()
+        except ValueError:
+            return
