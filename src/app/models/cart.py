@@ -31,7 +31,7 @@ class Cart(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id : Mapped[int] = mapped_column(Integer(), primary_key=True)
-    user_id = mapped_column(Integer(), ForeignKey("user.id"), nullable=False)
+    user_id = mapped_column(Integer(), ForeignKey("UserModel.id"), nullable=False)
     product_id = mapped_column(Integer(), ForeignKey("product.id"), nullable=False)
     user: Mapped["User"] = relationship(backref="cart")
     product: Mapped["Product"] = relationship(backref="cart")

@@ -33,9 +33,8 @@ Example:
 
 """
 
-from utils import (execute_sql_statement, create_tables,
-                   create_owner_account, grant_privileges,
-                   create_extension, clear, update_records,
+from utils import (execute_sql_statement, grant_privileges,
+                   create_extension, update_records,
                    google_search, url_search)
 
 def print_options():
@@ -43,12 +42,10 @@ def print_options():
     Print the available options for the user.
     """
     print("Execute sql statement [0]")
-    print("Create tables [1]")
-    print("Create owner account [2]")
-    print("Grant privileges [3]")
-    print("Create extension [4]")
-    print("Scrape Functions [5]")
-    print("Exit [6]")
+    print("Grant privileges [1]")
+    print("Create extension [2]")
+    print("Scrape Functions [3]")
+    print("Exit [4]")
 
 def print_scrape_options():
     """
@@ -69,19 +66,15 @@ def main():
             ans = input()
             execute_sql_statement(ans)
         elif choice == "1":
-            create_tables()
-        elif choice == "2":
-            create_owner_account()
-        elif choice == "3":
             grant_privileges()
-        elif choice == "4":
+        elif choice == "2":
             print("Enter the extension name (blank for pg_trgm):")
             ans = input()
             if ans:
                 create_extension(ans)
             else:
                 create_extension()
-        elif choice == "5":
+        elif choice == "3":
             print_scrape_options()
             ans = input("Enter your choice: ")
             while True:
@@ -95,14 +88,16 @@ def main():
                     break
                 else:
                     print("Invalid choice. Please try again.")
-                clear()
                 print_scrape_options()
                 ans = input("Enter your choice: ")
-        elif choice == "6":
+        elif choice == "4":
             break
         else:
             print("Invalid choice. Please try again.")
-        clear()
+
+        print_options()
+        choice = input("Enter your choice: ")
+        
 
 if __name__ == "__main__":
     main()

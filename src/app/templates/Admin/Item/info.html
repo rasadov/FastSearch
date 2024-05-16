@@ -2,7 +2,7 @@
 
 {% block title %}
 <title>User Info</title>
-{% if item.__tablename__ in ['product', 'user'] %}
+{% if item.__tablename__ in ['product', 'UserModel'] %}
 <script type="text/javascript" src="../../../static/js/image.js"></script>
 {% endif %}
 {% endblock %}
@@ -22,7 +22,7 @@
             <p>{{ key }}: {{ value }}</p>
             {% endfor %}
         </div>
-        {% if item.__tablename__ == "user" %}
+        {% if item.__tablename__ == "UserModel" %}
         <div>
             <h3>
                 Cart

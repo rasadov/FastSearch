@@ -17,4 +17,4 @@ ENV PYTHONPATH=/src
 
 ENTRYPOINT [ "gunicorn" ]
 
-CMD ["--workers=2", "src.app.__main__:app", "--bind=0.0.0.0:20"]
+CMD ["--workers=2", "src.app.__main__:app", "--bind=0.0.0.0:5000"]

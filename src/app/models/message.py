@@ -24,8 +24,8 @@ class Message(db.Model):
 
     id : Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(String(length=1000), nullable=False)
-    sender_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
-    recipient_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
+    sender_id: Mapped[int] = mapped_column(ForeignKey('UserModel.id'), nullable=False)
+    recipient_id: Mapped[int] = mapped_column(ForeignKey('UserModel.id'), nullable=False)
     read: Mapped[bool] = mapped_column(default=False)
 
     def __init__(self, text, sender_id, recipient_id):

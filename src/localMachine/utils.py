@@ -26,10 +26,7 @@ Create the specified extension in the database.
 import os
 import sys
 import time
-
 from sqlalchemy import text
-
-print(sys.path)
 
 sys.path.append("src")
 
@@ -37,16 +34,13 @@ from spiders.myproject.myproject.spiders import MySpider
 from app.__init__ import app, db, OWNER_EMAIL, SERVER_STARTED_ON
 from app.models import User, Product, PriceHistory, Cart, Message
 
-def clear():
-    """
-    Clear the console screen.
-    """
-    time.sleep(5)
-    if sys.platform == "win32":
-        os.system("cls")
-    else:
-        os.system("clear")
+def app_context_wrapper(f):
+    def wrapper():
+        with app.app_context():
+            f()
+    return wrapper
 
+@app_context_wrapper
 def execute_sql_statement(query):
     """
     Execute the specified SQL statement in the database.
@@ -54,35 +48,13 @@ def execute_sql_statement(query):
     Args:
         query (str): The SQL statement to execute.
     """
-    with app.app_context():
-        try:
-            db.session.execute(text(query))
-            db.session.commit()
-        except Exception:
-            pass
+    try:
+        db.session.execute(text(query))
+        db.session.commit()
+    except Exception:
+        pass
 
-def create_tables():
-    """
-    Create the tables in the database.
-    """
-    db.create_all()
-    db.session.commit()
-
-def create_owner_account(owner_email=OWNER_EMAIL, confirmation_date=SERVER_STARTED_ON):
-    """
-    Create an owner account with the specified email address and confirmation date.
-
-    Args:
-        owner_email (str, optional): The email address of the owner. Defaults to OWNER_EMAIL.
-        confirmation_date (datetime, optional): The confirmation date of the owner account. Defaults to SERVER_STARTED_ON.
-    """
-    if not User.query.filter_by(email_address=owner_email).count():
-        owner = User(email_address=owner_email,
-                     role="owner",
-                     confirmed_on=confirmation_date)
-        db.session.add(owner)
-    db.session.commit()
-
+@app_context_wrapper
 def grant_privileges(db_name, db_user):
     """
     Grant all privileges on the specified database to the specified user.
@@ -104,6 +76,7 @@ def create_extension(extension_name="pg_trgm"):
 
 # Scraping
 
+@app_context_wrapper
 def update_records():
     """
     Updates the records in the database by scraping products from the web.
@@ -122,6 +95,7 @@ def update_records():
     except ValueError:
         return
 
+@app_context_wrapper
 def google_search():
     """
     Searches for products on Google and adds them to the database.
@@ -147,6 +121,7 @@ def google_search():
             except ValueError:
                 return
 
+@app_context_wrapper
 def url_search():
     """
     Searches for products using a list of URLs and adds them to the database.

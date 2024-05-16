@@ -38,17 +38,18 @@ such as 'models', 'web', 'spiders', etc., which are not included in this code sn
 
 """
 
+import atexit
 from urllib.parse import urlparse
 from multiprocessing import Process
-import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import request, jsonify, render_template
 from flask_login import current_user
 
-from app import app, admin_required
+from app import app, admin_required, OWNER_EMAIL
 from app.models import Product
 from spiders import MySpider
+from app.utils.email import send_email
 
 # Manual scraping
 
@@ -217,3 +218,29 @@ def scrape_google_query(query: str, pages: int, results_per_page: int):
             "message": "Products added to database successfully",
         }
     )
+
+def update_records():
+    """
+    Updates the records in the database by scraping products from the web.
+
+    This function retrieves all the products from the database and updates their information
+    by scraping the web using a spider. If an exception occurs during the scraping process,
+    the function continues to the next product.
+
+    Returns:
+        None
+    """
+    send_email(OWNER_EMAIL, "The records in the database have been updated.", "Records Updated", "Abyssara")
+    products = Product.query.all()
+    for product in products:
+        try:
+            spider = MySpider(product.url, "url")
+            spider.run()
+        except ValueError:
+            continue
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=update_records, trigger="interval", hours=24)
+scheduler.start()
+
+atexit.register(scheduler.shutdown)
