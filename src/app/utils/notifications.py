@@ -19,13 +19,14 @@ def notify_price_change(url) -> None:
     Returns:
         None
     """
-    products = Product.query.filter_by(url=url).first()
+    product: Product = Product.query.filter_by(url=url).first()
 
-    users = [User.query.get(i.user_id) for i in  Cart.query.filter_by(product_id=products.id).all()]
-    for i in users:
-        send_email(
-            i.email_address,
-            f"The price of '{products.title}' has changed. The new price is {products.price}.",
-            "Price Change Notification From Abyssara",
-            "Price dropped"
-        )
+    users: list[User] = [User.query.get(i.user_id) for i in Cart.query.filter_by(product_id=product.id).all()]
+    for user in users:
+        if user.is_confirmed():
+            send_email(
+                user.email_address,
+                f"The price of '{product.title}' has changed. The new price is {product.price}.",
+                "Price Change Notification From Abyssara",
+                "Price dropped"
+            )

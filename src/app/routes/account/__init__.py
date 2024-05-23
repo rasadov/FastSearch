@@ -23,4 +23,6 @@ def profile_get():
         The rendered profile page with the user's cart items.
     """
     cart = Cart.items(current_user.id)
+    if not current_user.is_confirmed():
+        flash("Please confirm your email address to recieve notifications", "warning")
     return render_template("Account/profile.html", cart=cart)
