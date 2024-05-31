@@ -19,7 +19,7 @@ from flask import session, render_template, redirect, flash
 from flask_login import login_user, logout_user
 
 
-from app import app, db, oauth, login_required, logout_required
+from app import app, db, oauth, login_required, logout_required, CURRENT_DOMAIN
 from app.models import User
 from app.utils.forms import RegisterForm, LoginForm
 
@@ -142,7 +142,7 @@ def login_with_google():
         The redirect response to the Google login page.
     """
     google = oauth.create_client("google")  # create the google oauth client
-    redirect_uri = 'https://abyssara.tech/authorize/google'
+    redirect_uri = CURRENT_DOMAIN + '/authorize/google'
     return google.authorize_redirect(redirect_uri)
 
 
@@ -202,7 +202,7 @@ def login_with_microsoft():
         The redirect response to the Microsoft login page.
     """
     microsoft = oauth.create_client("microsoft")
-    redirect_uri = 'https://abyssara.tech/authorize/microsoft'
+    redirect_uri = CURRENT_DOMAIN + '/authorize/microsoft'
     return microsoft.authorize_redirect(redirect_uri)
 
 

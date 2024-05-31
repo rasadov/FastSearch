@@ -2,7 +2,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 
-gtag('config', 'G-B0ELJBKQN0');
+gtag('config', 'G-JR49X8W548');
 
 let flashClose = document.querySelectorAll('.flash-close');
 let message = document.querySelector('.alert');

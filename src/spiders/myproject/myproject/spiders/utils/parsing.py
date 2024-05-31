@@ -102,7 +102,7 @@ def scrape_amazon_item(response: Response, url: None | str = None):
                 }
             )
 
-    except (AttributeError, ValueError) as e:
+    except (AttributeError, ValueError, TypeError) as e:
         print(f"Error: {e}")
         deactivate_product(url)
 
@@ -176,7 +176,7 @@ def scrape_ebay_item(response: Response, url: str):
             "availability": availability,
             }
         )
-    except (ValueError, AttributeError, IndexError) as e:
+    except (ValueError, AttributeError, IndexError, TypeError) as e:
         print(f"Error: {e}")
         deactivate_product(url)
 
@@ -255,7 +255,7 @@ def scrape_newegg_item(response: Response, url: None | str = None):
             "availability": availability,
             }
         )
-    except (AttributeError, ValueError) as e:
+    except (AttributeError, ValueError, TypeError) as e:
         print(f"Error: {e}")
         deactivate_product(url)
 
@@ -320,7 +320,7 @@ def scrape_gamestop_item(response: Response, url: None | str = None):
             "availability": availability,
             }
         )
-    except (AttributeError, IndexError, ValueError) as e:
+    except (AttributeError, IndexError, ValueError, TypeError) as e:
         print(f"Error: {e}")
         deactivate_product(url)
 
@@ -384,7 +384,7 @@ def scrape_excaliberpc_item(response: Response, url: None | str = None):
             "availability": availability,
             }
         )
-    except (AttributeError, ValueError) as e:
+    except (AttributeError, ValueError, TypeError) as e:
         print(f"Error: {e}")
         deactivate_product(url)
 

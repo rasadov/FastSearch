@@ -2,7 +2,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 
-gtag('config', 'G-B0ELJBKQN0');
+gtag('config', 'G-JR49X8W548');
 
 let navbarToggle = document.querySelector('.navbar-toggler');
 let navbarCollapse = document.querySelector('.navbar-collapse');

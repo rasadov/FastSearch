@@ -106,6 +106,8 @@ OWNER_USERNAME = os.environ.get("OWNER_USERNAME")
 
 DONATION_LINK = "https://www.buymeacoffee.com/abyssara"
 
+CURRENT_DOMAIN = os.environ.get("CURRENT_DOMAIN")
+
 app = Flask(__name__)
 
 SECRET_KEY = os.environ.get("SECRET_KEY")

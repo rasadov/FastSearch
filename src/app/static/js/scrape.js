@@ -2,14 +2,12 @@ googleField = `<div class="form-group col-md-3 mx-auto">
                 <label for="pages" class="m-4">Amount of Pages:</label>
                 <input class="form-control" type="number" id="pages" name="pages" placeholder="Amount of pages">
             </div>
-            <div class="form-group col-md-3 mx-auto">
-                <label for="results_per_page" class="m-4">Results per Page:</label>
-                <input class="form-control" type="number" id="results_per_page" name="results_per_page" placeholder="Results per page">
-            </div>
             <div class="form-group col-md-6 mx-auto">
                 <label for="url" class="m-4">Query:</label>
                 <input class="form-control" type="text" id="url" name="query" placeholder="Enter query">
             </div>
+            <div class="form-group col-md-6 mx-auto">
+                <button class="btn btn-primary m-4" onclick="createQueryField()">Add new query</button>
             <div class="m-4">
                 <p>This method will search for your query in Google and scrape the results</p>
             </div>`;
@@ -38,16 +36,18 @@ function send_request() {
     var xml = new XMLHttpRequest();
     xml.open('POST', '/admin/product/scrape', true);
     xml.setRequestHeader('Content-Type', 'application/json');
+    var queries = document.getElementsByName('query');
+    var queryList = [];
+    queries.forEach(query => {
+        queryList.push(query.value);
+    });
     var data = {
         'source': formData.get('source'),
-        'query': formData.get('query'),
+        'query': queryList,
         'pages': formData.get('pages'),
-        'results_per_page': formData.get('results_per_page')
     };
-
-    formhtml = document.getElementById('fields').parentElement.innerHTML
     
-
+    formhtml = document.getElementById('fields').parentElement.innerHTML
 
     document.getElementById('fields').parentElement.innerHTML = `
     <div class="loader">
@@ -101,3 +101,11 @@ function send_request() {
 };
 
 
+function createQueryField() {
+    var div = document.getElementById('fields');
+    var field = `<div class="form-group col-md-6 mx-auto">
+    <label for="url" class="m-4">Query:</label>
+    <input class="form-control" type="text" id="url" name="query" placeholder="Enter query">
+    </div>`
+    div.innerHTML += field;
+}

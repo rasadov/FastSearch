@@ -16,8 +16,7 @@ the product information from the URL.
 After the process completes, the product is checked
 if it was successfully added to the database and the user is redirected accordingly.
 
-- If the method is 'google', the query, pages, and
-results_per_page parameters are retrieved from the request form.
+- If the method is 'google', the `query` and `pages` parameters are retrieved from the request form.
 The query parameter is validated and a new process is started to run the spider
 for scraping the product information from Google search results.
 After the process completes, a success message is displayed and
@@ -53,7 +52,7 @@ from app.utils.email import send_email
 
 # Manual scraping
 
-def run_spider(url, method=None, pages=None, results_per_page=None):
+def run_spider(url, method=None, pages=None):
     """
     Runs a spider to scrape data from a given URL.
 
@@ -61,13 +60,11 @@ def run_spider(url, method=None, pages=None, results_per_page=None):
         url (str): The URL to scrape data from.
         method (str, optional): The HTTP method to use for the request. Defaults to None.
         pages (int, optional): The number of pages to scrape. Defaults to None.
-        results_per_page (int, optional): The number of results to scrape per page. 
-        Defaults to None.
 
     Returns:
         None
     """
-    spider = MySpider(url, method, pages, results_per_page)
+    spider = MySpider(url, method, pages)
     spider.run()
 
 
@@ -99,8 +96,7 @@ def admin_scrape_post():
     After the process completes, it checks if the product was successfully
     added to the database and redirects accordingly.
 
-    If the method is 'google', it retrieves the 'query', 'pages', and
-    'results_per_page' parameters from the form. 
+    If the method is 'google', it retrieves the 'query' and 'pages' parameters from the form. 
     It validates the 'query' parameter and starts a new process to run the spider for scraping
     the product information from Google search results. 
     After the process completes, it displays a success message and
@@ -128,15 +124,14 @@ def admin_scrape_post():
 
     method = data.get("source")
 
-    url = data.get("query")
+    queryList = data.get("query")
     pages = data.get("pages")
-    results_per_page = data.get("results_per_page")
-    if url:
+    if len(queryList) > 0:
         if method == "custom":
-            scrape_url(url)
-
+            scrape_url(queryList)
         if method == "google":
-            scrape_google_query(url, pages, results_per_page)
+            print("queryList: ", queryList)
+            scrape_google_query(queryList, pages)
 
     return jsonify(
         {
@@ -145,17 +140,26 @@ def admin_scrape_post():
         }
     )
 
-def scrape_url(url: str):
+def scrape_url(url: list):
     """
     Scrapes the given URL and adds the product to the database if it doesn't already exist.
 
     Args:
-        url (str): The URL to scrape.
+        url (list): The URL to scrape.
 
     Returns:
         dict: A JSON response containing the status and message.
 
     """
+    try:
+        url = url[0]
+    except IndexError:
+        return jsonify(
+            {
+                "status": "error",
+                "message": "URL not provided"
+            }
+        )
     parsed_url = urlparse(url)
     url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
@@ -191,14 +195,13 @@ def scrape_url(url: str):
         }
     )
 
-def scrape_google_query(query: str, pages: int, results_per_page: int):
+def scrape_google_query(query: list, pages: int):
     """
     Scrapes Google search results for a given query.
 
     Args:
         query (str): The search query to scrape.
         pages (int): The number of pages to scrape.
-        results_per_page (int): The number of results to scrape per page.
 
     Returns:
         dict: A JSON response containing the status and message.
@@ -207,7 +210,7 @@ def scrape_google_query(query: str, pages: int, results_per_page: int):
     """
     p = Process(
         target=run_spider,
-        args=(query, "google", int(pages), int(results_per_page))
+        args=(query, "google", int(pages))
     )
     p.start()
     p.join()
@@ -231,13 +234,12 @@ def update_records():
         None
     """
     send_email(OWNER_EMAIL, "The records in the database have been updated.", "Records Updated", "Abyssara")
-    products = Product.query.all()
-    for product in products:
-        try:
-            spider = MySpider(product.url, "url")
-            spider.run()
-        except ValueError:
-            continue
+    try:
+        product_links = list(Product.query.values("url"))
+        spider = MySpider(product_links, "list")
+        spider.run()
+    except ValueError:
+        return
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=update_records, trigger="interval", hours=24)
