@@ -40,67 +40,68 @@ class Search:
     """
 
     @staticmethod
-    def google_custom_search(query, start_index,
-                        GOOGLE_SEARCH_API=os.environ.get("GOOGLE_SEARCH_ENGINE_API"),
-                        GOOGLE_CX=os.environ.get("GOOGLE_CX")
-                        ) -> dict | None:
+    def google_query_search(query, start_index,
+                            GOOGLE_SEARCH_API = os.getenv("GOOGLE_SEARCH_ENGINE_API"),
+                            GOOGLE_CX = os.getenv("GOOGLE_CX")):
         """
         Searches Google using the Custom Search API.
         """
         base_url = "https://www.googleapis.com/customsearch/v1"
-        queries = query if isinstance(query, list) else [query]
-        res = []
+        params = {
+            "key": GOOGLE_SEARCH_API,
+            "cx": GOOGLE_CX,
+            "q": query,
+            "start": start_index,
+        }
 
-        for q in queries:
-            params = {
-                "key": GOOGLE_SEARCH_API,
-                "cx": GOOGLE_CX,
-                "q": q,
-                "start": start_index,
-            }
-
-            try:
-                response = requests.get(base_url, params=params, timeout=5)
-                response.raise_for_status()
-                search_results = response.json()
-                res.append(search_results)
-                print(len(search_results.get("items", [])))
-            except requests.exceptions.RequestException as e:
-                print(f"An error occurred: {e}")
-
-        return res if res else None
+        try:
+            response = requests.get(base_url, params=params, timeout=5)
+            response.raise_for_status()
+            search_results = response.json()
+            return search_results
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None
 
     @staticmethod
-    def search(query: str | list, method: str, total_pages: int | None = None):
-        """
-        Returns links for the given query and method.
-        """
-        if method == "google":
-            for page in range(1, total_pages + 1):
-                start_index = (page - 1) * 10
+    def google_list_search(queryList: list, total_pages: int = 1):
+        for page in range(1, total_pages + 1):
+            start_index = (page - 1) * 10
+            for query in queryList:
                 try:
-                    results = Search.google_custom_search(
+                    results = Search.google_query_search(
                         query, start_index
                     )
                 except Exception as e:
                     print(f"An error occurred: {e}")
                     continue
 
-                # Flatten the list of results if necessary
-                if isinstance(query, list):
-                    results = [item for sublist in results for item in sublist.get("items", [])]
+                for item in results.get("items", []):
+                    link = item.get("link")
+                    parsed_url = urlparse(link)
+                    link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+                    yield link
 
-                for result in results:
-                    for item in result.get("items", []):
-                        link = item.get("link")
-                        parsed_url = urlparse(link)
-                        link = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
-                        print(link)
-                        yield link
+    @staticmethod
+    def url_search(url: str):
+        """
+        Returns the URL if it is valid. 
+        """
+        parsed_url = urlparse(url)
+        if not parsed_url.scheme or not parsed_url.netloc:
+            raise ValueError("Invalid URL")
+        return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+    @staticmethod
+    def search(query: str | list, method: str, total_pages: int | None = None):
+        """
+        Returns links for the given parameters.
+        """
+        if method == "google":
+            yield from Search.google_list_search(query, total_pages)
+
         elif method == "url":
-            parsed_url = urlparse(query)
-            if not parsed_url.scheme or not parsed_url.netloc:
-                raise ValueError("Invalid URL")
-            yield f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+            yield Search.url_search(query)
+
         else:
             raise ValueError(f"Invalid method: {method}")

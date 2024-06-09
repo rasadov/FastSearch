@@ -45,10 +45,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask import request, jsonify, render_template
 from flask_login import current_user
 
-from app import app, admin_required, OWNER_EMAIL
+from app import app, admin_required
 from app.models import Product
 from spiders import MySpider
-from app.utils.email import send_email
 
 # Manual scraping
 
@@ -124,23 +123,22 @@ def admin_scrape_post():
 
     method = data.get("source")
 
+    response = {
+        "status": "error",
+        "message": "There was some error, make sure you have entered correct parameters."
+    }
+
     queryList = data.get("query")
     pages = data.get("pages")
     if len(queryList) > 0:
         if method == "custom":
-            scrape_url(queryList)
+            response = scrape_url(queryList)
         if method == "google":
-            print("queryList: ", queryList)
-            scrape_google_query(queryList, pages)
+            response = scrape_google_query(queryList, pages)
 
-    return jsonify(
-        {
-            "status": "error",
-            "message": "There was some error, make sure you have entered correct parameters."
-        }
-    )
+    return jsonify(response)
 
-def scrape_url(url: list):
+def scrape_url(url: list) -> dict:
     """
     Scrapes the given URL and adds the product to the database if it doesn't already exist.
 
@@ -154,23 +152,19 @@ def scrape_url(url: list):
     try:
         url = url[0]
     except IndexError:
-        return jsonify(
-            {
+        return {
                 "status": "error",
                 "message": "URL not provided"
             }
-        )
     parsed_url = urlparse(url)
     url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
     product = Product.query.filter_by(url=url)
     if product.count():
-        return jsonify(
-            {
+        return {
                 "status": "error",
                 "message": "Product already exists"
             }
-        )
 
     p = Process(
         target=run_spider,
@@ -182,20 +176,16 @@ def scrape_url(url: list):
     product = Product.query.filter_by(url=url)
     if product.count():
         product = product.first()
-        return jsonify(
-            {
+        return {
                 "status": "success",
                 "message": "Product added successfully"
             }
-        )
-    return jsonify(
-        {
+    return {
             "status": "error",
             "message": "Product could not be added"
         }
-    )
 
-def scrape_google_query(query: list, pages: int):
+def scrape_google_query(query: list, pages: int) -> dict:
     """
     Scrapes Google search results for a given query.
 
@@ -215,12 +205,10 @@ def scrape_google_query(query: list, pages: int):
     p.start()
     p.join()
 
-    return jsonify(
-        {
+    return {
             "status": "success",
             "message": "Products added to database successfully",
         }
-    )
 
 def update_records():
     """
@@ -233,11 +221,12 @@ def update_records():
     Returns:
         None
     """
-    send_email(OWNER_EMAIL, "The records in the database have been updated.", "Records Updated", "Abyssara")
     try:
-        product_links = list(Product.query.values("url"))
-        spider = MySpider(product_links, "list")
-        spider.run()
+        with app.app_context():
+            product_links = list(Product.query.values("url"))
+            spider = MySpider(product_links, "list")
+            spider.run()
+        print("Records updated successfully")
     except ValueError:
         return
 

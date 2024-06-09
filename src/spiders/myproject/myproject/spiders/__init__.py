@@ -85,7 +85,7 @@ class MySpider(scrapy.Spider):
             except Exception as e:
                 print(f"An error occurred: {e}")
                 return
-
+            
         for url in self.start_urls:
             yield scrapy.Request(url=url, callback=self.parse, meta={"url": url})
 

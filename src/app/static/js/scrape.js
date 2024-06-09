@@ -2,12 +2,14 @@ googleField = `<div class="form-group col-md-3 mx-auto">
                 <label for="pages" class="m-4">Amount of Pages:</label>
                 <input class="form-control" type="number" id="pages" name="pages" placeholder="Amount of pages">
             </div>
-            <div class="form-group col-md-6 mx-auto">
-                <label for="url" class="m-4">Query:</label>
-                <input class="form-control" type="text" id="url" name="query" placeholder="Enter query">
+            <div class="queries">
+                <div class="form-group col-md-6 mx-auto">
+                    <label for="url" class="m-4">Query:</label>
+                    <input class="form-control" type="text" id="url" name="query" placeholder="Enter query">
+                </div>
             </div>
             <div class="form-group col-md-6 mx-auto">
-                <button class="btn btn-primary m-4" onclick="createQueryField()">Add new query</button>
+                <button type="button" class="btn btn-primary m-4" onclick="createQueryField()">Add new query</button>
             <div class="m-4">
                 <p>This method will search for your query in Google and scrape the results</p>
             </div>`;
@@ -102,7 +104,8 @@ function send_request() {
 
 
 function createQueryField() {
-    var div = document.getElementById('fields');
+    console.log('clicked');
+    var div = document.querySelector('.queries');
     var field = `<div class="form-group col-md-6 mx-auto">
     <label for="url" class="m-4">Query:</label>
     <input class="form-control" type="text" id="url" name="query" placeholder="Enter query">
