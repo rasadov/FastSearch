@@ -2,13 +2,15 @@
 This file contains routes for admin inbox
 """
 
-from flask import request, render_template, redirect, url_for, flash
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 
-from app import app, db, admin_required
-
+from app.config import db
+from app.utils.decorators import admin_required
 from app.models import Message, User
 
-@app.get("/admin/messages")
+blueprint = Blueprint("admin_messages", __name__)
+
+@blueprint.get("/admin/messages")
 @admin_required
 def admin_messages_get():
     """
@@ -22,7 +24,7 @@ def admin_messages_get():
 
     return render_template("Admin/search.html", items=items, variables={}, function=function)
 
-@app.get("/admin/message/<int:message_id>")
+@blueprint.get("/admin/message/<int:message_id>")
 @admin_required
 def admin_message_info_get(message_id):
     """
@@ -38,7 +40,7 @@ def admin_message_info_get(message_id):
     user = User.query.get(message.sender_id)
     return render_template("Admin/Item/info.html", item=message, user=user)
 
-@app.get("/admin/message/delete")
+@blueprint.get("/admin/message/delete")
 @admin_required
 def admin_message_delete():
     """
@@ -59,7 +61,7 @@ def admin_message_delete():
     db.session.commit()
     return redirect(url_for("admin_messages_get"))
 
-@app.post("/admin/message/mark_as_read")
+@blueprint.post("/admin/message/mark_as_read")
 @admin_required
 def admin_message_mark_as_read():
     """

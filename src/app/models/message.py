@@ -5,7 +5,7 @@ This module contains the Message class, which represents a message in the applic
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped
 
-from app import db
+from app.config import db
 
 class Message(db.Model):
     """

@@ -15,17 +15,20 @@ Profile pages:
 
 from datetime import datetime
 
-from flask import session, render_template, redirect, flash
+from flask import Blueprint, session, render_template, redirect, flash
 from flask_login import login_user, logout_user
 
 
-from app import app, db, oauth, login_required, logout_required, CURRENT_DOMAIN
+from app.config import db, oauth, CURRENT_DOMAIN
 from app.models import User
 from app.utils.forms import RegisterForm, LoginForm
+from app.utils.decorators import logout_required, login_required
+
+blueprint = Blueprint("authentication", __name__)
 
 # login and registration routes
 
-@app.get("/register")
+@blueprint.get("/register")
 @logout_required
 def register_get():
     """
@@ -39,7 +42,7 @@ def register_get():
     return render_template("Account/register.html", form=form)
 
 
-@app.post("/register")
+@blueprint.post("/register")
 def register_post():
     """
     Handles the registration form submission
@@ -75,7 +78,7 @@ def register_post():
     return redirect("/register")
 
 
-@app.get("/login")
+@blueprint.get("/login")
 @logout_required
 def login_get():
     """
@@ -95,7 +98,7 @@ def login_get():
     return render_template("Account/login.html", form=form)
 
 
-@app.post("/login")
+@blueprint.post("/login")
 @logout_required
 def login_post():
     """
@@ -132,7 +135,7 @@ def login_post():
 # OAuth2.0 with Google
 
 
-@app.route("/login/google", methods=["GET", "POST"])
+@blueprint.route("/login/google", methods=["GET", "POST"])
 @logout_required
 def login_with_google():
     """
@@ -146,7 +149,7 @@ def login_with_google():
     return google.authorize_redirect(redirect_uri)
 
 
-@app.route("/authorize/google", methods=["GET", "POST"])
+@blueprint.route("/authorize/google", methods=["GET", "POST"])
 @logout_required
 def authorize_google():
     """
@@ -192,7 +195,7 @@ def authorize_google():
 # OAuth2.0 with Microsoft
 
 
-@app.route("/login/microsoft", methods=["GET", "POST"])
+@blueprint.route("/login/microsoft", methods=["GET", "POST"])
 @logout_required
 def login_with_microsoft():
     """
@@ -206,7 +209,7 @@ def login_with_microsoft():
     return microsoft.authorize_redirect(redirect_uri)
 
 
-@app.route("/authorize/microsoft", methods=["GET", "POST"])
+@blueprint.route("/authorize/microsoft", methods=["GET", "POST"])
 @logout_required
 def authorize_microsoft():
     """
@@ -247,7 +250,7 @@ def authorize_microsoft():
 
 # Logout page
 
-@app.get("/logout")
+@blueprint.get("/logout")
 @login_required
 def logout():
     """

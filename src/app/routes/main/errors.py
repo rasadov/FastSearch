@@ -11,12 +11,11 @@ The following error handling routes are defined:
 - 404 Not Found: Returns the rendered template for the `404.html` error page.
 """
 
-from flask import render_template
+from flask import Blueprint, render_template
 
-from app import app
+blueprint = Blueprint("errors", __name__)
 
-
-@app.errorhandler(400)
+@blueprint.errorhandler(400)
 def bad_request(e):
     """
     Error handler for 400 Bad Request error.
@@ -30,7 +29,7 @@ def bad_request(e):
     return f"Bad Request: \n\n {e}", 400
 
 
-@app.errorhandler(403)
+@blueprint.errorhandler(403)
 def forbidden(e):
     """
     Error handler for 403 Forbidden error.
@@ -44,7 +43,7 @@ def forbidden(e):
     return render_template("Error/error.html", num=403, e=e), 403
 
 
-@app.errorhandler(404)
+@blueprint.errorhandler(404)
 def page_not_found(e):
     """
     Error handler for 404 Not Found error.

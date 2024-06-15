@@ -42,12 +42,14 @@ from urllib.parse import urlparse
 from multiprocessing import Process
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template
 from flask_login import current_user
 
-from app import app, admin_required
+from app.utils.decorators import admin_required
 from app.models import Product
 from spiders import MySpider
+
+blueprint = Blueprint("admin_scrape", __name__)
 
 # Manual scraping
 
@@ -67,7 +69,7 @@ def run_spider(url, method=None, pages=None):
     spider.run()
 
 
-@app.get("/admin/product/scrape")
+@blueprint.get("/admin/product/scrape")
 @admin_required
 def admin_scrape_get():
     """
@@ -77,7 +79,7 @@ def admin_scrape_get():
     return render_template("Admin/scrape.html")
 
 
-@app.post("/admin/product/scrape")
+@blueprint.post("/admin/product/scrape")
 def admin_scrape_post():
     """
     Scrapes the product information from the provided URL and adds it to the database.
@@ -198,13 +200,20 @@ def scrape_google_query(query: list, pages: int) -> dict:
             - status (str): The status of the scraping process.
             - message (str): A message indicating the success of the operation.
     """
-    p = Process(
-        target=run_spider,
-        args=(query, "google", int(pages))
-    )
-    p.start()
-    p.join()
-
+    try:
+        if not query or pages < 1 or pages > 20:
+            raise ValueError
+        p = Process(
+            target=run_spider,
+            args=(query, "google", int(pages))
+        )
+        p.start()
+        p.join()
+    except ValueError:
+        return {
+            "status": "error",
+            "message": "Invalid query or number of pages"
+        }
     return {
             "status": "success",
             "message": "Products added to database successfully",
@@ -222,7 +231,7 @@ def update_records():
         None
     """
     try:
-        with app.app_context():
+        with blueprint.app_context():
             product_links = list(Product.query.values("url"))
             spider = MySpider(product_links, "list")
             spider.run()

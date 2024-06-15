@@ -35,7 +35,7 @@ Routes:
 
 import os
 
-from flask import jsonify, render_template
+from flask import Blueprint, jsonify, render_template
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
     DateRange,
@@ -44,7 +44,9 @@ from google.analytics.data_v1beta.types import (
     RunReportRequest,
 )
 
-from app import app, admin_required
+from app.utils.decorators import admin_required
+
+blueprint = Blueprint("admin_analytics", __name__)
 
 def run_report(
         dimensions,
@@ -84,9 +86,9 @@ def run_report(
             yield (row.dimension_values[0].value, row.metric_values[0].value)
 
     except IndexError as e:
-        app.logger.error("No data available: %s", e)
+        blueprint.logger.error("No data available: %s", e)
     except Exception as e:
-        app.logger.error("An error occurred: %s", e)
+        blueprint.logger.error("An error occurred: %s", e)
 
 def report_on_user_countries():
     """
@@ -135,7 +137,7 @@ def report_on_active_users():
     yield from run_report([Dimension(name="date")], [Metric(name="activeUsers")])
 
 
-@app.get("/admin/analytics/country_sessions")
+@blueprint.get("/admin/analytics/country_sessions")
 @admin_required
 def admin_analytics_country_sessions():
     """
@@ -147,7 +149,7 @@ def admin_analytics_country_sessions():
     return jsonify(list(report_on_user_countries()))
 
 
-@app.get("/admin/analytics/page_views")
+@blueprint.get("/admin/analytics/page_views")
 @admin_required
 def admin_analytics_page_views():
     """
@@ -163,7 +165,7 @@ def admin_analytics_page_views():
         return jsonify(report)
 
 
-@app.get("/admin/analytics/user_devices")
+@blueprint.get("/admin/analytics/user_devices")
 @admin_required
 def admin_analytics_user_devices():
     """
@@ -175,7 +177,7 @@ def admin_analytics_user_devices():
     return jsonify(list(report_on_user_devices()))
 
 
-@app.get("/admin/analytics/active_users")
+@blueprint.get("/admin/analytics/active_users")
 @admin_required
 def admin_analytics_active_users():
     """
@@ -190,7 +192,7 @@ def admin_analytics_active_users():
     except IndexError:
         return jsonify(active_users)
 
-@app.get("/admin/analysis")
+@blueprint.get("/admin/analysis")
 @admin_required
 def admin_analytics_get():
     """

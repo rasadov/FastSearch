@@ -46,13 +46,15 @@ import sys
 
 sys.path.append("src/")
 
-from app import app
-import app.config
+from app.config import application
+
 
 # Import routes
 
-from app.routes import *
+import app.routes
+
+application.register_blueprint(app.routes.blueprint)
 
 # Main function
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    application.run(debug=True, host='0.0.0.0', port=5000)

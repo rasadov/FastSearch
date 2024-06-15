@@ -5,7 +5,7 @@ This module contains the Cart model which represents a cart in the application.
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
-from app import db
+from app.config import db
 from .user import User
 from .product import Product
 

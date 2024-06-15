@@ -15,18 +15,21 @@ The following routes are defined:
 
 from datetime import datetime
 
-from flask import render_template, flash, redirect, url_for, request
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user
 from itsdangerous import SignatureExpired
 from sqlalchemy import or_
 
-from app import app, login_required, db
+from app.config import db
 from app.models import User
 from app.utils.forms import (ChangePasswordForm, SetPasswordForm, ChangeUsernameForm,
                 DeleteAccountForm, ResetPasswordForm, ForgotPasswordForm)
 from app.utils.email import send_email
+from app.utils.decorators import login_required
 
-@app.get("/profile/password/change")
+blueprint = Blueprint("settings", __name__)
+
+@blueprint.get("/profile/password/change")
 @login_required
 def change_password_get():
     """
@@ -46,7 +49,7 @@ def change_password_get():
                            form=form,
                            btn_value='Change Password')
 
-@app.post("/profile/password/change")
+@blueprint.post("/profile/password/change")
 @login_required
 def change_password_post():
     """
@@ -79,7 +82,7 @@ def change_password_post():
         flash("Old password is not correct", category="danger")
     return redirect("/profile/password/change")
 
-@app.get("/profile/password/set")
+@blueprint.get("/profile/password/set")
 @login_required
 def set_password_get():
     """
@@ -99,7 +102,7 @@ def set_password_get():
                            h1="Set Password",
                            btn_value="Set Password")
 
-@app.post("/profile/password/set")
+@blueprint.post("/profile/password/set")
 def set_password_post():
     """
     Handles the POST request for setting a new password for the user.
@@ -123,7 +126,7 @@ def set_password_post():
     flash("Old password is not correct", category="danger")
     return redirect("/profile/password/set")
 
-@app.get("/profile/username/change")
+@blueprint.get("/profile/username/change")
 @login_required
 def change_username_get():
     """
@@ -147,7 +150,7 @@ def change_username_get():
                            form=form,
                            btn_value="Change Username")
 
-@app.post("/profile/username/change")
+@blueprint.post("/profile/username/change")
 @login_required
 def change_username_post():
     """
@@ -198,7 +201,7 @@ def change_username_post():
             return redirect("/profile")
     return redirect("/profile/username/change")
 
-@app.get("/verification")
+@blueprint.get("/verification")
 @login_required
 def ask_of_verification():
     """
@@ -207,7 +210,7 @@ def ask_of_verification():
     return render_template("Account/verification.html")
 
 
-@app.post("/verification")
+@blueprint.post("/verification")
 @login_required
 def send_verification_email():
     """
@@ -236,7 +239,7 @@ def send_verification_email():
     return redirect(url_for("profile_get"))
 
 
-@app.get("/email/verify/<token>")
+@blueprint.get("/email/verify/<token>")
 def verify_email_get(token):
     """
     Renders the verify_email.html template with the provided token.
@@ -250,7 +253,7 @@ def verify_email_get(token):
     return render_template("Account/verify_email.html", token=token)
 
 
-@app.post("/email/verify/<token>")
+@blueprint.post("/email/verify/<token>")
 def verify_email_post(token):
     """
     Verify the email address using the provided token.
@@ -281,7 +284,7 @@ def verify_email_post(token):
         flash("The confirmation link is invalid or has expired.", "danger")
         return redirect(url_for("profile_get"))
 
-@app.get("/password/forgot")
+@blueprint.get("/password/forgot")
 def forgot_password_get():
     """
     Handle the forgot password functionality.
@@ -305,7 +308,7 @@ def forgot_password_get():
                            btn_value="Send Email")
 
 
-@app.post("/password/forgot")
+@blueprint.post("/password/forgot")
 def forgot_password_post():
     """
     Handle the POST request for the 'forgot password' functionality.
@@ -337,7 +340,7 @@ def forgot_password_post():
             flash("Email not found", "warning")
     return redirect(url_for("forgot_password_get"))
 
-@app.get("/password/reset/<token>")
+@blueprint.get("/password/reset/<token>")
 def reset_password_get(token):
     """
     Renders the reset password page.
@@ -354,7 +357,7 @@ def reset_password_get(token):
                            btn_value="Reset Password")
 
 
-@app.post("/password/reset/<token>")
+@blueprint.post("/password/reset/<token>")
 def reset_password_post(token):
     """
     Handles the reset password form submission.
@@ -381,7 +384,7 @@ def reset_password_post(token):
         return redirect(url_for("login_get"))
     return redirect(url_for("reset_password_get", token=token))
 
-@app.get("/profile/delete")
+@blueprint.get("/profile/delete")
 @login_required
 def delete_account_get():
     """
@@ -397,7 +400,7 @@ def delete_account_get():
     h1 = "Are you sure you want to delete your account?"
     return render_template("Base/form_base.html", form=form, h1=h1, btn_value="Delete Account")
 
-@app.post("/profile/delete")
+@blueprint.post("/profile/delete")
 @login_required
 def delete_account_post():
     """

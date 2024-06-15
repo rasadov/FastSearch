@@ -7,7 +7,7 @@ from sqlalchemy import Index, Computed, func
 from flask_sqlalchemy.query import Query
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
-from app import db
+from app.config import db
 from app.models.pricehistory import PriceHistory
 from app.models.ts_vector import TSVector
 

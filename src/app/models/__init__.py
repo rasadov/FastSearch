@@ -43,7 +43,7 @@ and Flask-Login for user authentication.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 
-from app import app, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
+from app.config import application, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
 from app.models.user import User
 from app.models.product import Product
 from app.models.pricehistory import PriceHistory
@@ -58,7 +58,7 @@ def create_tables():
     """
     Create the database tables if they do not exist.
     """
-    with app.app_context():
+    with application.app_context():
         try:
             db.session.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
         except Exception as e:

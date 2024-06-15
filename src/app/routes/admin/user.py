@@ -26,15 +26,18 @@ Functions:
 """
 from datetime import datetime
 
-from flask import request, render_template, redirect, flash
+from flask import Blueprint, request, render_template, redirect, flash
 from flask_login import current_user
 
-from app import app, db, admin_required
-
+from app.config import db
 from app.models import User, Cart
+from app.utils.decorators import admin_required
+
+
+blueprint = Blueprint("admin_user", __name__)
 
 # Route for rendering the admin user search page
-@app.get("/admin/users")
+@blueprint.get("/admin/users")
 @admin_required
 def admin_user_search_get():
     """
@@ -85,7 +88,7 @@ def admin_user_search_get():
 
 
 # Route for rendering the admin user info page
-@app.get("/admin/user/<int:user_id>")
+@blueprint.get("/admin/user/<int:user_id>")
 @admin_required
 def admin_user_info_get(user_id):
     """
@@ -112,7 +115,7 @@ def admin_user_info_get(user_id):
 
 
 # Route for rendering the admin user edit page
-@app.get("/admin/user/edit/<int:item_id>")
+@blueprint.get("/admin/user/edit/<int:item_id>")
 @admin_required
 def admin_user_edit_get(item_id):
     """
@@ -130,7 +133,7 @@ def admin_user_edit_get(item_id):
 
 
 # Route for handling the admin user edit form submission
-@app.post("/admin/user/edit/<int:item_id>")
+@blueprint.post("/admin/user/edit/<int:item_id>")
 @admin_required
 def admin_user_edit_post(item_id):
     """
@@ -194,7 +197,7 @@ def admin_user_edit_post(item_id):
 
 
 # Route for rendering the admin user delete page
-@app.get("/admin/user/delete/<int:item_id>")
+@blueprint.get("/admin/user/delete/<int:item_id>")
 @admin_required
 def admin_user_delete_get(item_id):
     """
@@ -214,7 +217,7 @@ def admin_user_delete_get(item_id):
 
 
 # Route for handling the admin user delete form submission
-@app.post("/admin/user/delete/<int:item_id>")
+@blueprint.post("/admin/user/delete/<int:item_id>")
 @admin_required
 def admin_user_delete_post(item_id):
     """

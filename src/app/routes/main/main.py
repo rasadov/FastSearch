@@ -22,15 +22,17 @@ Functions:
 - `contact_post()`: Process the contact form submission and send an email to the admin users.
 """
 
-from flask import request, jsonify, flash, redirect, url_for, render_template
-from flask_login import current_user, login_user
+from flask import Blueprint, request, jsonify, flash, redirect, url_for, render_template
+from flask_login import current_user
 from app.models import Product, Cart, User, Message
-from app import app, db, login_required, DONATION_LINK
+from app.config import db, DONATION_LINK
 from app.utils.email import send_email
+from app.utils.decorators import login_required
 from spiders.myproject.myproject.spiders.utils.converter import SignsConverter
 
+blueprint = Blueprint("main", __name__)
 
-@app.get("/")
+@blueprint.get("/")
 def home_get():
     """
     Renders the home page.
@@ -38,13 +40,9 @@ def home_get():
     Returns:
     - Rendered template for the home page.
     """
-    # if current_user.is_anonymous:
-    #     user = User.query.get(1)
-    #     if user:
-    #         login_user(user)
     return render_template("Main/index.html")
 
-@app.get("/search")
+@blueprint.get("/search")
 def search_get():
     """
     Renders the search page with filtered products based on the query parameters.
@@ -87,7 +85,7 @@ def convert(key, val):
         return float(val)
     return val
 
-@app.get("/api/search")
+@blueprint.get("/api/search")
 def search_api() -> jsonify:
     """
     Get the search results based on the query parameters.
@@ -153,7 +151,7 @@ def search_api() -> jsonify:
         }
     )
 
-@app.post('/cart/add')
+@blueprint.post('/cart/add')
 @login_required
 def add_to_cart() -> jsonify:
     """
@@ -203,7 +201,7 @@ def add_to_cart() -> jsonify:
 #     """
 #     return redirect(DONATION_LINK)
 
-@app.get("/contact")
+@blueprint.get("/contact")
 def contact_get():
     """
     Handler function for the GET request to '/contact' endpoint.
@@ -214,7 +212,7 @@ def contact_get():
     """
     return render_template("Main/contact.html")
 
-@app.post("/contact")
+@blueprint.post("/contact")
 def contact_post():
     """
     Process the contact form submission and send an email to the admin users.

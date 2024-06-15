@@ -49,13 +49,15 @@ Note:
 """
 from datetime import datetime
 
-from flask import request, render_template, redirect, flash
+from flask import Blueprint, request, render_template, redirect, flash
 
-from app import app, db, admin_required
+from app.config import db
+from app.utils.decorators import admin_required
 from app.models import Product, PriceHistory
 
+blueprint = Blueprint("admin_product", __name__)
 
-@app.get("/admin/products/search")
+@blueprint.get("/admin/products/search")
 @admin_required
 def admin_products_search_get():
     """
@@ -114,7 +116,7 @@ def admin_products_search_get():
     )
 
 
-@app.get("/admin/product/<int:product_id>")
+@blueprint.get("/admin/product/<int:product_id>")
 @admin_required
 def admin_product_info_get(product_id):
     """
@@ -141,7 +143,7 @@ def admin_product_info_get(product_id):
     return render_template("Admin/Item/info.html", item=product)
 
 
-@app.get("/admin/product/edit/<int:item_id>")
+@blueprint.get("/admin/product/edit/<int:item_id>")
 @admin_required
 def admin_product_edit_get(item_id):
     """
@@ -159,7 +161,7 @@ def admin_product_edit_get(item_id):
     return render_template("Admin/Item/edit.html", item=product, func="admin_product_edit_post")
 
 
-@app.post("/admin/product/edit/<int:item_id>")
+@blueprint.post("/admin/product/edit/<int:item_id>")
 @admin_required
 def admin_product_edit_post(item_id):
     """
@@ -220,7 +222,7 @@ def admin_product_edit_post(item_id):
     return redirect(f"/admin/product/{item_id}")
 
 
-@app.get("/admin/product/delete/<int:item_id>")
+@blueprint.get("/admin/product/delete/<int:item_id>")
 @admin_required
 def admin_product_delete_get(item_id):
     """
@@ -240,7 +242,7 @@ def admin_product_delete_get(item_id):
     )
 
 
-@app.post("/admin/product/delete/<int:item_id>")
+@blueprint.post("/admin/product/delete/<int:item_id>")
 @admin_required
 def admin_product_delete_post(item_id):
     """

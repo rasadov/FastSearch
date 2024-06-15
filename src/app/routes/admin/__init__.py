@@ -38,19 +38,26 @@ Note:
 """
 
 
-from flask import jsonify, render_template
+from flask import Blueprint, jsonify, render_template
 
-from app import app
+blueprint = Blueprint("admin", __name__)
 
-from app.models import User, Product
+from app.models import User, Product, Message
+from app.utils.decorators import admin_required
 
-from app.routes.admin.analytics import *
-from app.routes.admin.scrape import *
-from app.routes.admin.user import *
-from app.routes.admin.product import *
-from app.routes.admin.message import *
+import app.routes.admin.analytics
+import app.routes.admin.scrape
+import app.routes.admin.user
+import app.routes.admin.product
+import app.routes.admin.message
 
-@app.get("/admin")
+blueprint.register_blueprint(app.routes.admin.analytics.blueprint)
+blueprint.register_blueprint(app.routes.admin.scrape.blueprint)
+blueprint.register_blueprint(app.routes.admin.user.blueprint)
+blueprint.register_blueprint(app.routes.admin.product.blueprint)
+blueprint.register_blueprint(app.routes.admin.message.blueprint)
+
+@blueprint.get("/admin")
 @admin_required
 def admin_get():
     """
@@ -68,7 +75,7 @@ def admin_get():
     )
 
 
-@app.get("/admin/messages/unread")
+@blueprint.get("/admin/messages/unread")
 @admin_required
 def get_count_of_messages():
     """

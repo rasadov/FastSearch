@@ -9,11 +9,11 @@ Routes:
 
 import os
 
-from flask import send_from_directory
+from flask import Blueprint, send_from_directory
 
-from app import app
+blueprint = Blueprint("other", __name__)
 
-@app.get("/favicon.ico")
+@blueprint.get("/favicon.ico")
 def favicon():
     """
     Endpoint for serving the favicon.ico file.
@@ -22,13 +22,13 @@ def favicon():
         The favicon.ico file as a response.
     """
     return send_from_directory(
-        os.path.join(app.root_path, "static"),
+        os.path.join(blueprint.root_path, "static"),
         "images/favicon/favicon.ico",
         mimetype="image/vnd.microsoft.icon",
     )
 
 
-@app.get("/robots.txt")
+@blueprint.get("/robots.txt")
 def robots():
     """
     Returns the content of the 'robots.txt' file.
@@ -39,4 +39,4 @@ def robots():
     Returns:
         str: The content of the 'robots.txt' file.
     """
-    return send_from_directory(os.path.join(app.root_path, "static"), "robots.txt")
+    return send_from_directory(os.path.join(blueprint.root_path, "static"), "robots.txt")

@@ -10,7 +10,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped
 from itsdangerous import SignatureExpired
 
-from app import bcrypt, db, s
+from app.config import bcrypt, db, s
 
 
 class User(UserMixin, db.Model):

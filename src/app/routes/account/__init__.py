@@ -6,14 +6,22 @@ Routes:
 - GET `/profile`: Retrieve the user's profile and render the profile page.
 """
 
+from flask import render_template, flash, Blueprint
+from flask_login import current_user
+
 from app.models import Cart
+from app.utils.decorators import login_required
 
-from .authentication import *
+import authentication
+import settings
 
-from .settings import *
 
+blueprint = Blueprint("account", __name__)
 
-@app.get("/profile")
+blueprint.register_blueprint(authentication.blueprint)
+blueprint.register_blueprint(settings.blueprint)
+
+@blueprint.get("/profile")
 @login_required
 def profile_get():
     """
