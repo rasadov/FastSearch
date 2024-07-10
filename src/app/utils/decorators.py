@@ -36,7 +36,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous:
             flash("You are not authenticated.", "info")
-            return redirect(url_for("login_get"))
+            return redirect('/login')
         return f(*args, **kwargs)
 
     return decorated_function
@@ -62,7 +62,7 @@ def logout_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_authenticated:
             flash("You are already authenticated.", "info")
-            return redirect(url_for("home_get"))
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function
@@ -90,7 +90,7 @@ def admin_required(f):
             current_user.role not in ["admin", "owner"]
         ):
             flash("You are not authorized to view this page.", "info")
-            return redirect(url_for("home_get"))
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function
@@ -111,7 +111,7 @@ def owner_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_anonymous or current_user.role != "owner":
             flash("You are not authorized to view this page.", "info")
-            return redirect(url_for("home_get"))
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function
@@ -136,7 +136,7 @@ def confirmed_required(f):
     def decorated_function(*args, **kwargs):
         if not current_user.is_confirmed():
             flash("You need to confirm your email address.", "info")
-            return redirect(url_for("home_get"))
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function
@@ -158,7 +158,7 @@ def unconfirmed_required(f):
     def decorated_function(*args, **kwargs):
         if current_user.is_confirmed():
             flash("You are already confirmed.", "info")
-            return redirect(url_for("home_get"))
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function

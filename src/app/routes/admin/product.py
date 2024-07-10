@@ -241,7 +241,6 @@ def admin_product_delete_get(item_id):
         "Admin/Item/delete.html", item=product, func="admin_product_delete_post"
     )
 
-
 @blueprint.post("/admin/product/delete/<int:item_id>")
 @admin_required
 def admin_product_delete_post(item_id):
