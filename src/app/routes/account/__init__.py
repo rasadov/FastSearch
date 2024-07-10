@@ -12,13 +12,13 @@ from flask_login import current_user
 from app.models import Cart
 from app.utils.decorators import login_required
 
-import authentication
-import settings
+from app.routes.account import auth
+from app.routes.account import settings
 
 
 blueprint = Blueprint("account", __name__)
 
-blueprint.register_blueprint(authentication.blueprint)
+blueprint.register_blueprint(auth.blueprint)
 blueprint.register_blueprint(settings.blueprint)
 
 @blueprint.get("/profile")

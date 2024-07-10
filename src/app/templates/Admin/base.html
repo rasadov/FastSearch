@@ -31,33 +31,33 @@
                     <h2>Dashboard</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('admin_get') }}"><h4 style="margin: 20px auto 0;">Admin</h4></a>
+                            <a class="nav-link active" href="/admin"><h4 style="margin: 20px auto 0;">Admin</h4></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_user_search_get') }}">Users</a>
+                            <a class="nav-link" href="/admin/users">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_products_search_get') }}">Products</a>
+                            <a class="nav-link" href="/admin/products">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_scrape_get') }}">Scrape</a>
+                            <a class="nav-link" href="/admin/scrape">Scrape</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_analytics_get') }}">Analytics</a>
+                            <a class="nav-link" href="/admin/analytics">Analytics</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_messages_get') }}" id="messages">Messages</a>
+                            <a class="nav-link" href="/admin/messages" id="messages">Messages</a>
                         </li>
                     </ul>
                     <ul class="nav flex-column" style="margin-top: 30px;">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ url_for('home_get') }}"><h4 style="margin: 20px auto 0;">Home</h4></a>
+                            <a class="nav-link active" href="/"><h4 style="margin: 20px auto 0;">Home</h4></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('search_get') }}">Search</a>
+                            <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profile_get') }}">profile</a>
+                            <a class="nav-link" href="/profile">profile</a>
                         </li>
                     </ul>
                 </div>

@@ -19,7 +19,8 @@ from flask import Blueprint, session, render_template, redirect, flash
 from flask_login import login_user, logout_user
 
 
-from app.config import db, oauth, CURRENT_DOMAIN
+from app import CURRENT_DOMAIN
+from app.config import db, oauth
 from app.models import User
 from app.utils.forms import RegisterForm, LoginForm
 from app.utils.decorators import logout_required, login_required

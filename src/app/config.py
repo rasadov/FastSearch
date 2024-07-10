@@ -36,9 +36,7 @@ importing all necessary modules and defining important variables and decorators.
 """
 
 import os
-from datetime import datetime
 
-import dotenv
 from authlib.integrations.flask_client import OAuth
 from flask import Flask
 from flask_bcrypt import Bcrypt
@@ -46,28 +44,11 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import URLSafeTimedSerializer
 
-from app.models import User
+from app import DB_USER, DB_NAME, DB_PASSWORD, DB_HOST, DB_PORT, SECRET_KEY
 
-dotenv.load_dotenv('envs\\flask\\.env')
-dotenv.load_dotenv('envs\\postgresql\\.env')
-
-DB_USER = os.environ.get("DB_USER")
-DB_NAME = os.environ.get("DB_NAME")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
-SERVER_STARTED_ON = datetime.now()
-
-OWNER_EMAIL = os.environ.get("OWNER_EMAIL")
-OWNER_USERNAME = os.environ.get("OWNER_USERNAME")
-
-DONATION_LINK = "https://www.buymeacoffee.com/abyssara"
-
-CURRENT_DOMAIN = os.environ.get("CURRENT_DOMAIN")
 
 application = Flask(__name__)
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
 
 application.config["SECRET_KEY"] = SECRET_KEY
 
@@ -114,19 +95,3 @@ login_manager = LoginManager(application)
 login_manager.login_view = "login"
 
 s = URLSafeTimedSerializer(application.config["SECRET_KEY"])
-
-@login_manager.user_loader
-def load_user(user_id):
-    """
-    Load a user from the database based on the user ID.
-
-    Args:
-      user_id (int): The ID of the user to load.
-
-    Returns:
-      User or None: The loaded user object if found, None otherwise.
-    """
-    try:
-        return db.session.get(User, int(user_id))  # noqa: F405
-    except (AttributeError, ValueError):
-        return None

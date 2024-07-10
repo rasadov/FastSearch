@@ -39,10 +39,10 @@
         <div class="card-body">
             <div class="text-center">
                 <div class="m-3">
-                    <h1 class="card-title">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
+                    <h1 class="card-title">Username: {% if current_user.username %} {{ current_user.username }} {% else %} <a href="/profile/username/change" class="text-muted">Blank</a> {% endif %}</h1>
                 </div>
                 <div class="m-3">
-                    <h1 class="card-title">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="{{ url_for('change_username_get') }}" class="text-muted">Blank</a> {% endif %}</h1>
+                    <h1 class="card-title">Name: {% if current_user.name %} {{ current_user.name }} {% else %} <a href="/profile/username/change" class="text-muted">Blank</a> {% endif %}</h1>
                 </div>
                 <div class="m-3">
                     <h1 class="card-title">Email address: {{ current_user.email_address }}</h1>
@@ -51,26 +51,26 @@
             <div class="flex-container mt-5 mb-3" style="display: flex; justify-content: space-around;">
                 {% if not current_user.is_confirmed() %}
                 <div class="mt-3">
-                    <a href="{{ url_for('ask_of_verification') }}" class="btn btn-primary">Confirm your email</a>
+                    <a href="verification" class="btn btn-primary">Confirm your email</a>
                 </div>
                 {% endif %}
                 <div class="mt-3">
-                    <a href="{{ url_for('change_username_get')}}" class="btn btn-primary">Change account credentials</a>
+                    <a href="/profile/username/change" class="btn btn-primary">Change account credentials</a>
                 </div>
                 {% if current_user.password_hash %}
                 <div class="mt-3">
-                    <a href="{{ url_for('change_password_get') }}" class="btn btn-primary">Change password</a>
+                    <a href="/profile/password/change" class="btn btn-primary">Change password</a>
                 </div>
                 {% else %}
                 <div class="mt-3">
-                    <a href="{{ url_for('set_password_get') }}" class="btn btn-primary">Set password</a>
+                    <a href="/profile/password/set" class="btn btn-primary">Set password</a>
                 </div>
                 {% endif %}
                 <div class="mt-3">
-                    <a href="{{ url_for('logout')}}" class="btn btn-danger">Log out</a>
+                    <a href="/logout" class="btn btn-danger">Log out</a>
                 </div>
                 <div class="mt-3">
-                    <a href="{{ url_for('delete_account_get') }}" class="btn btn-danger">Delete account</a>
+                    <a href="/profile/delete" class="btn btn-danger">Delete account</a>
                 </div>
             </div>
         </div>

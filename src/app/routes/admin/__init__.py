@@ -45,17 +45,17 @@ blueprint = Blueprint("admin", __name__)
 from app.models import User, Product, Message
 from app.utils.decorators import admin_required
 
-import app.routes.admin.analytics
-import app.routes.admin.scrape
-import app.routes.admin.user
-import app.routes.admin.product
-import app.routes.admin.message
+from app.routes.admin import analytics
+from app.routes.admin import scrape
+from app.routes.admin import user
+from app.routes.admin import product
+from app.routes.admin import message
 
-blueprint.register_blueprint(app.routes.admin.analytics.blueprint)
-blueprint.register_blueprint(app.routes.admin.scrape.blueprint)
-blueprint.register_blueprint(app.routes.admin.user.blueprint)
-blueprint.register_blueprint(app.routes.admin.product.blueprint)
-blueprint.register_blueprint(app.routes.admin.message.blueprint)
+blueprint.register_blueprint(analytics.blueprint)
+blueprint.register_blueprint(scrape.blueprint)
+blueprint.register_blueprint(user.blueprint)
+blueprint.register_blueprint(product.blueprint)
+blueprint.register_blueprint(message.blueprint)
 
 @blueprint.get("/admin")
 @admin_required

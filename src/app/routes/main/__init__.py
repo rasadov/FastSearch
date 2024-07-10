@@ -4,14 +4,14 @@ This module imports all the main routes for the application.
 
 from flask import Blueprint
 
-import app.routes.main.main
+from app.routes.main import main
 
-import app.routes.main.other
+from app.routes.main import other
 
-import app.routes.main.errors
+from app.routes.main import errors
 
 blueprint = Blueprint("main", __name__)
 
-blueprint.register_blueprint(app.routes.main.main.blueprint)
-blueprint.register_blueprint(app.routes.main.other.blueprint)
-blueprint.register_blueprint(app.routes.main.errors.blueprint)
+blueprint.register_blueprint(main.blueprint)
+blueprint.register_blueprint(other.blueprint)
+blueprint.register_blueprint(errors.blueprint)

@@ -19,7 +19,7 @@ import psycopg2
 
 from app.utils.notifications import notify_price_change
 
-from app.config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
+from app import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 
 def save_product_to_database(

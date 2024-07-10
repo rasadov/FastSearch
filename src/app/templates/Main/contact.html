@@ -29,7 +29,7 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <h3 class="card-title">Contact us through email</h3>
-                    <form method="POST" action="{{ url_for('contact_post') }}">
+                    <form method="POST" action="/contact">
                         <div class="form-group">
                             <label for="name">Your Name:</label>
                             <input type="text" name="name" id="name" class="form-control" required>
@@ -58,7 +58,7 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <h3 class="card-title">Contact us through email</h3>
-                    <p class="card-text">You need to login to contact us through email. You can login <a href="{{ url_for('login_get') }}">here</a></p>
+                    <p class="card-text">You need to login to contact us through email. You can login <a href="/login">here</a></p>
                 </div>
             </div>
         </div>

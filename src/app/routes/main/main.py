@@ -25,7 +25,8 @@ Functions:
 from flask import Blueprint, request, jsonify, flash, redirect, url_for, render_template
 from flask_login import current_user
 from app.models import Product, Cart, User, Message
-from app.config import db, DONATION_LINK
+from app.config import db
+from app import DONATION_LINK
 from app.utils.email import send_email
 from app.utils.decorators import login_required
 from spiders.myproject.myproject.spiders.utils.converter import SignsConverter

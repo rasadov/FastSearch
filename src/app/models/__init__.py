@@ -43,7 +43,8 @@ and Flask-Login for user authentication.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
 
-from app.config import application, db, OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
+from app import OWNER_EMAIL, OWNER_USERNAME, SERVER_STARTED_ON
+# from app.config import application, db
 from app.models.user import User
 from app.models.product import Product
 from app.models.pricehistory import PriceHistory
@@ -54,22 +55,22 @@ Base = declarative_base()
 
 __all__ = ["UserModel", "Product", "PriceHistory", "Cart", "Message"]
 
-def create_tables():
-    """
-    Create the database tables if they do not exist.
-    """
-    with application.app_context():
-        try:
-            db.session.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
-        except Exception as e:
-            pass
-        db.create_all()
-        if not User.query.filter_by(email_address=OWNER_EMAIL).count():
-            owner = User(email_address=OWNER_EMAIL,
-                         username=OWNER_USERNAME,
-                         role="owner",
-                         confirmed_on=SERVER_STARTED_ON)
-            db.session.add(owner)
-        db.session.commit()
+# def create_tables():
+#     """
+#     Create the database tables if they do not exist.
+#     """
+#     with application.app_context():
+#         try:
+#             db.session.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm;"))
+#         except Exception as e:
+#             pass
+#         db.create_all()
+#         if not User.query.filter_by(email_address=OWNER_EMAIL).count():
+#             owner = User(email_address=OWNER_EMAIL,
+#                          username=OWNER_USERNAME,
+#                          role="owner",
+#                          confirmed_on=SERVER_STARTED_ON)
+#             db.session.add(owner)
+#         db.session.commit()
 
-create_tables()
+# create_tables()
